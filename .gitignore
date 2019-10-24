@@ -1,2 +1,5 @@
 src/node_modules/*
-
+src/.idea/*
+src/*-lock*
+src/platforms/*
+src/plugins/*

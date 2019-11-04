@@ -74,7 +74,8 @@ var view = new ol.View({
 var map = new ol.Map({
     target: 'map',
     layers: [
-        osm
+        osm,
+        arrets_tao
     ],
     view: view
 

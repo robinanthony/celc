@@ -25,7 +25,7 @@ with open('target/arrets_tao.sql', 'w') as sql_data:
 CREATE TABLE public.arrets_tao
 (
     id character varying(75) NOT NULL,
-    geom geometry(Point, 25),
+    geom geometry(Point, 4326),
     name character varying(75),
     CONSTRAINT arrets_tao_pkey PRIMARY KEY (id)
 );
@@ -34,7 +34,7 @@ CREATE TABLE public.arrets_tao
 with open('target/arrets_tao.sql', "a") as sql_data:
     for elem in clean_data:
         sql_data.write("INSERT INTO public.arrets_tao (id, name, geom) VALUES (\'{}\', \'{}\', ST_GeomFromText(\'POINT({} {})\', {}));\n"
-            .format(elem["stop_id"], elem["stop_name"].replace("'", "''"), elem["geometry"]["coordinates"][0], elem["geometry"]["coordinates"][1], 25))
+            .format(elem["stop_id"], elem["stop_name"].replace("'", "''"), elem["geometry"]["coordinates"][0], elem["geometry"]["coordinates"][1], 4326))
 
 ######################################################
 ########## TRAITEMENT DU FICHIER LIGNES TAO ##########
@@ -58,7 +58,6 @@ for data in clean_data:
     res = "("
     for coords in data["geometry"]["coordinates"]:
         for coord in coords:
-            print(coord)
             res += ""+str(coord[0])+" "+str(coord[1])+", "
     data["geometry"]["coordinates"] = res[:-2]+")"
 
@@ -71,7 +70,7 @@ with open('target/lignes_tao.sql', 'w') as sql_data:
 CREATE TABLE public.lignes_tao
 (
     id character varying(75) NOT NULL,
-    geom geometry(MULTILINESTRING, 25),
+    geom geometry(MULTILINESTRING, 4326),
     short_name character varying(25),
     long_name character varying(100),
     route_type character varying(25),
@@ -82,7 +81,7 @@ CREATE TABLE public.lignes_tao
 with open('target/lignes_tao.sql', "a") as sql_data:
     for elem in clean_data:
         sql_data.write("INSERT INTO public.lignes_tao (id, short_name, long_name, route_type, geom) VALUES (\'{}\', \'{}\', \'{}\', \'{}\', ST_GeomFromText(\'MULTILINESTRING({})\', {}));\n"
-            .format(elem["route_id"], elem["route_short_name"].replace("'", "''"), elem["route_long_name"].replace("'", "''"), elem["route_type"].replace("'", "''"), elem["geometry"]["coordinates"], 25))
+            .format(elem["route_id"], elem["route_short_name"].replace("'", "''"), elem["route_long_name"].replace("'", "''"), elem["route_type"].replace("'", "''"), elem["geometry"]["coordinates"], 4326))
 
 
 print("------------ FIN DU PROGRAMME ------------")

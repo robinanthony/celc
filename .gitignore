@@ -3,3 +3,4 @@ src/.idea/*
 src/*-lock*
 src/platforms/*
 src/plugins/*
+bdd/target/*

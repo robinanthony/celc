@@ -98,3 +98,80 @@ var map = new ol.Map({
     view: view
 
 });
+
+map.getLayers().array_[1].setVisible($("#bus").is(":checked"))
+map.getLayers().array_[2].setVisible($("#bus").is(":checked"))
+// map.getLayers().array_[3].setVisible($("#tram").is(":checked"))
+
+
+$("input:checkbox").each(function(){
+    $(this).change(function functionName(){
+        map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
+        map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
+        // map.getLayers().array_[3].setVisible($("#tram").is(":checked"))
+    })
+});
+
+// map.on('singleclick', function(evt) {
+//     document.getElementById('info').innerHTML = '';
+//     var viewResolution = view.getResolution();
+//     var url = arrets_tao.getSource().getGetFeatureInfoUrl(
+//         evt.coordinate, viewResolution, view.getProjection(),
+//         {'INFO_FORMAT': 'text/html'});
+//
+//     if (url) {
+//         fetch(url)
+//             .then(function (response) { return response.text(); })
+//             .then(function (html) {
+//                 document.getElementById('info1').innerHTML = html;
+//             });
+//     }
+// });
+
+var select = null; // ref to currently selected interaction
+
+// select interaction working on "singleclick"
+var selectSingleClick = new ol.interaction.Select();
+
+var selectElement = document.getElementById('info');
+
+var changeInteraction = function() {
+    if (select !== null) {
+        map.removeInteraction(select);
+    }
+    select = selectSingleClick;
+    if (select !== null) {
+        map.addInteraction(select);
+        select.on('select', function(e) {
+            console.log(e);
+
+            let selected = e.target.getFeatures().getArray()[0];
+            alert(getInfos(selected));
+        });
+    }
+};
+
+var getInfos = function(elem) {
+    console.log("ELEM  ",elem);
+    let id = elem.getId().split('.')[0];
+    let prop = elem.getProperties();
+
+    switch (id) {
+        case 'arrets_tao':
+            return `Arret : ${prop["name"]}`;
+            break;
+        case 'lignes_tao':
+            return `Ligne ${prop["short_name"]} : ${prop["long_name"]}`;
+            break;
+        default:
+            break;
+    }
+}
+
+
+
+
+/**
+ * onchange callback on the select element.
+ */
+changeInteraction();

@@ -3,8 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <title>Signalements</title>
+    <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css" type="text/css">
+
+    <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.js"></script>
+
+    <script src="js/bootstrap.js"></script>
+
+    <link rel="stylesheet"  href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/map.css">
+    <link rel="stylesheet" type="text/css" href="css/signal.css">
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
 </head>
 <body>
-<p>signalements</p>
+  <h3> nom de la rue clicker ou arret </h3>
+  <form class="" action="index.html" method="post">
+
+    <label for="typeSignal">typed de signalement</label>
+    <select class="form-control" id="typeSignal">
+      <option>1</option>
+      <option>2</option>
+      <option>3</option>
+      <option>4</option>
+      <option>5</option>
+    </select>
+
+    <div class="-none" id="1">
+        <input type="file" name="img[]" class="file" accept="image/*">
+        <div class="input-group mb-3">
+
+        <input type="text" class="form-control" disabled placeholder="Upload File" id="file">
+        <div class="input-group-append">
+          <button type="button" class="browse btn btn-primary">Browse...</button>
+        </div>
+      </div>
+      <div class="ml-2 col-sm-6">
+        <img src="https://placehold.it/80x80" id="preview" class="img-thumbnail">
+      </div>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Signaler</button>
+  </form>
+  <script type="text/javascript">
+  $(document).on("click", ".browse", function() {
+    var file = $(this).parents().find(".file");
+    file.trigger("click");
+    });
+    $('input[type="file"]').change(function(e) {
+    var fileName = e.target.files[0].name;
+    $("#file").val(fileName);
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      // get loaded data and render thumbnail.
+      document.getElementById("preview").src = e.target.result;
+    };
+    // read the image file as a data URL.
+    reader.readAsDataURL(this.files[0]);
+  });
+  </script>
 </body>
 </html>

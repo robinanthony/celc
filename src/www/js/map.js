@@ -75,9 +75,22 @@ var map = new ol.Map({
     target: 'map',
     layers: [
         osm,
-        arrets_tao
+        arrets_tao,
+        lignes_tao
     ],
     view: view
 
 });
 
+map.getLayers().array_[1].setVisible($("#bus").is(":checked"))
+map.getLayers().array_[2].setVisible($("#bus").is(":checked"))
+// map.getLayers().array_[3].setVisible($("#tram").is(":checked"))
+
+
+$("input:checkbox").each(function(){
+    $(this).change(function functionName(){
+        map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
+        map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
+        // map.getLayers().array_[3].setVisible($("#tram").is(":checked"))
+    })
+})

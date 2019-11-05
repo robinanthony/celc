@@ -61,7 +61,7 @@ var arrets_tao_bus = new ol.layer.Vector({
                 image: new ol.style.Circle({
                     radius: 7,
                     fill: new ol.style.Fill({color: 'rgba(0,0,150,0.15)'}),
-                    stroke: new ol.style.Stroke({color : 'rgba(0,150,0,1)', width: 2})
+                    stroke: new ol.style.Stroke({color : 'rgba(0,0,150,1)', width: 2})
                 })
             })
         });
@@ -93,22 +93,24 @@ var map = new ol.Map({
     layers: [
         osm,
         arrets_tao_bus,
-        arrets_tao_tram
+        arrets_tao_tram,
+        lignes_tao
     ],
     view: view
 
 });
 
 map.getLayers().array_[1].setVisible($("#bus").is(":checked"))
-map.getLayers().array_[2].setVisible($("#bus").is(":checked"))
-// map.getLayers().array_[3].setVisible($("#tram").is(":checked"))
+map.getLayers().array_[2].setVisible($("#tram").is(":checked"))
+map.getLayers().array_[3].setVisible($("#tram").is(":checked"))
 
 
 $("input:checkbox").each(function(){
     $(this).change(function functionName(){
         map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
-        map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
-        // map.getLayers().array_[3].setVisible($("#tram").is(":checked"))
+        map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
+        map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
+
     })
 });
 
@@ -157,11 +159,11 @@ var getInfos = function(elem) {
     let prop = elem.getProperties();
 
     switch (id) {
-        case 'arrets_tao':
+        case 'arrets_tao_bus':
             return `Arret : ${prop["name"]}`;
             break;
-        case 'lignes_tao':
-            return `Ligne ${prop["short_name"]} : ${prop["long_name"]}`;
+        case 'arrets_tao_tram':
+            return `Arret : ${prop["name"]}`;
             break;
         default:
             break;

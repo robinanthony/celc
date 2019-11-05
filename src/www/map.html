@@ -29,6 +29,7 @@
 
 <div class="wrapper">
     <!-- Sidebar -->
+    <div id="side-block"></div>
     <nav id="sidebar" class="active">
 
         <div id="dismiss">
@@ -116,11 +117,11 @@
                 </button>
             </div>
         </nav>
+
+        <div id="map" class="map"></div>
     </div>
 
 </div>
-
-<div id="map" class="map"></div>
 
 <script src="js/map.js"></script>
 
@@ -167,7 +168,7 @@
             preventDefault : true
         };
 
-        Hammer(document.body).on("swiperight", function(ev){ 
+        Hammer(document.getElementById('side-block')).on("swiperight", function(ev){ 
             if (ev.center.x - ev.distance < 250) {
                 $('#sidebar').removeClass('active');
             }
@@ -177,6 +178,10 @@
             if (ev.center.x - ev.distance < 350) {
                 $('#sidebar').addClass('active');
             }
+        },options);
+
+        Hammer(document.getElementById('content')).on("tap swipe", function(ev){ 
+            $('#sidebar').addClass('active');
         },options);
     });
 </script>

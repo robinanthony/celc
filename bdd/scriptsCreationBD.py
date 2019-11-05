@@ -79,7 +79,7 @@ for rd in raw_data:
 for data in clean_data:
     res = "("
     for coords in data["geometry"]["coordinates"]:
-        for coord in coords:
+        for coord in coords: # TODO ENREGISTRER LE POINT DE DEPART ET NE PAS L'AJOUTER SI REPRESENT DANS LA SUITE
             res += ""+str(coord[0])+" "+str(coord[1])+", "
     data["geometry"]["coordinates"] = res[:-2]+")"
 

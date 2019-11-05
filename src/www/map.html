@@ -8,6 +8,8 @@
 
     <script src="js/bootstrap.js"></script>
 
+    <script src="js/hammer.min.js"></script>
+
     <link rel="stylesheet"  href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/map.css">
     <!-- Scrollbar Custom CSS -->
@@ -154,6 +156,24 @@
             $('.collapse.in').toggleClass('in');
             $('a[aria-expanded=true]').attr('aria-expanded', 'false');
         });
+
+        var options = {
+            dragLockToAxis: true,
+            dragBlockHorizontal: true,
+            preventDefault : true
+        };
+
+        Hammer(document.body).on("swiperight", function(ev){ 
+            if (ev.center.x - ev.distance < 250) {
+                $('#sidebar').removeClass('active');
+            }
+        },options);
+
+        Hammer(document.body).on("swipeleft", function(ev){ 
+            if (ev.center.x - ev.distance < 350) {
+                $('#sidebar').addClass('active');
+            }
+        },options);
     });
 </script>
 

@@ -1,5 +1,10 @@
+///// Adresse du geoserver avec son espace de travail
+var adresse_geoserver = 'http://192.168.46.196:8080/geoserver/CELC';
+
 ///// Fonction permettant de récuperer les informations sur le GeoServeur
 var getSource = function(lien, couche){
+  // lien = 'adresse_du_geoserver/espace_de_travail'
+  // couche = 'entrepot:couche'
           var source = new ol.source.Vector({
             format: new ol.format.GeoJSON(),
             loader: function(extent, resolution, projection) {
@@ -37,9 +42,9 @@ var osm = new ol.layer.Tile({
             source: new ol.source.OSM({opaque:false})
         });
 
-var arrets_tao = new ol.layer.Vector({
+var arrets_tao_tram = new ol.layer.Vector({
           renderMode: 'image',
-          source: getSource('http://192.168.46.196:8080/geoserver/CELC', 'CELC:arrets_tao'),
+          source: getSource(adresse_geoserver, 'CELC:arrets_tao_tram'),
           style: new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: 7,
@@ -49,9 +54,21 @@ var arrets_tao = new ol.layer.Vector({
             })
         });
 
+var arrets_tao_bus = new ol.layer.Vector({
+          renderMode: 'image',
+          source: getSource(adresse_geoserver, 'CELC:arrets_tao_bus'),
+          style: new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 7,
+                    fill: new ol.style.Fill({color: 'rgba(0,0,150,0.15)'}),
+                    stroke: new ol.style.Stroke({color : 'rgba(0,150,0,1)', width: 2})
+                })
+            })
+        });
+
 var lignes_tao = new ol.layer.Vector({
           renderMode: 'image',
-          source: getSource('http://192.168.46.196:8080/geoserver/CELC', 'CELC:lignes_tao'),
+          source: getSource(adresse_geoserver, 'CELC:lignes_tao'),
           style: new ol.style.Style({
               fill: new ol.style.Fill({
                   color: 'rgba(205,205,205,0.8)'
@@ -74,9 +91,10 @@ var view = new ol.View({
 var map = new ol.Map({
     target: 'map',
     layers: [
-        osm
+        osm,
+        arrets_tao_bus,
+        arrets_tao_tram
     ],
     view: view
 
 });
-

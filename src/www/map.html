@@ -8,6 +8,8 @@
 
     <script src="js/bootstrap.js"></script>
 
+    <script src="js/hammer.min.js"></script>
+
     <link rel="stylesheet"  href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/map.css">
     <!-- Scrollbar Custom CSS -->
@@ -27,6 +29,7 @@
 
 <div class="wrapper">
     <!-- Sidebar -->
+    <div id="side-block"></div>
     <nav id="sidebar" class="active">
 
         <div id="dismiss">
@@ -114,11 +117,11 @@
                 </button>
             </div>
         </nav>
+
+        <div id="map" class="map"></div>
     </div>
 
 </div>
-
-<div id="map" class="map"></div>
 
 <script src="js/map.js"></script>
 
@@ -158,6 +161,28 @@
             $('.collapse.in').toggleClass('in');
             $('a[aria-expanded=true]').attr('aria-expanded', 'false');
         });
+
+        var options = {
+            dragLockToAxis: true,
+            dragBlockHorizontal: true,
+            preventDefault : true
+        };
+
+        Hammer(document.getElementById('side-block')).on("swiperight", function(ev){ 
+            if (ev.center.x - ev.distance < 250) {
+                $('#sidebar').removeClass('active');
+            }
+        },options);
+
+        Hammer(document.body).on("swipeleft", function(ev){ 
+            if (ev.center.x - ev.distance < 350) {
+                $('#sidebar').addClass('active');
+            }
+        },options);
+
+        Hammer(document.getElementById('content')).on("tap swipe", function(ev){ 
+            $('#sidebar').addClass('active');
+        },options);
     });
 </script>
 

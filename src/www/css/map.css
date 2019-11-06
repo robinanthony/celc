@@ -4,6 +4,17 @@
     display: block;
 }
 
+#side-block {
+    position: absolute;
+    width: 3rem;
+    height: 100vh;
+    z-index: 9900;    
+}
+
+.ol-zoom.ol-unselectable.ol-control {
+    z-index: 9995;
+}
+
 #sidebar {
     min-width: 250px;
     max-width: 250px;

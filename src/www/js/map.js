@@ -66,9 +66,9 @@ var arrets_tao_bus = new ol.layer.Vector({
             })
         });
 
-var lignes_tao = new ol.layer.Vector({
+var lignes_tao_bus = new ol.layer.Vector({
           renderMode: 'image',
-          source: getSource(adresse_geoserver, 'CELC:lignes_tao'),
+          source: getSource(adresse_geoserver, 'CELC:lignes_tao_bus'),
           style: new ol.style.Style({
               fill: new ol.style.Fill({
                   color: 'rgba(205,205,205,0.8)'
@@ -79,6 +79,21 @@ var lignes_tao = new ol.layer.Vector({
               })
           })
         });
+
+var lignes_tao_tram = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:lignes_tao_tram'),
+    style: new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(205,205,205,0.8)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: 'rgba(100,205,205, 0.8)',
+            width: 3
+        })
+    })
+});
+
 
 
 ///// Création du view pour la carte
@@ -94,22 +109,25 @@ var map = new ol.Map({
         osm,
         arrets_tao_bus,
         arrets_tao_tram,
-        lignes_tao
+        lignes_tao_bus,
+        lignes_tao_tram
     ],
     view: view
 
 });
 
 map.getLayers().array_[1].setVisible($("#bus").is(":checked"))
+map.getLayers().array_[3].setVisible($("#bus").is(":checked"))
 map.getLayers().array_[2].setVisible($("#tram").is(":checked"))
-map.getLayers().array_[3].setVisible($("#tram").is(":checked"))
+map.getLayers().array_[4].setVisible($("#tram").is(":checked"))
 
 
 $("input:checkbox").each(function(){
     $(this).change(function functionName(){
-        map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
-        map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
-        map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
+        map.getLayers().array_[1].setVisible($("#bus").is(":checked"))
+        map.getLayers().array_[3].setVisible($("#bus").is(":checked"))
+        map.getLayers().array_[2].setVisible($("#tram").is(":checked"))
+        map.getLayers().array_[4].setVisible($("#tram").is(":checked"))
 
     })
 });
@@ -161,10 +179,12 @@ var getInfos = function(elem) {
     switch (id) {
         case 'arrets_tao_bus':
             return `Arret : ${prop["name"]}`;
-            break;
         case 'arrets_tao_tram':
             return `Arret : ${prop["name"]}`;
-            break;
+        case 'lignes_tao_bus':
+            return `Ligne ${prop["short_name"]} ${prop["long_name"]}`;
+        case 'lignes_tao_tram':
+            return `Ligne ${prop["short_name"]} ${prop["long_name"]}`;
         default:
             break;
     }

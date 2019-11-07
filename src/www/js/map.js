@@ -36,7 +36,8 @@ var getSource = function(lien, couche){
         };
 
 
-///// Création des différentes couches pour la map
+/** ----- Création des différentes couches pour la map ----- **/
+
 var osm = new ol.layer.Tile({
             extent: ol.proj.transformExtent([1.7, 47.7, 2.1, 48.1],'EPSG:4326','EPSG:3857'),
             source: new ol.source.OSM({opaque:false})
@@ -88,8 +89,20 @@ var lignes_tao_tram = new ol.layer.Vector({
             color: 'rgba(205,205,205,0.8)'
         }),
         stroke: new ol.style.Stroke({
-            color: 'rgba(100,205,205, 0.8)',
+            color: 'rgba(205,100,205, 0.8)',
             width: 3
+        })
+    })
+});
+
+var stations_velo = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:stations_velo'),
+    style: new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({color: 'rgba(230,0,0,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgba(255,0,0,1)', width: 2})
         })
     })
 });
@@ -107,46 +120,38 @@ var map = new ol.Map({
     target: 'map',
     layers: [
         osm,
+        lignes_tao_bus,
+        lignes_tao_tram,
+        //piste_cyclable
         arrets_tao_bus,
         arrets_tao_tram,
-        lignes_tao_bus,
-        lignes_tao_tram
+        stations_velo
     ],
     view: view
 
 });
 
-map.getLayers().array_[1].setVisible($("#bus").is(":checked"))
-map.getLayers().array_[3].setVisible($("#bus").is(":checked"))
-map.getLayers().array_[2].setVisible($("#tram").is(":checked"))
-map.getLayers().array_[4].setVisible($("#tram").is(":checked"))
+/** ----- Affichage couches ----- **/
+
+map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
+map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
+map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
+map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
 
 
 $("input:checkbox").each(function(){
     $(this).change(function functionName(){
-        map.getLayers().array_[1].setVisible($("#bus").is(":checked"))
-        map.getLayers().array_[3].setVisible($("#bus").is(":checked"))
-        map.getLayers().array_[2].setVisible($("#tram").is(":checked"))
-        map.getLayers().array_[4].setVisible($("#tram").is(":checked"))
-
+        map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
+        map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+        map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
+        map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
+        map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
     })
 });
 
-// map.on('singleclick', function(evt) {
-//     document.getElementById('info').innerHTML = '';
-//     var viewResolution = view.getResolution();
-//     var url = arrets_tao.getSource().getGetFeatureInfoUrl(
-//         evt.coordinate, viewResolution, view.getProjection(),
-//         {'INFO_FORMAT': 'text/html'});
-//
-//     if (url) {
-//         fetch(url)
-//             .then(function (response) { return response.text(); })
-//             .then(function (html) {
-//                 document.getElementById('info1').innerHTML = html;
-//             });
-//     }
-// });
+
+/** ------ Récupération infos ----- **/
 
 var select = null; // ref to currently selected interaction
 
@@ -178,13 +183,13 @@ var getInfos = function(elem) {
 
     switch (id) {
         case 'arrets_tao_bus':
-            return `Arret : ${prop["name"]}`;
+            return `Arret bus : ${prop["name"]}`;
         case 'arrets_tao_tram':
-            return `Arret : ${prop["name"]}`;
+            return `Arret tram : ${prop["name"]}`;
         case 'lignes_tao_bus':
-            return `Ligne ${prop["short_name"]} ${prop["long_name"]}`;
+            return `Ligne bus ${prop["short_name"]} ${prop["long_name"]}`;
         case 'lignes_tao_tram':
-            return `Ligne ${prop["short_name"]} ${prop["long_name"]}`;
+            return `Ligne tram ${prop["short_name"]} ${prop["long_name"]}`;
         default:
             break;
     }

@@ -7,3 +7,7 @@
   max-width: 150px;
   max-height: 150px;
 }
+
+.form-group{
+  width: 100%
+}

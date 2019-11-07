@@ -134,7 +134,7 @@ var map = new ol.Map({
 /** ----- Affichage couches ----- **/
 
 map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
-map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+// map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
 map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
 map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
 map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
@@ -143,7 +143,7 @@ map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
 $("input:checkbox").each(function(){
     $(this).change(function functionName(){
         map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
-        map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+       // map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
         map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
         map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
         map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
@@ -160,7 +160,10 @@ var selectSingleClick = new ol.interaction.Select();
 
 var selectElement = document.getElementById('info');
 
+var currZoom = map.getView().getZoom();
+
 var changeInteraction = function() {
+    console.log(currZoom)
     if (select !== null) {
         map.removeInteraction(select);
     }
@@ -202,3 +205,23 @@ var getInfos = function(elem) {
  * onchange callback on the select element.
  */
 changeInteraction();
+
+
+
+if (currZoom <= 12) {
+    map.getLayers().array_[3].setVisible(false);
+}
+else{
+    map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+}
+
+map.on('moveend', function(e) {
+    currZoom = map.getView().getZoom();
+    console.log(currZoom)
+    if (currZoom <= 12) {
+        map.getLayers().array_[3].setVisible(false);
+    }
+    else if ($("#bus").is(":checked")){
+        map.getLayers().array_[3].setVisible(true);
+    }
+});

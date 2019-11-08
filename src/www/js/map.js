@@ -132,7 +132,6 @@ var map = new ol.Map({
 });
 
 /** ----- Affichage couches ----- **/
- var currZoom = map.getView().getZoom();
 
 map.getView().on('change:resolution', function(evt) {
     var zoom = map.getView().getZoom();
@@ -202,107 +201,106 @@ map.getView().on('change:resolution', function(evt) {
 
 });
 
-
-map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
-map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
-map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
-map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
-map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
-
-
-$("input:checkbox").each(function(){
-    $(this).change(function functionName(){
-        map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
-       map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
-        map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
-        map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
-        map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
-    })
-});
-
-// if (currZoom <= 13) {
-//     map.getLayers().array_[3].setVisible(false);
-//     map.getLayers().array_[4].setVisible(false);
-// }
-// else{
-//     map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
-//     map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
-// }
-//
-// map.on('moveend', function(e) {
-//     currZoom = map.getView().getZoom();
-//     console.log(currZoom)
-//     if (currZoom <= 13) {
-//         map.getLayers().array_[3].setVisible(false);
-//         map.getLayers().array_[4].setVisible(false);
-//     }
-//     else{
-//         if ($("#bus").is(":checked")){
-//             map.getLayers().array_[3].setVisible(true);
-//         }
-//         else{
-//             map.getLayers().array_[3].setVisible(false);
-//         }
-//         if($("#tram").is(":checked")){
-//             map.getLayers().array_[4].setVisible(true);
-//         }
-//         else{
-//             map.getLayers().array_[4].setVisible(false);
-//         }
-//     }
-//
-// });
+var init_map = function() {
+    map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
+    map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+    map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
+    map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
+    map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
 
 
-/** ------ Récupération infos ----- **/
+    $("input:checkbox").each(function(){
+        $(this).change(function functionName(){
+            map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
+            map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+            map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
+            map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
+            map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
+        })
+    });
 
-var select = null; // ref to currently selected interaction
+    // if (currZoom <= 13) {
+    //     map.getLayers().array_[3].setVisible(false);
+    //     map.getLayers().array_[4].setVisible(false);
+    // }
+    // else{
+    //     map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+    //     map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
+    // }
+    //
+    // map.on('moveend', function(e) {
+    //     currZoom = map.getView().getZoom();
+    //     console.log(currZoom)
+    //     if (currZoom <= 13) {
+    //         map.getLayers().array_[3].setVisible(false);
+    //         map.getLayers().array_[4].setVisible(false);
+    //     }
+    //     else{
+    //         if ($("#bus").is(":checked")){
+    //             map.getLayers().array_[3].setVisible(true);
+    //         }
+    //         else{
+    //             map.getLayers().array_[3].setVisible(false);
+    //         }
+    //         if($("#tram").is(":checked")){
+    //             map.getLayers().array_[4].setVisible(true);
+    //         }
+    //         else{
+    //             map.getLayers().array_[4].setVisible(false);
+    //         }
+    //     }
+    //
+    // });
 
-// select interaction working on "singleclick"
-var selectSingleClick = new ol.interaction.Select();
 
-var selectElement = document.getElementById('info');
+    /** ------ Récupération infos ----- **/
 
-var changeInteraction = function() {
-    console.log(currZoom)
-    if (select !== null) {
-        map.removeInteraction(select);
+    var select = null; // ref to currently selected interaction
+
+    // select interaction working on "singleclick"
+    var selectSingleClick = new ol.interaction.Select();
+
+    var selectElement = document.getElementById('info');
+
+    var changeInteraction = function() {
+        var currZoom = map.getView().getZoom();
+        console.log(currZoom)
+        if (select !== null) {
+            map.removeInteraction(select);
+        }
+        select = selectSingleClick;
+        if (select !== null) {
+            map.addInteraction(select);
+            select.on('select', function(e) {
+                console.log(e);
+
+                let selected = e.target.getFeatures().getArray()[0];
+                alert(getInfos(selected));
+            });
+        }
+    };
+
+    var getInfos = function(elem) {
+        console.log("ELEM  ",elem);
+        let id = elem.getId().split('.')[0];
+        let prop = elem.getProperties();
+
+        switch (id) {
+            case 'arrets_tao_bus':
+                return `Arret bus : ${prop["name"]}`;
+            case 'arrets_tao_tram':
+                return `Arret tram : ${prop["name"]}`;
+            case 'lignes_tao_bus':
+                return `Ligne bus ${prop["short_name"]} ${prop["long_name"]}`;
+            case 'lignes_tao_tram':
+                return `Ligne tram ${prop["short_name"]} ${prop["long_name"]}`;
+            default:
+                break;
+        }
     }
-    select = selectSingleClick;
-    if (select !== null) {
-        map.addInteraction(select);
-        select.on('select', function(e) {
-            console.log(e);
 
-            let selected = e.target.getFeatures().getArray()[0];
-            alert(getInfos(selected));
-        });
-    }
-};
-
-var getInfos = function(elem) {
-    console.log("ELEM  ",elem);
-    let id = elem.getId().split('.')[0];
-    let prop = elem.getProperties();
-
-    switch (id) {
-        case 'arrets_tao_bus':
-            return `Arret bus : ${prop["name"]}`;
-        case 'arrets_tao_tram':
-            return `Arret tram : ${prop["name"]}`;
-        case 'lignes_tao_bus':
-            return `Ligne bus ${prop["short_name"]} ${prop["long_name"]}`;
-        case 'lignes_tao_tram':
-            return `Ligne tram ${prop["short_name"]} ${prop["long_name"]}`;
-        default:
-            break;
-    }
+    /**
+     * onchange callback on the select element.
+     */
+    changeInteraction();
 }
-
-
-
-
-/**
- * onchange callback on the select element.
- */
-changeInteraction();

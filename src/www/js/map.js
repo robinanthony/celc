@@ -49,8 +49,8 @@ var arrets_tao_tram = new ol.layer.Vector({
           style: new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: 7,
-                    fill: new ol.style.Fill({color: 'rgba(0,150,0,0.15)'}),
-                    stroke: new ol.style.Stroke({color : 'rgba(0,150,0,1)', width: 2})
+                    fill: new ol.style.Fill({color: 'rgba(150,19,19,0.15)'}),
+                    stroke: new ol.style.Stroke({color : 'rgb(150,9,11)', width: 2})
                 })
             })
         });
@@ -62,7 +62,7 @@ var arrets_tao_bus = new ol.layer.Vector({
                 image: new ol.style.Circle({
                     radius: 7,
                     fill: new ol.style.Fill({color: 'rgba(0,0,150,0.15)'}),
-                    stroke: new ol.style.Stroke({color : 'rgba(0,0,150,1)', width: 2})
+                    stroke: new ol.style.Stroke({color : 'rgb(26,52,150)', width: 2})
                 })
             })
         });
@@ -75,7 +75,7 @@ var lignes_tao_bus = new ol.layer.Vector({
                   color: 'rgba(205,205,205,0.8)'
               }),
               stroke: new ol.style.Stroke({
-                  color: 'rgba(100,205,205, 0.8)',
+                  color: 'rgba(103,156,200,0.8)',
                   width: 3
               })
           })
@@ -89,8 +89,8 @@ var lignes_tao_tram = new ol.layer.Vector({
             color: 'rgba(205,205,205,0.8)'
         }),
         stroke: new ol.style.Stroke({
-            color: 'rgba(205,100,205, 0.8)',
-            width: 3
+            color: 'rgba(255,45,23,0.8)',
+            width: 5
         })
     })
 });
@@ -101,8 +101,8 @@ var stations_velo = new ol.layer.Vector({
     style: new ol.style.Style({
         image: new ol.style.Circle({
             radius: 7,
-            fill: new ol.style.Fill({color: 'rgba(230,0,0,0.15)'}),
-            stroke: new ol.style.Stroke({color : 'rgba(255,0,0,1)', width: 2})
+            fill: new ol.style.Fill({color: 'rgba(34,230,32,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(10,164,0)', width: 4})
         })
     })
 });
@@ -111,6 +111,7 @@ var stations_velo = new ol.layer.Vector({
 var view = new ol.View({
     center: ol.proj.fromLonLat([1.909251,47.902964]),
     minZoom: 13,
+    maxZoom: 20,
     zoom: 14
 });
 
@@ -135,15 +136,16 @@ var map = new ol.Map({
 
 map.getView().on('change:resolution', function(evt) {
     var zoom = map.getView().getZoom();
+    console.log(zoom);
     var radius;
     var widthb = 3;
-    var widtht = 4
+    var widtht = 5;
     if(zoom <= 13)
         radius = 2;
     else if(zoom >= 16){
         radius = 10;
-        widthb = 6
-        widtht = 8
+        widthb = 6;
+        widtht = 9;
     }
     else
         radius = 7;
@@ -152,32 +154,32 @@ map.getView().on('change:resolution', function(evt) {
         image: new ol.style.Circle({
             radius: radius,
             fill: new ol.style.Fill({color: 'rgba(0,0,150,0.15)'}),
-            stroke: new ol.style.Stroke({color : 'rgba(0,0,150,1)', width: 2})
+            stroke: new ol.style.Stroke({color : 'rgb(26,52,150)', width: 2})
         })
     });
 
     var newStyle_tram = new ol.style.Style({
         image: new ol.style.Circle({
             radius: radius,
-            fill: new ol.style.Fill({color: 'rgba(0,150,0,0.15)'}),
-            stroke: new ol.style.Stroke({color : 'rgba(0,150,0,1)', width: 2})
+            fill: new ol.style.Fill({color: 'rgba(150,19,19,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(150,9,11)', width: 2})
         })
     });
 
     var newStyle_velo = new ol.style.Style({
         image: new ol.style.Circle({
             radius: radius,
-            fill: new ol.style.Fill({color: 'rgba(230,0,0,0.15)'}),
-            stroke: new ol.style.Stroke({color : 'rgba(255,0,0,1)', width: 2})
+            fill: new ol.style.Fill({color: 'rgba(34,230,32,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(10,164,0)', width: 4})
         })
     });
 
     var newStyle_ligne_bus= new ol.style.Style({
-        fill: new ol.style.Fill({
-            color: 'rgba(205,205,205,0.8)'
-        }),
-        stroke: new ol.style.Stroke({
-            color: 'rgba(100,205,205, 0.8)',
+            fill: new ol.style.Fill({
+                color: 'rgba(205,205,205,0.8)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: 'rgba(103,156,200,0.8)',
             width: widthb
         })
     });
@@ -187,7 +189,7 @@ map.getView().on('change:resolution', function(evt) {
             color: 'rgba(205,205,205,0.8)'
         }),
         stroke: new ol.style.Stroke({
-            color: 'rgba(205,100,205, 0.8)',
+            color: 'rgba(255,45,23,0.8)',
             width: widtht
         })
     });

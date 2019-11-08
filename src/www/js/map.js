@@ -107,11 +107,10 @@ var stations_velo = new ol.layer.Vector({
     })
 });
 
-
-
 ///// Création du view pour la carte
 var view = new ol.View({
     center: ol.proj.fromLonLat([1.909251,47.902964]),
+    minZoom: 13,
     zoom: 14
 });
 
@@ -131,11 +130,78 @@ var map = new ol.Map({
 
 });
 
-var init_map = function() {
-    /** ----- Affichage couches ----- **/
+/** ----- Affichage couches ----- **/
 
+map.getView().on('change:resolution', function(evt) {
+    var zoom = map.getView().getZoom();
+    var radius;
+    var widthb = 3;
+    var widtht = 4
+    if(zoom <= 13)
+        radius = 2;
+    else if(zoom >= 16){
+        radius = 10;
+        widthb = 6
+        widtht = 8
+    }
+    else
+        radius = 7;
+
+    var newStyle_bus = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: radius,
+            fill: new ol.style.Fill({color: 'rgba(0,0,150,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgba(0,0,150,1)', width: 2})
+        })
+    });
+
+    var newStyle_tram = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: radius,
+            fill: new ol.style.Fill({color: 'rgba(0,150,0,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgba(0,150,0,1)', width: 2})
+        })
+    });
+
+    var newStyle_velo = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: radius,
+            fill: new ol.style.Fill({color: 'rgba(230,0,0,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgba(255,0,0,1)', width: 2})
+        })
+    });
+
+    var newStyle_ligne_bus= new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(205,205,205,0.8)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: 'rgba(100,205,205, 0.8)',
+            width: widthb
+        })
+    });
+
+    var newStyle_ligne_tram = new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(205,205,205,0.8)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: 'rgba(205,100,205, 0.8)',
+            width: widtht
+        })
+    });
+    arrets_tao_bus.setStyle(newStyle_bus);
+    arrets_tao_tram.setStyle(newStyle_tram);
+    stations_velo.setStyle(newStyle_velo);
+    lignes_tao_bus.setStyle(newStyle_ligne_bus);
+    lignes_tao_tram.setStyle(newStyle_ligne_tram);
+
+
+});
+
+var init_map = function() {
     map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
-    // map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+    map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
     map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
     map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
     map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
@@ -144,12 +210,45 @@ var init_map = function() {
     $("input:checkbox").each(function(){
         $(this).change(function functionName(){
             map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
-        // map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+            map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
             map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
             map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
             map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
         })
     });
+
+    // if (currZoom <= 13) {
+    //     map.getLayers().array_[3].setVisible(false);
+    //     map.getLayers().array_[4].setVisible(false);
+    // }
+    // else{
+    //     map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+    //     map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
+    // }
+    //
+    // map.on('moveend', function(e) {
+    //     currZoom = map.getView().getZoom();
+    //     console.log(currZoom)
+    //     if (currZoom <= 13) {
+    //         map.getLayers().array_[3].setVisible(false);
+    //         map.getLayers().array_[4].setVisible(false);
+    //     }
+    //     else{
+    //         if ($("#bus").is(":checked")){
+    //             map.getLayers().array_[3].setVisible(true);
+    //         }
+    //         else{
+    //             map.getLayers().array_[3].setVisible(false);
+    //         }
+    //         if($("#tram").is(":checked")){
+    //             map.getLayers().array_[4].setVisible(true);
+    //         }
+    //         else{
+    //             map.getLayers().array_[4].setVisible(false);
+    //         }
+    //     }
+    //
+    // });
 
 
     /** ------ Récupération infos ----- **/
@@ -161,9 +260,8 @@ var init_map = function() {
 
     var selectElement = document.getElementById('info');
 
-    var currZoom = map.getView().getZoom();
-
     var changeInteraction = function() {
+        var currZoom = map.getView().getZoom();
         console.log(currZoom)
         if (select !== null) {
             map.removeInteraction(select);
@@ -199,31 +297,8 @@ var init_map = function() {
         }
     }
 
-
-
-
     /**
      * onchange callback on the select element.
      */
     changeInteraction();
-
-
-
-    if (currZoom <= 12) {
-        map.getLayers().array_[3].setVisible(false);
-    }
-    else{
-        map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
-    }
-
-    map.on('moveend', function(e) {
-        currZoom = map.getView().getZoom();
-        console.log(currZoom)
-        if (currZoom <= 12) {
-            map.getLayers().array_[3].setVisible(false);
-        }
-        else if ($("#bus").is(":checked")){
-            map.getLayers().array_[3].setVisible(true);
-        }
-    });
 }

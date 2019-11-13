@@ -49,8 +49,8 @@ var arrets_tao_tram = new ol.layer.Vector({
           style: new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: 7,
-                    fill: new ol.style.Fill({color: 'rgba(0,150,0,0.15)'}),
-                    stroke: new ol.style.Stroke({color : 'rgba(0,150,0,1)', width: 2})
+                    fill: new ol.style.Fill({color: 'rgba(150,19,19,0.15)'}),
+                    stroke: new ol.style.Stroke({color : 'rgb(150,9,11)', width: 2})
                 })
             })
         });
@@ -62,7 +62,7 @@ var arrets_tao_bus = new ol.layer.Vector({
                 image: new ol.style.Circle({
                     radius: 7,
                     fill: new ol.style.Fill({color: 'rgba(0,0,150,0.15)'}),
-                    stroke: new ol.style.Stroke({color : 'rgba(0,0,150,1)', width: 2})
+                    stroke: new ol.style.Stroke({color : 'rgb(26,52,150)', width: 2})
                 })
             })
         });
@@ -75,7 +75,7 @@ var lignes_tao_bus = new ol.layer.Vector({
                   color: 'rgba(205,205,205,0.8)'
               }),
               stroke: new ol.style.Stroke({
-                  color: 'rgba(100,205,205, 0.8)',
+                  color: 'rgba(103,156,200,0.8)',
                   width: 3
               })
           })
@@ -89,8 +89,8 @@ var lignes_tao_tram = new ol.layer.Vector({
             color: 'rgba(205,205,205,0.8)'
         }),
         stroke: new ol.style.Stroke({
-            color: 'rgba(205,100,205, 0.8)',
-            width: 3
+            color: 'rgba(255,45,23,0.8)',
+            width: 5
         })
     })
 });
@@ -101,17 +101,17 @@ var stations_velo = new ol.layer.Vector({
     style: new ol.style.Style({
         image: new ol.style.Circle({
             radius: 7,
-            fill: new ol.style.Fill({color: 'rgba(230,0,0,0.15)'}),
-            stroke: new ol.style.Stroke({color : 'rgba(255,0,0,1)', width: 2})
+            fill: new ol.style.Fill({color: 'rgba(34,230,32,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(10,164,0)', width: 4})
         })
     })
 });
 
-
-
 ///// Création du view pour la carte
 var view = new ol.View({
     center: ol.proj.fromLonLat([1.909251,47.902964]),
+    minZoom: 13,
+    maxZoom: 20,
     zoom: 14
 });
 
@@ -133,72 +133,174 @@ var map = new ol.Map({
 
 /** ----- Affichage couches ----- **/
 
-map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
-map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
-map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
-map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
-map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
+map.getView().on('change:resolution', function(evt) {
+    var zoom = map.getView().getZoom();
+    console.log(zoom);
+    var radius;
+    var widthb = 3;
+    var widtht = 5;
+    if(zoom <= 13)
+        radius = 2;
+    else if(zoom >= 16){
+        radius = 10;
+        widthb = 6;
+        widtht = 9;
+    }
+    else
+        radius = 7;
+
+    var newStyle_bus = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: radius,
+            fill: new ol.style.Fill({color: 'rgba(0,0,150,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(26,52,150)', width: 2})
+        })
+    });
+
+    var newStyle_tram = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: radius,
+            fill: new ol.style.Fill({color: 'rgba(150,19,19,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(150,9,11)', width: 2})
+        })
+    });
+
+    var newStyle_velo = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: radius,
+            fill: new ol.style.Fill({color: 'rgba(34,230,32,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(10,164,0)', width: 4})
+        })
+    });
+
+    var newStyle_ligne_bus= new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: 'rgba(205,205,205,0.8)'
+            }),
+            stroke: new ol.style.Stroke({
+                color: 'rgba(103,156,200,0.8)',
+            width: widthb
+        })
+    });
+
+    var newStyle_ligne_tram = new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(205,205,205,0.8)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: 'rgba(255,45,23,0.8)',
+            width: widtht
+        })
+    });
+    arrets_tao_bus.setStyle(newStyle_bus);
+    arrets_tao_tram.setStyle(newStyle_tram);
+    stations_velo.setStyle(newStyle_velo);
+    lignes_tao_bus.setStyle(newStyle_ligne_bus);
+    lignes_tao_tram.setStyle(newStyle_ligne_tram);
 
 
-$("input:checkbox").each(function(){
-    $(this).change(function functionName(){
-        map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
-        map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
-        map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
-        map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
-        map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
-    })
 });
 
+var init_map = function() {
+    map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
+    map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+    map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
+    map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
+    map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
 
-/** ------ Récupération infos ----- **/
 
-var select = null; // ref to currently selected interaction
+    $("input:checkbox").each(function(){
+        $(this).change(function functionName(){
+            map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
+            map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+            map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
+            map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
+            map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
+        })
+    });
 
-// select interaction working on "singleclick"
-var selectSingleClick = new ol.interaction.Select();
+    // if (currZoom <= 13) {
+    //     map.getLayers().array_[3].setVisible(false);
+    //     map.getLayers().array_[4].setVisible(false);
+    // }
+    // else{
+    //     map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
+    //     map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
+    // }
+    //
+    // map.on('moveend', function(e) {
+    //     currZoom = map.getView().getZoom();
+    //     console.log(currZoom)
+    //     if (currZoom <= 13) {
+    //         map.getLayers().array_[3].setVisible(false);
+    //         map.getLayers().array_[4].setVisible(false);
+    //     }
+    //     else{
+    //         if ($("#bus").is(":checked")){
+    //             map.getLayers().array_[3].setVisible(true);
+    //         }
+    //         else{
+    //             map.getLayers().array_[3].setVisible(false);
+    //         }
+    //         if($("#tram").is(":checked")){
+    //             map.getLayers().array_[4].setVisible(true);
+    //         }
+    //         else{
+    //             map.getLayers().array_[4].setVisible(false);
+    //         }
+    //     }
+    //
+    // });
 
-var selectElement = document.getElementById('info');
 
-var changeInteraction = function() {
-    if (select !== null) {
-        map.removeInteraction(select);
+    /** ------ Récupération infos ----- **/
+
+    var select = null; // ref to currently selected interaction
+
+    // select interaction working on "singleclick"
+    var selectSingleClick = new ol.interaction.Select();
+
+    var selectElement = document.getElementById('info');
+
+    var changeInteraction = function() {
+        var currZoom = map.getView().getZoom();
+        console.log(currZoom)
+        if (select !== null) {
+            map.removeInteraction(select);
+        }
+        select = selectSingleClick;
+        if (select !== null) {
+            map.addInteraction(select);
+            select.on('select', function(e) {
+                console.log(e);
+
+                let selected = e.target.getFeatures().getArray()[0];
+                alert(getInfos(selected));
+            });
+        }
+    };
+
+    var getInfos = function(elem) {
+        console.log("ELEM  ",elem);
+        let id = elem.getId().split('.')[0];
+        let prop = elem.getProperties();
+
+        switch (id) {
+            case 'arrets_tao_bus':
+                return `Arret bus : ${prop["name"]}`;
+            case 'arrets_tao_tram':
+                return `Arret tram : ${prop["name"]}`;
+            case 'lignes_tao_bus':
+                return `Ligne bus ${prop["short_name"]} ${prop["long_name"]}`;
+            case 'lignes_tao_tram':
+                return `Ligne tram ${prop["short_name"]} ${prop["long_name"]}`;
+            default:
+                break;
+        }
     }
-    select = selectSingleClick;
-    if (select !== null) {
-        map.addInteraction(select);
-        select.on('select', function(e) {
-            console.log(e);
 
-            let selected = e.target.getFeatures().getArray()[0];
-            alert(getInfos(selected));
-        });
-    }
-};
-
-var getInfos = function(elem) {
-    console.log("ELEM  ",elem);
-    let id = elem.getId().split('.')[0];
-    let prop = elem.getProperties();
-
-    switch (id) {
-        case 'arrets_tao_bus':
-            return `Arret bus : ${prop["name"]}`;
-        case 'arrets_tao_tram':
-            return `Arret tram : ${prop["name"]}`;
-        case 'lignes_tao_bus':
-            return `Ligne bus ${prop["short_name"]} ${prop["long_name"]}`;
-        case 'lignes_tao_tram':
-            return `Ligne tram ${prop["short_name"]} ${prop["long_name"]}`;
-        default:
-            break;
-    }
+    /**
+     * onchange callback on the select element.
+     */
+    changeInteraction();
 }
-
-
-
-
-/**
- * onchange callback on the select element.
- */
-changeInteraction();

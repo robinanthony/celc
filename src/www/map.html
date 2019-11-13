@@ -32,12 +32,15 @@
     <div id="side-block"></div>
     <nav id="sidebar" class="active">
 
-        <div id="dismiss">
+        <!-- <div id="dismiss">
             <i class="fas fa-arrow-left" id="arrow"></i>
-        </div>
+        </div> -->
 
         <div class="sidebar-header">
             <h3>C'est la carte</h3>
+            <div id="dismiss">
+                <i class="fas fa-arrow-left"></i>
+            </div>
         </div>
 
         <ul class="list-unstyled components">
@@ -108,12 +111,12 @@
     <!-- Page Content -->
     <div id="content">
 
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav id="actionbar" class="navbar navbar-expand-lg navbar-light bg-actionbar">
             <div class="container-fluid">
 
-                <button type="button" id="sidebarCollapse" class="btn btn-info">
-                    <i class="fas fa-align-left"></i>
-                    <span>Toggle Sidebar</span>
+                <button type="button" id="sidebarCollapse" class="btn btn-actionbar">
+                    <i class="fas fa-bars"></i>
+                    <span class="d-none d-lg-inline">Menu</span>
                 </button>
             </div>
         </nav>
@@ -123,9 +126,9 @@
 
 </div>
 
-<script src="js/map.js"></script>
-
 <div id="info"></div>
+
+<script src="js/map.js"></script>
 
 <!-- jQuery CDN - Slim version (=without AJAX) -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -183,6 +186,8 @@
         Hammer(document.getElementById('content')).on("tap swipe", function(ev){ 
             $('#sidebar').addClass('active');
         },options);
+
+        init_map();
     });
 </script>
 

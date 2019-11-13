@@ -4,4 +4,4 @@ src/*-lock*
 src/platforms/*
 src/plugins/*
 bdd/target/*
-__pycache__/*
+*__pycache__*

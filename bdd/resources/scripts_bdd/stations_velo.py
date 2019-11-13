@@ -4,7 +4,7 @@ import re
 ######################################################
 ######## TRAITEMENT DU FICHIER STATIONS VELOS ########
 def traitement():
-    with open('resources/velos/stations-velos.json') as json_data:
+    with open('resources/velos/stations_velos.json') as json_data:
         raw_data = json.load(json_data)
 
     clean_data = []
@@ -24,13 +24,13 @@ def traitement():
 
     with open('target/stations_velo.sql', 'w') as sql_data:
         sql_data.write(
-        """-- Table: public.stations_velo ST_GeomFromText(\'POINT({} {})\', {})
+        """-- Table: public.stations_velo
     -- DROP TABLE public.stations_velo;
 
     CREATE TABLE public.stations_velo
     (
         id numeric NOT NULL,
-        station_name character varying(25),
+        name character varying(25),
         geom geometry(Point, 4326),
         CONSTRAINT stations_velo_pkey PRIMARY KEY (id)
     );
@@ -39,5 +39,5 @@ def traitement():
 
     with open('target/stations_velo.sql', "a") as sql_data:
         for elem in clean_data:
-            sql_data.write("INSERT INTO public.stations_velo (id, station_name, geom) VALUES ({}, \'{}\',  ST_GeomFromText(\'POINT({} {})\', {}));\n"
+            sql_data.write("INSERT INTO public.stations_velo (id, name, geom) VALUES ({}, \'{}\',  ST_GeomFromText(\'POINT({} {})\', {}));\n"
                 .format(elem["stations_id"], elem["station_name"].replace("'", "''"), elem["geometry"][0], elem["geometry"][1], 4326))

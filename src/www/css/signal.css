@@ -11,3 +11,7 @@
 .form-group{
   width: 100%
 }
+
+.menu-center{
+  flex: 1;
+}

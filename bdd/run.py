@@ -17,3 +17,13 @@ stations_velo.traitement()
 parcs_relais_velo.traitement()
 
 print("------------ FIN DU PROGRAMME ------------")
+#
+# CREATE TABLE public.signalements
+# (
+#     id numeric NOT NULL,
+#     type_signalement character varying(64) NOT NULL,
+#     type_object character varying(64) NOT NULL,
+#     id_object numeric NOT NULL,
+#     geom geometry(Point, 4326),
+#     CONSTRAINT signalements_pkey PRIMARY KEY (id)
+# );

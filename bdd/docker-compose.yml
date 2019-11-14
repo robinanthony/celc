@@ -1,0 +1,24 @@
+version: '2.1'
+
+volumes:
+   geoserver-data:
+   geo-db-data:
+
+services:
+   db:
+      image: kartoza/postgis:11.0-2.5
+      volumes:
+         - geo-db-data:/var/lib/postgresql
+      ports:
+        - "25434:5432"
+
+   geoserver:
+      image: kartoza/geoserver:latest
+      volumes:
+        - geoserver-data:/opt/geoserver/data_dir
+      ports:
+        - "8080:8080"
+      depends_on:
+        - db
+
+

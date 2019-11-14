@@ -15,6 +15,8 @@
     <!-- Scrollbar Custom CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
 
+    <script src="js/new_signalement.js"></script>
+
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
 </head>
@@ -28,42 +30,39 @@
           <input type="hidden" name="id" id="id" value="">
           <input type="hidden" name="location_name" id="location_name_field" value="">
 
-          <label for="typeSignal">typed de signalement</label>
-          <select class="form-control mb-3" id="typeSignal">
-            <option value="1" >retard</option>
-            <option value="2">accident</option>
-            <option value="3">travaux</option>
-            <option value="4">route barée</option>
-            <option value="5">dégradation</option>
+          <label for="typeSignal">Type de signalement</label>
+          <select class="form-control mb-3" id="typeSignal" onchange="display()">
+            <option value="retard" >Retard</option>
+            <option value="acccident">Accident</option>
+            <option value="travaux">Travaux</option>
+            <option value="baree">Route barée</option>
+            <option value="degradation">Dégradation</option>
           </select>
 
           <div class="">
-            <div class="input-group mb-3" id="optional_1">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon3"> info Retard </span>
-              </div>
-                <input type="number" class="form-control" id="delay" placeholder="Retart">
+            <div class="input-group mb-3 other_param" id="optional_1">
+
             </div>
 
             <div class="form-group" id="optional_2">
               <label for="comment">commentaire</label>
-              <textarea class="form-control" id="comment" rows="3"></textarea>
+              <textarea class="form-control" id="comment" rows="3" placeholder="Commentaire"></textarea>
             </div>
           </div>
 
-          <!-- <div class="d-none" id="img-upload">
-              <input type="file" name="img[]" class="file" accept="image/*">
-              <div class="input-group mb-3">
+<!--          <div  id="img-upload">-->
+<!--              <input type="file" name="img[]" class="file" accept="image/*">-->
+<!--              <div class="input-group mb-3">-->
 
-              <input type="text" class="form-control" disabled placeholder="Upload File" id="file">
-              <div class="input-group-append">
-                <button type="button" class="browse btn btn-primary">Browse...</button>
-              </div>
-            </div>
-            <div class="ml-2 col-sm-6">
-              <img src="https://placehold.it/80x80" id="preview" class="img-thumbnail">
-            </div>
-          </div> -->
+<!--              <input type="text" class="form-control" disabled placeholder="Upload File" id="file">-->
+<!--              <div class="input-group-append">-->
+<!--                <button type="button" class="browse btn btn-primary">Browse...</button>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="ml-2 col-sm-6">-->
+<!--              <img src="https://placehold.it/80x80" id="preview" class="img-thumbnail">-->
+<!--            </div>-->
+<!--          </div>-->
 
 
           <button type="submit" class="btn btn-primary right">Signaler</button>
@@ -72,42 +71,5 @@
     </div>
 
   </div>
-
-  <script type="text/javascript">
-
-
-  $(document).ready(function () {
-    const params = new URLSearchParams(document.location.search);
-
-    if(params.get("location")!=null){
-      $("#location").text(params.get("location"));
-      $("#location_name_field").val(params.get("location"));
-    }
-    if(params.get("id")!=null){
-      $("#id").val(params.get("id"));
-
-    }
-
-
-  });
-
-  // $(document).on("click", ".browse", function() {
-  //   var file = $(this).parents().find(".file");
-  //   file.trigger("click");
-  //   });
-  //   $('input[type="file"]').change(function(e) {
-  //   var fileName = e.target.files[0].name;
-  //   $("#file").val(fileName);
-  //
-  //   var reader = new FileReader();
-  //   reader.onload = function(e) {
-  //     // get loaded data and render thumbnail.
-  //     document.getElementById("preview").src = e.target.result;
-  //   };
-  //
-  //   // read the image file as a data URL.
-  //   reader.readAsDataURL(this.files[0]);
-  // });
-  </script>
 </body>
 </html>

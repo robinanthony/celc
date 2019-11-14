@@ -39,47 +39,47 @@ var getSource = function(lien, couche){
 /** ----- Création des différentes couches pour la map ----- **/
 
 var osm = new ol.layer.Tile({
-            extent: ol.proj.transformExtent([1.7, 47.7, 2.1, 48.1],'EPSG:4326','EPSG:3857'),
-            source: new ol.source.OSM({opaque:false})
-        });
+    extent: ol.proj.transformExtent([1.7, 47.7, 2.1, 48.1],'EPSG:4326','EPSG:3857'),
+    source: new ol.source.OSM({opaque:false})
+});
 
 var arrets_tao_tram = new ol.layer.Vector({
-          renderMode: 'image',
-          source: getSource(adresse_geoserver, 'CELC:arrets_tao_tram'),
-          style: new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 7,
-                    fill: new ol.style.Fill({color: 'rgba(150,19,19,0.15)'}),
-                    stroke: new ol.style.Stroke({color : 'rgb(150,9,11)', width: 2})
-                })
-            })
-        });
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:arrets_tao_tram'),
+    style: new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({color: 'rgb(150,9,11)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(150,9,11)', width: 2})
+        })
+    })
+});
 
 var arrets_tao_bus = new ol.layer.Vector({
-          renderMode: 'image',
-          source: getSource(adresse_geoserver, 'CELC:arrets_tao_bus'),
-          style: new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 7,
-                    fill: new ol.style.Fill({color: 'rgba(0,0,150,0.15)'}),
-                    stroke: new ol.style.Stroke({color : 'rgb(26,52,150)', width: 2})
-                })
-            })
-        });
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:arrets_tao_bus'),
+    style: new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({color: 'rgba(0,0,150,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(26,52,150)', width: 2})
+        })
+    })
+});
 
 var lignes_tao_bus = new ol.layer.Vector({
-          renderMode: 'image',
-          source: getSource(adresse_geoserver, 'CELC:lignes_tao_bus'),
-          style: new ol.style.Style({
-              fill: new ol.style.Fill({
-                  color: 'rgba(205,205,205,0.8)'
-              }),
-              stroke: new ol.style.Stroke({
-                  color: 'rgba(103,156,200,0.8)',
-                  width: 3
-              })
-          })
-        });
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:lignes_tao_bus'),
+    style: new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(205,205,205,0.8)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: 'rgba(103,156,200,0.8)',
+            width: 3
+        })
+    })
+});
 
 var lignes_tao_tram = new ol.layer.Vector({
     renderMode: 'image',
@@ -95,6 +95,20 @@ var lignes_tao_tram = new ol.layer.Vector({
     })
 });
 
+var lignes_velo = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:lignes_velo'),
+    style: new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(205,205,205,0.8)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: 'rgba(15,255,233,0.8)',
+            width: 3
+        })
+    })
+});
+
 var stations_velo = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:stations_velo'),
@@ -102,7 +116,31 @@ var stations_velo = new ol.layer.Vector({
         image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({color: 'rgba(34,230,32,0.15)'}),
-            stroke: new ol.style.Stroke({color : 'rgb(10,164,0)', width: 4})
+            stroke: new ol.style.Stroke({color : 'rgb(10,164,0)', width: 5})
+        })
+    })
+});
+
+var parcs_relais_velo = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:parcs_relais_velo'),
+    style: new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({color: 'rgba(34,230,32,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(164,39,150)', width: 5})
+        })
+    })
+});
+
+var parkings_velo = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:parkings_velo'),
+    style: new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 4,
+            fill: new ol.style.Fill({color: 'rgba(34,230,32,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(164,133,23)', width: 2})
         })
     })
 });
@@ -125,7 +163,10 @@ var map = new ol.Map({
         //piste_cyclable
         arrets_tao_bus,
         arrets_tao_tram,
-        stations_velo
+        stations_velo,
+        parcs_relais_velo,
+        parkings_velo,
+        lignes_velo
     ],
     view: view
 
@@ -137,17 +178,31 @@ map.getView().on('change:resolution', function(evt) {
     var zoom = map.getView().getZoom();
     console.log(zoom);
     var radius;
+    var radiusParking = 4;
     var widthb = 3;
     var widtht = 5;
-    if(zoom <= 13)
+    var widthParking = 2;
+
+    if(zoom <= 13){
         radius = 2;
+        radiusParking = 0;
+    }
+
     else if(zoom >= 16){
         radius = 10;
         widthb = 6;
         widtht = 9;
+        radiusParking = 7;
+        if(zoom >=18){
+            radiusParking = 10
+            widthParking = 4
+        }
+
     }
-    else
+    else{
         radius = 7;
+        radiusParking = 4
+    }
 
     var newStyle_bus = new ol.style.Style({
         image: new ol.style.Circle({
@@ -160,25 +215,43 @@ map.getView().on('change:resolution', function(evt) {
     var newStyle_tram = new ol.style.Style({
         image: new ol.style.Circle({
             radius: radius,
-            fill: new ol.style.Fill({color: 'rgba(150,19,19,0.15)'}),
+            fill: new ol.style.Fill({color: 'rgb(150,9,11)'}),
             stroke: new ol.style.Stroke({color : 'rgb(150,9,11)', width: 2})
         })
     });
 
-    var newStyle_velo = new ol.style.Style({
+
+    var newStyle_velo_station = new ol.style.Style({
         image: new ol.style.Circle({
             radius: radius,
             fill: new ol.style.Fill({color: 'rgba(34,230,32,0.15)'}),
-            stroke: new ol.style.Stroke({color : 'rgb(10,164,0)', width: 4})
+            stroke: new ol.style.Stroke({color : 'rgb(10,164,0)', width: 5})
         })
     });
 
+    var newStyle_velo_parc_relais = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: radius,
+            fill: new ol.style.Fill({color: 'rgba(34,230,32,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(164,39,150)', width: 5})
+        })
+    });
+
+    var newStyle_velo_parkings = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: radiusParking,
+            fill: new ol.style.Fill({color: 'rgba(34,230,32,0.15)'}),
+            stroke: new ol.style.Stroke({color : 'rgb(164,133,23)', width: widthParking})
+        })
+    });
+
+
     var newStyle_ligne_bus= new ol.style.Style({
-            fill: new ol.style.Fill({
-                color: 'rgba(205,205,205,0.8)'
-            }),
-            stroke: new ol.style.Stroke({
-                color: 'rgba(103,156,200,0.8)',
+        fill: new ol.style.Fill({
+            color: 'rgba(205,205,205,0.8)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: 'rgba(103,156,200,0.8)',
             width: widthb
         })
     });
@@ -192,12 +265,25 @@ map.getView().on('change:resolution', function(evt) {
             width: widtht
         })
     });
+
+    var newStyle_ligne_velo = new ol.style.Style({
+        fill: new ol.style.Fill({
+            color: 'rgba(205,205,205,0.8)'
+        }),
+        stroke: new ol.style.Stroke({
+            color: 'rgba(15,255,233,0.8)',
+            width: widthb
+        })
+    });
+
     arrets_tao_bus.setStyle(newStyle_bus);
     arrets_tao_tram.setStyle(newStyle_tram);
-    stations_velo.setStyle(newStyle_velo);
+    stations_velo.setStyle(newStyle_velo_station);
     lignes_tao_bus.setStyle(newStyle_ligne_bus);
     lignes_tao_tram.setStyle(newStyle_ligne_tram);
-
+    parcs_relais_velo.setStyle(newStyle_velo_parc_relais);
+    parkings_velo.setStyle(newStyle_velo_parkings);
+    lignes_velo.setStyle(newStyle_ligne_velo)
 
 });
 
@@ -207,6 +293,10 @@ var init_map = function() {
     map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
     map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
     map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
+    map.getLayers().array_[6].setVisible($("#parc_relais_velo").is(":checked"));
+    map.getLayers().array_[7].setVisible($("#parkings_velo").is(":checked"));
+    map.getLayers().array_[8].setVisible($("#piste_velo").is(":checked"));
+
 
 
     $("input:checkbox").each(function(){
@@ -216,6 +306,10 @@ var init_map = function() {
             map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
             map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
             map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
+            map.getLayers().array_[6].setVisible($("#parc_relais_velo").is(":checked"));
+            map.getLayers().array_[7].setVisible($("#parkings_velo").is(":checked"));
+            map.getLayers().array_[8].setVisible($("#piste_velo").is(":checked"));
+
         })
     });
 
@@ -275,7 +369,14 @@ var init_map = function() {
                 console.log(e);
 
                 let selected = e.target.getFeatures().getArray()[0];
-                alert(getInfos(selected));
+                // alert(getInfos(selected));
+
+                var info = getInfos(selected)
+                if (confirm(info)) {
+                    document.location.href = "new_signalement.html?title="+info;
+                } else {
+
+                }
             });
         }
     };
@@ -294,6 +395,15 @@ var init_map = function() {
                 return `Ligne bus ${prop["short_name"]} ${prop["long_name"]}`;
             case 'lignes_tao_tram':
                 return `Ligne tram ${prop["short_name"]} ${prop["long_name"]}`;
+            case 'stations_velo':
+                return `Arrêt vélo ${prop["name"]}`;
+            case 'parcs_relais_velo':
+                return `Parc relais vélo ${prop["name"]}`;
+            case 'parkings_velo':
+                // return "è";
+                return `${prop["name"]}`;
+            case 'lignes_velo':
+                return `${prop["name"]}`;
             default:
                 break;
         }

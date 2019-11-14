@@ -4,7 +4,7 @@ import re
 ######################################################
 ########## TRAITEMENT DU FICHIER ARRETS TAO ##########
 def traitement():
-    with open('resources/bus/arrets-tao-gtfs.json', 'r') as json_data:
+    with open('resources/bus/arrets_tao.json', 'r') as json_data:
         raw_data = json.load(json_data)
 
     clean_data = []

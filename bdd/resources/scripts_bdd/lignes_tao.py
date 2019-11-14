@@ -4,7 +4,7 @@ import re
 ######################################################
 ########## TRAITEMENT DU FICHIER LIGNES TAO ##########
 def traitement():
-    with open('resources/bus/lignes-tao-gtfs.json') as json_data:
+    with open('resources/bus/lignes_tao.json') as json_data:
         raw_data = json.load(json_data)
 
     clean_data = []

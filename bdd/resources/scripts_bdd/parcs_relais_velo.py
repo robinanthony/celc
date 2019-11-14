@@ -4,7 +4,7 @@ import re
 ######################################################
 ######## TRAITEMENT DU FICHIER ??TODO?? VELOS ########
 def traitement():
-    with open('resources/velos/parcs_relais_velos.json') as json_data:
+    with open('resources/velos/parcs_relais_velo.json') as json_data:
         raw_data = json.load(json_data)
 
     clean_data = []

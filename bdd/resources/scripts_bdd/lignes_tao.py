@@ -1,11 +1,18 @@
 import json
 import re
+import requests
 
 ######################################################
 ########## TRAITEMENT DU FICHIER LIGNES TAO ##########
 def traitement():
-    with open('resources/bus/lignes_tao.json') as json_data:
-        raw_data = json.load(json_data)
+    raw_data = []
+
+    res = requests.get('https://data.orleans-metropole.fr/api/records/1.0/search/?dataset=lignes-tao-gtfs&rows=-1')
+    if res:
+        raw_data = res.json()['records']
+    else:
+        with open('resources/bus/lignes_tao.json') as json_data:
+            raw_data = json.load(json_data)
 
     clean_data = []
 

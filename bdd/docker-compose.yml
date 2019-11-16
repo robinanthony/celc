@@ -3,17 +3,38 @@ version: '2.1'
 volumes:
    geoserver-data:
    geo-db-data:
+        
+networks:
+  geo-net:
+    driver: bridge
 
 services:
+   geo-init:
+      build:
+         context: .
+         dockerfile: ./geo-init.Dockerfile
+      networks:
+         - geo-net
+      depends_on:
+        - geoserver
+
    db:
-      image: kartoza/postgis:11.0-2.5
+      build:
+         context: .
+         dockerfile: ./postgis.Dockerfile
+      networks:
+         - geo-net
       volumes:
          - geo-db-data:/var/lib/postgresql
       ports:
         - "25434:5432"
 
    geoserver:
-      image: kartoza/geoserver:latest
+      build:
+         context: .
+         dockerfile: ./geoserver.Dockerfile
+      networks:
+         - geo-net
       volumes:
         - geoserver-data:/opt/geoserver/data_dir
       ports:

@@ -1,11 +1,18 @@
 import json
 import re
+import requests
 
 ######################################################
 ######## TRAITEMENT DU FICHIER STATIONS VELOS ########
 def traitement():
-    with open('resources/velos/stations_velo.json') as json_data:
-        raw_data = json.load(json_data)
+    raw_data = []
+
+    res = requests.get('https://data.orleans-metropole.fr/api/records/1.0/search/?dataset=liste-des-stations-velo-2018-orleans-metropole&rows=-1')
+    if res:
+        raw_data = res.json()['records']
+    else:
+        with open('resources/velos/stations_velo.json') as json_data:
+            raw_data = json.load(json_data)
 
     clean_data = []
 

@@ -2,3 +2,10 @@ Afin de créer les fichiers associés à la base de données,
 il suffit d'éxecuter le fichier "run.py".
 
 Vos fichiers sql seront alors générés dans le dossier "target".
+
+
+Pour générer tout le geoserver, lancer 
+$docker-compose build
+$docker-compose up
+dans le dossier actuel, les serveurs se lanceront sur les ports 5432 (postgis) et 8080 (geoserver)
+Le geoserver sera accessible depuis <Docker_Host>:8080/geoserver

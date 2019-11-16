@@ -1,11 +1,18 @@
 import json
 import re
+import requests
 
 ######################################################
 ########## TRAITEMENT DU FICHIER LIGNES TAO ##########
 def traitement():
-    with open('resources/velos/lignes_velo.json') as json_data:
-        raw_data = json.load(json_data)
+    raw_data = []
+
+    res = requests.get('https://data.orleans-metropole.fr/api/records/1.0/search/?dataset=referentielbdauao_dep_iti_cyclables&facet=commune&facet=quartier&facet=type_iti&rows=-1')
+    if res:
+        raw_data = res.json()['records']
+    else:
+        with open('resources/velos/lignes_velo.json') as json_data:
+            raw_data = json.load(json_data)
 
     clean_data = []
     id_generator = 0

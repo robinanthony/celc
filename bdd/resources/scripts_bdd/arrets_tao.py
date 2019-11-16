@@ -1,11 +1,19 @@
 import json
 import re
+import requests
+
 
 ######################################################
 ########## TRAITEMENT DU FICHIER ARRETS TAO ##########
 def traitement():
-    with open('resources/bus/arrets_tao.json', 'r') as json_data:
-        raw_data = json.load(json_data)
+    raw_data = []
+
+    res = requests.get('https://data.orleans-metropole.fr/api/records/1.0/search/?dataset=arrets-tao-gtfs&rows=-1')
+    if res:
+        raw_data = res.json()['records']
+    else:
+        with open('resources/bus/arrets_tao.json', 'r') as json_data:
+            raw_data = json.load(json_data)
 
     clean_data = []
 

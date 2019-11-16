@@ -1,5 +1,9 @@
+
 ///// Adresse du geoserver avec son espace de travail
-var adresse_geoserver = 'http://192.168.46.196:8080/geoserver/CELC';
+///// ip fac : 192.168.46.196:8080
+var host = (typeof geoserver !== 'undefined' && typeof geoserver.host === 'string') ? geoserver.host : "192.168.46.196" 
+var port = (typeof geoserver !== 'undefined' && typeof geoserver.port === 'string') ? geoserver.port : "8080"
+var adresse_geoserver = 'http://'+host+':'+port+'/geoserver/CELC';
 
 ///// Fonction permettant de récuperer les informations sur le GeoServeur
 var getSource = function(lien, couche){

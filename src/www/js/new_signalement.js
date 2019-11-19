@@ -35,24 +35,6 @@ function extractUrlParams () {
     return t;
 }
 
-// $(document).on("click", ".browse", function() {
-//   var file = $(this).parents().find(".file");
-//   file.trigger("click");
-//   });
-//   $('input[type="file"]').change(function(e) {
-//   var fileName = e.target.files[0].name;
-//   $("#file").val(fileName);
-//
-//   var reader = new FileReader();
-//   reader.onload = function(e) {
-//     // get loaded data and render thumbnail.
-//     document.getElementById("preview").src = e.target.result;
-//   };
-//
-//   // read the image file as a data URL.
-//   reader.readAsDataURL(this.files[0]);
-// });
-
 function display() {
     var v = $("#typeSignal").val();
 
@@ -81,4 +63,38 @@ function display() {
     else{
         $( ".other_param" ).html("")
     }
+
 }
+
+function submitSignal() {
+    var v = $("#typeSignal").val();
+    //envoie du type + lieu/arrêt
+
+    if(v == "retard"){
+        //envoie de la durée
+    }
+    else if(v == "degradation"){
+        //envoie de l'image
+    }
+
+    //envoie du commentaire
+}
+
+
+// $(document).on("click", ".browse", function() {
+//   var file = $(this).parents().find(".file");
+//   file.trigger("click");
+//   });
+//   $('input[type="file"]').change(function(e) {
+//   var fileName = e.target.files[0].name;
+//   $("#file").val(fileName);
+//
+//   var reader = new FileReader();
+//   reader.onload = function(e) {
+//     // get loaded data and render thumbnail.
+//     document.getElementById("preview").src = e.target.result;
+//   };
+//
+//   // read the image file as a data URL.
+//   reader.readAsDataURL(this.files[0]);
+// });

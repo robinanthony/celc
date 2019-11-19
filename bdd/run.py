@@ -26,8 +26,10 @@ print("------------ FIN DU PROGRAMME ------------")
 # (
 #     id numeric NOT NULL,
 #     type_signalement character varying(64) NOT NULL,
+#     retard numeric,
+#     commentaire character varying(500),
 #     type_object character varying(64) NOT NULL,
 #     id_object numeric NOT NULL,
 #     geom geometry(Point, 4326),
-#     CONSTRAINT signalements_pkey PRIMARY KEY (id)
+#     CONSTRAINT signalements_pkey PRIMARY KEY (id),
 # );

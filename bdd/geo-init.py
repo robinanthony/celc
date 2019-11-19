@@ -96,16 +96,19 @@ timeout = 24
 while timeout > 0:
     try:
         workspaces_url = "{base}workspaces/".format(base = rest_url)
-        if not any(x['name'] == workspaceName for x in requests.get(workspaces_url, auth=('admin', 'geoserver'), headers=headers).json()['workspaces']['workspace']):
+		workspaces_get = requests.get(workspaces_url, auth=('admin', 'geoserver'), headers=headers).json()['workspaces']
+        if workspaces_get == '' or not any(x['name'] == workspaceName for x in workspaces_get['workspace']):
             createWorkspace(workspaceName)
         
         datastores_url = "{base}workspaces/{wname}/datastores/".format(base = rest_url, wname = workspaceName)
-        if not any(x['name'] == dataStoreName for x in requests.get(datastores_url, auth=('admin', 'geoserver'), headers=headers).json()['dataStores']['dataStore']):
+		dataStores_get = requests.get(datastores_url, auth=('admin', 'geoserver'), headers=headers).json()['dataStores']
+        if dataStores_get == '' or not any(x['name'] == dataStoreName for x in dataStores_get['dataStore']):
             createDatastore(workspaceName, dataStoreName)
 
         for ft_name in layers_names:
             featureTypes_url = "{base}workspaces/{wname}/datastores/{dname}/featuretypes/".format(base = rest_url, wname = workspaceName, dname = dataStoreName)
-            if not any(x['name'] == ft_name for x in requests.get(featureTypes_url, auth=('admin', 'geoserver'), headers=headers).json()['featureTypes']['featureType']):
+			featureTypes_get = requests.get(featureTypes_url, auth=('admin', 'geoserver'), headers=headers).json()['featureTypes']
+            if featureTypes_get == '' or not any(x['name'] == ft_name for x in featureTypes_get['featureType']):
                 createFeatureType(workspaceName, dataStoreName, ft_name)
 
         timeout = -1

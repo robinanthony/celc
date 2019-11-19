@@ -34,7 +34,7 @@ def createWorkspace(workspace_name):
 
     response = requests.post(workspaces_url, auth=('admin', 'geoserver'), json = workspace_json, headers=headers)
     if response.status_code == 201:
-        print("Workspace {} created".format(workspace_name)) 
+        print("Workspace {} created".format(workspace_name))
     elif response.status_code == 401:
         print("Workspace {} already existed".format(workspace_name))
     else:
@@ -61,7 +61,7 @@ def createDatastore(workspace_name, datastore_name):
 
     response = requests.post(datastores_url, auth=('admin', 'geoserver'), json = datastore_json, headers=headers)
     if response.status_code == 201:
-        print("Datastore {} created".format(datastore_name)) 
+        print("Datastore {} created".format(datastore_name))
     elif response.status_code == 401:
         print("Datastore {} already existed".format(datastore_name))
     else:
@@ -72,8 +72,8 @@ def createFeatureType(workspace_name, datastore_name, layer_name):
     featureType_json = {
         "featureType": {
             "name": layer_name,
-		    "nativeName": layer_name,
-		    "title": layer_name,
+            "nativeName": layer_name,
+            "title": layer_name,
             "srs": "EPSG:4326",
             "enabled": True,
             "nativeBoundingBox": bb,
@@ -84,7 +84,7 @@ def createFeatureType(workspace_name, datastore_name, layer_name):
 
     response = requests.post(featureTypes_url, auth=('admin', 'geoserver'), json = featureType_json, headers=headers)
     if response.status_code == 201:
-        print("Feature Type {} created".format(layer_name)) 
+        print("Feature Type {} created".format(layer_name))
     elif response.status_code == 401:
         print("Feature Type {} already existed".format(layer_name))
     else:
@@ -96,18 +96,18 @@ timeout = 24
 while timeout > 0:
     try:
         workspaces_url = "{base}workspaces/".format(base = rest_url)
-		workspaces_get = requests.get(workspaces_url, auth=('admin', 'geoserver'), headers=headers).json()['workspaces']
+        workspaces_get = requests.get(workspaces_url, auth=('admin', 'geoserver'), headers=headers).json()['workspaces']
         if workspaces_get == '' or not any(x['name'] == workspaceName for x in workspaces_get['workspace']):
             createWorkspace(workspaceName)
-        
+
         datastores_url = "{base}workspaces/{wname}/datastores/".format(base = rest_url, wname = workspaceName)
-		dataStores_get = requests.get(datastores_url, auth=('admin', 'geoserver'), headers=headers).json()['dataStores']
+        dataStores_get = requests.get(datastores_url, auth=('admin', 'geoserver'), headers=headers).json()['dataStores']
         if dataStores_get == '' or not any(x['name'] == dataStoreName for x in dataStores_get['dataStore']):
             createDatastore(workspaceName, dataStoreName)
 
         for ft_name in layers_names:
             featureTypes_url = "{base}workspaces/{wname}/datastores/{dname}/featuretypes/".format(base = rest_url, wname = workspaceName, dname = dataStoreName)
-			featureTypes_get = requests.get(featureTypes_url, auth=('admin', 'geoserver'), headers=headers).json()['featureTypes']
+            featureTypes_get = requests.get(featureTypes_url, auth=('admin', 'geoserver'), headers=headers).json()['featureTypes']
             if featureTypes_get == '' or not any(x['name'] == ft_name for x in featureTypes_get['featureType']):
                 createFeatureType(workspaceName, dataStoreName, ft_name)
 

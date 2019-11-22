@@ -5,3 +5,4 @@ src/platforms/*
 src/plugins/*
 bdd/target/*
 *__pycache__*
+*src*/*package.json

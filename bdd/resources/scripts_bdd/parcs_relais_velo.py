@@ -19,8 +19,11 @@ def traitement():
     for rd in raw_data:
         new_data = {
             "parc_relais_id" : int(rd["fields"]["id_parcv"]),
-            "parc_relais_name" : rd["fields"]["nomarrettao"],
-            "geometry" : rd["geometry"]["coordinates"]
+            "parc_relais_name" : rd["fields"]["nomstationvelo"],
+            "geometry" : rd["geometry"]["coordinates"],
+
+            "commune" : rd["fields"].get("commune", ""),
+            "adresse" : rd["fields"].get("adresse", "")
         }
         clean_data.append(new_data)
 
@@ -34,6 +37,8 @@ def traitement():
         id numeric NOT NULL,
         name character varying(25),
         geom geometry(Point, 4326),
+        commune character varying(50),
+        adresse character varying(80),
         CONSTRAINT parcs_relais_velo_pkey PRIMARY KEY (id)
     );
 
@@ -41,5 +46,5 @@ def traitement():
 
     with open('target/parcs_relais_velo.sql', "a") as sql_data:
         for elem in clean_data:
-            sql_data.write("INSERT INTO public.parcs_relais_velo (id, name, geom) VALUES ({}, \'{}\',  ST_GeomFromText(\'POINT({} {})\', {}));\n"
-                .format(elem["parc_relais_id"], elem["parc_relais_name"].replace("'", "''"), elem["geometry"][0], elem["geometry"][1], 4326))
+            sql_data.write("INSERT INTO public.parcs_relais_velo (id, name, geom, commune, adresse) VALUES ({}, \'{}\',  ST_GeomFromText(\'POINT({} {})\', {}), \'{}\', \'{}\');\n"
+                .format(elem["parc_relais_id"], elem["parc_relais_name"].replace("'", "''"), elem["geometry"][0], elem["geometry"][1], 4326, elem["commune"].replace("'", "''"), elem["adresse"].replace("'", "''")))

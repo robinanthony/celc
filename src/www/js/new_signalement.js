@@ -21,11 +21,12 @@ function extractUrlParams () {
     var t = location.search.substring(1);
     // console.log(t)
 
-    var pattern = "%20"
     t = t.replace(/%20/g," ");
-    t = t.replace(/%%27/g,"'");
+    t = t.replace(/%27/g,"'");
+    t = t.replace(/%C3%82/g,"Â");
     t = t.replace(/%C3%A9/g,"é");
-    t = t.replace(/%C3%A8/g,"é");
+    t = t.replace(/%C3%89/g,"E");
+    t = t.replace(/%C3%A8/g,"è");
     t = t.replace(/%C3%AA/g,"ê");
     t = t.replace(/%C2%B0/g,"°");
 

@@ -157,20 +157,21 @@ var view = new ol.View({
     zoom: 14
 });
 
-///// Création de la carte sur la target "map"
+
+/** ----- Création de la carte sur la target "map" ----- **/
 var map = new ol.Map({
     target: 'map',
     layers: [
         osm,
+        lignes_velo,
         lignes_tao_bus,
         lignes_tao_tram,
-        //piste_cyclable
         arrets_tao_bus,
         arrets_tao_tram,
         stations_velo,
         parcs_relais_velo,
-        parkings_velo,
-        lignes_velo
+        parkings_velo
+
     ],
     view: view
 
@@ -292,27 +293,27 @@ map.getView().on('change:resolution', function(evt) {
 });
 
 var init_map = function() {
-    map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
-    map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
-    map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
-    map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
-    map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
-    map.getLayers().array_[6].setVisible($("#parc_relais_velo").is(":checked"));
-    map.getLayers().array_[7].setVisible($("#parkings_velo").is(":checked"));
-    map.getLayers().array_[8].setVisible($("#piste_velo").is(":checked"));
+    map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
+    map.getLayers().array_[4].setVisible($("#bus").is(":checked"));
+    map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
+    map.getLayers().array_[5].setVisible($("#tram").is(":checked"));
+    map.getLayers().array_[6].setVisible($("#station_velo").is(":checked"));
+    map.getLayers().array_[7].setVisible($("#parc_relais_velo").is(":checked"));
+    map.getLayers().array_[8].setVisible($("#parkings_velo").is(":checked"));
+    map.getLayers().array_[1].setVisible($("#piste_velo").is(":checked"));
 
 
 
     $("input:checkbox").each(function(){
         $(this).change(function functionName(){
-            map.getLayers().array_[1].setVisible($("#bus").is(":checked"));
-            map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
-            map.getLayers().array_[2].setVisible($("#tram").is(":checked"));
-            map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
-            map.getLayers().array_[5].setVisible($("#station_velo").is(":checked"));
-            map.getLayers().array_[6].setVisible($("#parc_relais_velo").is(":checked"));
-            map.getLayers().array_[7].setVisible($("#parkings_velo").is(":checked"));
-            map.getLayers().array_[8].setVisible($("#piste_velo").is(":checked"));
+            map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
+            map.getLayers().array_[4].setVisible($("#bus").is(":checked"));
+            map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
+            map.getLayers().array_[5].setVisible($("#tram").is(":checked"));
+            map.getLayers().array_[6].setVisible($("#station_velo").is(":checked"));
+            map.getLayers().array_[7].setVisible($("#parc_relais_velo").is(":checked"));
+            map.getLayers().array_[8].setVisible($("#parkings_velo").is(":checked"));
+            map.getLayers().array_[1].setVisible($("#piste_velo").is(":checked"));
 
         })
     });
@@ -392,26 +393,25 @@ var init_map = function() {
 
         switch (id) {
             case 'arrets_tao_bus':
-                return `Arret bus : ${prop["name"]}`;
+                return `Arret de bus : ${prop["name"]}`;
             case 'arrets_tao_tram':
-                return `Arret tram : ${prop["name"]}`;
+                return `Arret de tram : ${prop["name"]}`;
             case 'lignes_tao_bus':
-                return `Ligne bus ${prop["short_name"]} ${prop["long_name"]}`;
+                return `Ligne de bus ${prop["short_name"]} ${prop["long_name"]}`;
             case 'lignes_tao_tram':
-                return `Ligne tram ${prop["short_name"]} ${prop["long_name"]}`;
+                return `Ligne de tram ${prop["short_name"]} ${prop["long_name"]}`;
             case 'stations_velo':
                 return `Arrêt vélo ${prop["name"]}`;
             case 'parcs_relais_velo':
                 return `Parc relais vélo ${prop["name"]}`;
             case 'parkings_velo':
-                // return "è";
                 return `${prop["name"]}`;
             case 'lignes_velo':
                 return `${prop["name"]}`;
             default:
-                break;
+                return "";
         }
-    }
+    };
 
     /**
      * onchange callback on the select element.

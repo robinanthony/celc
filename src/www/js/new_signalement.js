@@ -16,6 +16,8 @@ $(document).ready(function () {
     // $("#location").text(extractUrlParams());
 
     $("#location").text(info);
+    // console.log(sessionStorage.getItem("idLoc"));
+    // console.log(sessionStorage.getItem("typeLoc"));
     display()
 
 });

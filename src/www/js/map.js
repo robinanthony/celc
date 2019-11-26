@@ -433,7 +433,8 @@ var init_map = function() {
                 let selected = e.target.getFeatures().getArray()[0];
                 // alert(getInfos(selected));
 
-                var id = selected.getId();
+                var id = selected.getId().split('.')[1];
+                var type = selected.getId().split('.')[0];
                 var info = getInfos(selected);
 
                 setTimeout(() => {
@@ -441,6 +442,7 @@ var init_map = function() {
                         // document.location.href = "new_signalement.html?title="+info;
                         sessionStorage.setItem("infoLoc",info);
                         sessionStorage.setItem("idLoc",id);
+                        sessionStorage.setItem("typeLoc",type);
                         document.location.href = "new_signalement.html";
                     } 
                 }, 0)

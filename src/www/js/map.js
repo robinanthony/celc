@@ -177,6 +177,53 @@ var map = new ol.Map({
 
 });
 
+// Geolocalisation
+
+var geolocation = new ol.Geolocation({
+    // enableHighAccuracy must be set to true to have the heading value.
+    trackingOptions: {
+      enableHighAccuracy: true
+    },
+    projection: view.getProjection()
+  });
+
+// handle geolocation error.
+geolocation.on('error', function(error) {
+    alert(error.message);
+  });
+
+var accuracyFeature = new ol.Feature();
+geolocation.on('change:accuracyGeometry', function() {
+  accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+});
+
+var positionFeature = new ol.Feature();
+positionFeature.setStyle(new ol.style.Style({
+  image: new ol.style.Circle({
+    radius: 6,
+    fill: new ol.style.Fill({
+      color: '#3399CC'
+    }),
+    stroke: new ol.style.Stroke({
+      color: '#fff',
+      width: 2
+    })
+  })
+}));
+
+geolocation.on('change:position', function() {
+  var coordinates = geolocation.getPosition();
+  positionFeature.setGeometry(coordinates ?
+    new ol.geom.Point(coordinates) : null);
+});
+
+new ol.layer.Vector({
+  map: map,
+  source: new ol.source.Vector({
+    features: [accuracyFeature, positionFeature]
+  })
+});
+
 /** ----- Affichage couches ----- **/
 
 map.getView().on('change:resolution', function(evt) {
@@ -293,6 +340,16 @@ map.getView().on('change:resolution', function(evt) {
 });
 
 var init_map = function() {
+    geolocation.setTracking(true);
+    
+    geolocation.once('change:position', function() {
+        var coordinates = geolocation.getPosition();
+        positionFeature.setGeometry(coordinates ?
+            new ol.geom.Point(coordinates) : null);
+        var newPosition=ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326');
+        map.getView().setCenter(ol.proj.fromLonLat([newPosition[0], newPosition[1]]));
+    });
+
     map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
     map.getLayers().array_[4].setVisible($("#bus").is(":checked"));
     map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
@@ -357,7 +414,7 @@ var init_map = function() {
     var select = null; // ref to currently selected interaction
 
     // select interaction working on "singleclick"
-    var selectSingleClick = new ol.interaction.Select();
+    var selectSingleClick = new ol.interaction.Select({multi: false});
 
     var selectElement = document.getElementById('info');
 
@@ -371,17 +428,17 @@ var init_map = function() {
         if (select !== null) {
             map.addInteraction(select);
             select.on('select', function(e) {
-                console.log(e);
+                console.log(e.target.getFeatures().getArray());
 
                 let selected = e.target.getFeatures().getArray()[0];
                 // alert(getInfos(selected));
 
                 var info = getInfos(selected)
-                if (confirm(info)) {
-                    document.location.href = "new_signalement.html?title="+info;
-                } else {
-
-                }
+                setTimeout(() => {
+                    if (confirm(info)) {
+                        document.location.href = "new_signalement.html?title="+info;
+                    } 
+                }, 0)
             });
         }
     };

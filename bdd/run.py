@@ -20,16 +20,33 @@ parcs_relais_velo.traitement()
 parkings_velo.traitement()
 lignes_velo.traitement()
 
+with open('target/signalements.sql', 'w') as sql_data:
+    sql_data.write(
+    """-- Table: public.signalements
+-- DROP TABLE public.signalements;
+
+CREATE TABLE public.signalements
+(
+    id numeric NOT NULL,
+    type_signalement character varying(64) NOT NULL,
+    retard numeric,
+    commentaire character varying(512),
+    type_object character varying(64) NOT NULL,
+    id_object numeric NOT NULL,
+    CONSTRAINT signalements_pkey PRIMARY KEY (id)
+);
+
+""")
+
 print("------------ FIN DU PROGRAMME ------------")
-#
+
 # CREATE TABLE public.signalements
 # (
 #     id numeric NOT NULL,
 #     type_signalement character varying(64) NOT NULL,
 #     retard numeric,
-#     commentaire character varying(500),
+#     commentaire character varying(512),
 #     type_object character varying(64) NOT NULL,
 #     id_object numeric NOT NULL,
-#     geom geometry(Point, 4326),
-#     CONSTRAINT signalements_pkey PRIMARY KEY (id),
+#     CONSTRAINT signalements_pkey PRIMARY KEY (id)
 # );

@@ -18,14 +18,13 @@ def traitement():
 
     for rd in raw_data:
         new_data = {
-            # "route_id" : rd["fields"]["route_id"],
-            # "route_long_name" : rd["fields"]["route_long_name"],
-            # "route_short_name" : rd["fields"]["route_short_name"],
-            # "route_type" : rd["fields"]["route_type"],
-            # "geometry" : rd["fields"]["shape"]
             "stations_id" : int(rd["fields"]["id"]),
             "station_name": rd["fields"]["nomstation"],
-            "geometry" : rd["geometry"]["coordinates"]
+            "geometry" : rd["geometry"]["coordinates"],
+
+            "numplace" : int(rd["fields"]["numplace"]),
+            "voie" : rd["fields"]["voie"] + " " + rd["fields"]["nomvoie"],
+            "commune" : rd["fields"]["commune"]
         }
         clean_data.append(new_data)
 
@@ -37,8 +36,13 @@ def traitement():
     CREATE TABLE public.stations_velo
     (
         id numeric NOT NULL,
-        name character varying(25),
+        name character varying(50),
         geom geometry(Point, 4326),
+
+        numplace numeric,
+        voie character varying(75),
+        commune character varying(50),
+
         CONSTRAINT stations_velo_pkey PRIMARY KEY (id)
     );
 
@@ -46,5 +50,5 @@ def traitement():
 
     with open('target/stations_velo.sql', "a") as sql_data:
         for elem in clean_data:
-            sql_data.write("INSERT INTO public.stations_velo (id, name, geom) VALUES ({}, \'{}\',  ST_GeomFromText(\'POINT({} {})\', {}));\n"
-                .format(elem["stations_id"], elem["station_name"].replace("'", "''"), elem["geometry"][0], elem["geometry"][1], 4326))
+            sql_data.write("INSERT INTO public.stations_velo (id, name, geom, numplace, voie, commune) VALUES ({}, \'{}\',  ST_GeomFromText(\'POINT({} {})\', {}), {}, \'{}\', \'{}\');\n"
+                .format(elem["stations_id"], elem["station_name"].replace("'", "''"), elem["geometry"][0], elem["geometry"][1], 4326, elem["numplace"], elem["voie"].replace("'", "''"), elem["commune"].replace("'", "''")))

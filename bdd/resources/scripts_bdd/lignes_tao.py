@@ -43,7 +43,7 @@ def traitement():
     (
         id character varying(75) NOT NULL,
         geom geometry(MULTILINESTRING, 4326),
-        short_name character varying(25),
+        name character varying(50),
         long_name character varying(100),
         route_type character varying(25),
         CONSTRAINT lignes_tao_tram_pkey PRIMARY KEY (id)
@@ -56,7 +56,7 @@ def traitement():
     (
         id character varying(75) NOT NULL,
         geom geometry(MULTILINESTRING, 4326),
-        short_name character varying(25),
+        name character varying(50),
         long_name character varying(100),
         route_type character varying(25),
         CONSTRAINT lignes_tao_bus_pkey PRIMARY KEY (id)
@@ -67,8 +67,8 @@ def traitement():
     with open('target/lignes_bus_tram.sql', "a") as sql_data:
         for elem in clean_data:
             if(elem["route_type"] == "Bus"):
-                sql_data.write("INSERT INTO public.lignes_tao_bus (id, short_name, long_name, geom) VALUES (\'{}\', \'{}\', \'{}\', ST_GeomFromText(\'MULTILINESTRING({})\', {}));\n"
+                sql_data.write("INSERT INTO public.lignes_tao_bus (id, name, long_name, geom) VALUES (\'{}\', \'{}\', \'{}\', ST_GeomFromText(\'MULTILINESTRING({})\', {}));\n"
                     .format(elem["route_id"], elem["route_short_name"].replace("'", "''"), elem["route_long_name"].replace("'", "''"), elem["geometry"]["coordinates"], 4326))
             else:
-                sql_data.write("INSERT INTO public.lignes_tao_tram (id, short_name, long_name, geom) VALUES (\'{}\', \'{}\', \'{}\', ST_GeomFromText(\'MULTILINESTRING({})\', {}));\n"
+                sql_data.write("INSERT INTO public.lignes_tao_tram (id, name, long_name, geom) VALUES (\'{}\', \'{}\', \'{}\', ST_GeomFromText(\'MULTILINESTRING({})\', {}));\n"
                     .format(elem["route_id"], elem["route_short_name"].replace("'", "''"), elem["route_long_name"].replace("'", "''"), elem["geometry"]["coordinates"], 4326))

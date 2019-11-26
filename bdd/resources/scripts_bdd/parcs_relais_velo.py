@@ -35,7 +35,7 @@ def traitement():
     CREATE TABLE public.parcs_relais_velo
     (
         id numeric NOT NULL,
-        name character varying(25),
+        name character varying(50),
         geom geometry(Point, 4326),
         commune character varying(50),
         adresse character varying(80),

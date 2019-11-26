@@ -27,7 +27,7 @@ def traitement():
             "commune" : rd["fields"]["commune"],
             "longueur" : rd["fields"]["longueur"],
             "sens_cycl" : rd["fields"]["sens_cycl"],
-            "numero" : rd["fields"]["numero"],
+            "numero" : int(rd["fields"]["numero"]),
             "rue" : rd["fields"].get("rue", "0")
         }
         clean_data.append(new_data)
@@ -57,11 +57,11 @@ def traitement():
     (
         id numeric NOT NULL,
         geom geometry(MULTILINESTRING, 4326),
-        name character varying(25),
+        name character varying(50),
         commune character varying(50),
         longueur numeric,
         sens character varying(25),
-        numero character varying(5),
+        numero numeric,
         rue character varying(80),
         CONSTRAINT lignes_velo_pkey PRIMARY KEY (id)
     );
@@ -70,5 +70,5 @@ def traitement():
 
     with open('target/lignes_velo.sql', "a") as sql_data:
         for elem in clean_data:
-                sql_data.write("INSERT INTO public.lignes_velo (id, name, geom, commune, longueur, sens, numero, rue) VALUES (\'{}\', \'{}\', ST_GeomFromText(\'MULTILINESTRING({})\', {}), \'{}\', {}, \'{}\', \'{}\', \'{}\');\n"
+                sql_data.write("INSERT INTO public.lignes_velo (id, name, geom, commune, longueur, sens, numero, rue) VALUES ({}, \'{}\', ST_GeomFromText(\'MULTILINESTRING({})\', {}), \'{}\', {}, \'{}\', {}, \'{}\');\n"
                     .format(elem["ligne_id"], elem["ligne_name"].replace("'", "''"), elem["geometry"]["coordinates"], 4326, elem["commune"].replace("'", "''"), elem["longueur"], elem["sens_cycl"].replace("'", "''"), elem["numero"], elem["rue"].replace("'", "''")))

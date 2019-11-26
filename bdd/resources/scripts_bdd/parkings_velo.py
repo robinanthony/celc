@@ -27,7 +27,14 @@ def traitement():
             # "geometry" : rd["fields"]["shape"]
             "parking_id" : id_generator,
             "parking_name": "Parking vélo n° {}".format(id_generator),
-            "geometry" : rd["geometry"]["coordinates"]
+            "geometry" : rd["geometry"]["coordinates"],
+
+            "commune" : rd["fields"]["commune"],
+            "nb_places" : int(rd["fields"]["nb_places"]),
+            "observation" : rd["fields"].get("observatio", ""),
+            "numero" : int(rd["fields"]["numero"]),
+            "rue" : rd["fields"].get("rue", ""),
+            "typeElement" : rd["fields"]["type"]
         }
         clean_data.append(new_data)
 
@@ -39,8 +46,16 @@ def traitement():
     CREATE TABLE public.parkings_velo
     (
         id numeric NOT NULL,
-        name character varying(25),
+        name character varying(50),
         geom geometry(Point, 4326),
+
+        commune character varying(50),
+        nb_places numeric,
+        observation character varying(75),
+        numero numeric,
+        rue character varying(50),
+        typeElement character varying(25),
+
         CONSTRAINT parkings_velo_pkey PRIMARY KEY (id)
     );
 
@@ -48,5 +63,5 @@ def traitement():
 
     with open('target/parkings_velo.sql', "a") as sql_data:
         for elem in clean_data:
-            sql_data.write("INSERT INTO public.parkings_velo (id, name, geom) VALUES ({}, \'{}\',  ST_GeomFromText(\'POINT({} {})\', {}));\n"
-                .format(elem["parking_id"], elem["parking_name"].replace("'", "''"), elem["geometry"][0], elem["geometry"][1], 4326))
+            sql_data.write("INSERT INTO public.parkings_velo (id, name, geom, commune, nb_places, observation, numero, rue, typeElement) VALUES ({}, \'{}\',  ST_GeomFromText(\'POINT({} {})\', {}), \'{}\', {}, \'{}\', {}, \'{}\', \'{}\');\n"
+                .format(elem["parking_id"], elem["parking_name"].replace("'", "''"), elem["geometry"][0], elem["geometry"][1], 4326, elem["commune"].replace("'", "''"), elem["nb_places"], elem["observation"].replace("'", "''"), elem["numero"], elem["rue"].replace("'", "''"), elem["typeElement"].replace("'", "''")))

@@ -433,10 +433,17 @@ var init_map = function() {
                 let selected = e.target.getFeatures().getArray()[0];
                 // alert(getInfos(selected));
 
-                var info = getInfos(selected)
+                var id = selected.getId().split('.')[1];
+                var type = selected.getId().split('.')[0];
+                var info = getInfos(selected);
+
                 setTimeout(() => {
                     if (confirm(info)) {
-                        document.location.href = "new_signalement.html?title="+info;
+                        // document.location.href = "new_signalement.html?title="+info;
+                        sessionStorage.setItem("infoLoc",info);
+                        sessionStorage.setItem("idLoc",id);
+                        sessionStorage.setItem("typeLoc",type);
+                        document.location.href = "new_signalement.html";
                     } 
                 }, 0)
             });

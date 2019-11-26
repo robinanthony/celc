@@ -1,40 +1,46 @@
 $(document).ready(function () {
 
-    const params = new URLSearchParams(document.location.search);
+    // const params = new URLSearchParams(document.location.search);
 
-    if(params.get("location")!=null){
-        $("#location").text(params.get("location"));
-        $("#location_name_field").val(params.get("location"));
-    }
-    if(params.get("id")!=null){
-        $("#id").val(params.get("id"));
+    const info = sessionStorage.getItem("infoLoc");
 
-    }
+    // if(params.get("location")!=null){
+    //     $("#location").text(params.get("location"));
+    //     $("#location_name_field").val(params.get("location"));
+    // }
+    // if(params.get("id")!=null){
+    //     $("#id").val(params.get("id"));
+    //
+    // }
+    //
+    // $("#location").text(extractUrlParams());
 
-    $("#location").text(extractUrlParams());
+    $("#location").text(info);
+    // console.log(sessionStorage.getItem("idLoc"));
+    // console.log(sessionStorage.getItem("typeLoc"));
     display()
 
 });
 
 
-function extractUrlParams () {
-    var t = location.search.substring(1);
-    // console.log(t)
-
-    t = t.replace(/%20/g," ");
-    t = t.replace(/%27/g,"'");
-    t = t.replace(/%C3%82/g,"Â");
-    t = t.replace(/%C3%A9/g,"é");
-    t = t.replace(/%C3%89/g,"E");
-    t = t.replace(/%C3%A8/g,"è");
-    t = t.replace(/%C3%AA/g,"ê");
-    t = t.replace(/%C2%B0/g,"°");
-
-    t = t.split('=')[1];
-    // console.log(t)
-
-    return t;
-}
+// function extractUrlParams () {
+//     var t = location.search.substring(1);
+//     // console.log(t)
+//
+//     t = t.replace(/%20/g," ");
+//     t = t.replace(/%27/g,"'");
+//     t = t.replace(/%C3%82/g,"Â");
+//     t = t.replace(/%C3%A9/g,"é");
+//     t = t.replace(/%C3%89/g,"E");
+//     t = t.replace(/%C3%A8/g,"è");
+//     t = t.replace(/%C3%AA/g,"ê");
+//     t = t.replace(/%C2%B0/g,"°");
+//
+//     t = t.split('=')[1];
+//     // console.log(t)
+//
+//     return t;
+// }
 
 function display() {
     var v = $("#typeSignal").val();

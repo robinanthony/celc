@@ -1,7 +1,7 @@
 
 ///// Adresse du geoserver avec son espace de travail
 ///// ip fac : 192.168.46.196:8080
-var host = (typeof geoserver !== 'undefined' && typeof geoserver.host === 'string') ? geoserver.host : "192.168.46.196" 
+var host = (typeof geoserver !== 'undefined' && typeof geoserver.host === 'string') ? geoserver.host : "192.168.46.196"
 var port = (typeof geoserver !== 'undefined' && typeof geoserver.port === 'string') ? geoserver.port : "8080"
 var adresse_geoserver = 'http://'+host+':'+port+'/geoserver/CELC';
 
@@ -341,7 +341,7 @@ map.getView().on('change:resolution', function(evt) {
 
 var init_map = function() {
     geolocation.setTracking(true);
-    
+
     geolocation.once('change:position', function() {
         var coordinates = geolocation.getPosition();
         positionFeature.setGeometry(coordinates ?
@@ -437,14 +437,13 @@ var init_map = function() {
                 var type = selected.getId().split('.')[0];
                 var info = getInfos(selected);
 
+                $("#modalInfoTitle").text(info)
+                $('#modalInfo').modal('show')
+
                 setTimeout(() => {
-                    if (confirm(info)) {
-                        // document.location.href = "new_signalement.html?title="+info;
-                        sessionStorage.setItem("infoLoc",info);
-                        sessionStorage.setItem("idLoc",id);
-                        sessionStorage.setItem("typeLoc",type);
-                        document.location.href = "new_signalement.html";
-                    } 
+                  sessionStorage.setItem("infoLoc",info);
+                  sessionStorage.setItem("idLoc",id);
+                  sessionStorage.setItem("typeLoc",type);
                 }, 0)
             });
         }
@@ -476,6 +475,10 @@ var init_map = function() {
                 return "";
         }
     };
+
+    $("#newSignalement").on("click",function(){
+      document.location.href = "new_signalement.html";
+    })
 
     /**
      * onchange callback on the select element.

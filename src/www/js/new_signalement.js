@@ -81,6 +81,10 @@ function submitSignal() {
     //envoie du commentaire
 }
 
+function returnMap() {
+    document.location.href = "map.html";
+}
+
 
 // $(document).on("click", ".browse", function() {
 //   var file = $(this).parents().find(".file");

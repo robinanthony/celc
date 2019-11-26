@@ -177,53 +177,6 @@ var map = new ol.Map({
 
 });
 
-// Geolocalisation
-
-var geolocation = new ol.Geolocation({
-    // enableHighAccuracy must be set to true to have the heading value.
-    trackingOptions: {
-      enableHighAccuracy: true
-    },
-    projection: view.getProjection()
-  });
-
-// handle geolocation error.
-geolocation.on('error', function(error) {
-    alert(error.message);
-  });
-
-var accuracyFeature = new ol.Feature();
-geolocation.on('change:accuracyGeometry', function() {
-  accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
-});
-
-var positionFeature = new ol.Feature();
-positionFeature.setStyle(new ol.style.Style({
-  image: new ol.style.Circle({
-    radius: 6,
-    fill: new ol.style.Fill({
-      color: '#3399CC'
-    }),
-    stroke: new ol.style.Stroke({
-      color: '#fff',
-      width: 2
-    })
-  })
-}));
-
-geolocation.on('change:position', function() {
-  var coordinates = geolocation.getPosition();
-  positionFeature.setGeometry(coordinates ?
-    new ol.geom.Point(coordinates) : null);
-});
-
-new ol.layer.Vector({
-  map: map,
-  source: new ol.source.Vector({
-    features: [accuracyFeature, positionFeature]
-  })
-});
-
 /** ----- Affichage couches ----- **/
 
 map.getView().on('change:resolution', function(evt) {
@@ -340,6 +293,53 @@ map.getView().on('change:resolution', function(evt) {
 });
 
 var init_map = function() {
+    // Geolocalisation
+    
+    var geolocation = new ol.Geolocation({
+        // enableHighAccuracy must be set to true to have the heading value.
+        trackingOptions: {
+          enableHighAccuracy: true
+        },
+        projection: view.getProjection()
+      });
+    
+    // handle geolocation error.
+    geolocation.on('error', function(error) {
+        alert(error.message);
+      });
+    
+    var accuracyFeature = new ol.Feature();
+    geolocation.on('change:accuracyGeometry', function() {
+      accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+    });
+    
+    var positionFeature = new ol.Feature();
+    positionFeature.setStyle(new ol.style.Style({
+      image: new ol.style.Circle({
+        radius: 6,
+        fill: new ol.style.Fill({
+          color: '#3399CC'
+        }),
+        stroke: new ol.style.Stroke({
+          color: '#fff',
+          width: 2
+        })
+      })
+    }));
+    
+    geolocation.on('change:position', function() {
+      var coordinates = geolocation.getPosition();
+      positionFeature.setGeometry(coordinates ?
+        new ol.geom.Point(coordinates) : null);
+    });
+    
+    new ol.layer.Vector({
+      map: map,
+      source: new ol.source.Vector({
+        features: [accuracyFeature, positionFeature]
+      })
+    });
+    
     geolocation.setTracking(true);
     
     geolocation.once('change:position', function() {

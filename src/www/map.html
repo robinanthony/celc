@@ -89,6 +89,8 @@
                 </ul>
             </li>
         </ul>
+        <button type="button" onclick="document.location.href = 'new_signalement.html';" class="btn btn-primary">Nouveau signalement</button>
+
     </nav>
 
     <!-- Page Content -->
@@ -105,7 +107,28 @@
         </nav>
 
         <div id="map" class="map"></div>
+        <div class="modal fade" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="modalInfoTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modalInfoTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                ...
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"  data-dismiss="modal">Close</button>
+                <button type="button" id="newSignalement" class="btn btn-primary">Nouveau signalement</button>
+              </div>
+            </div>
+          </div>
+        </div>
     </div>
+
+
 
 </div>
 
@@ -156,19 +179,19 @@
             preventDefault : true
         };
 
-        Hammer(document.getElementById('side-block')).on("swiperight", function(ev){ 
+        Hammer(document.getElementById('side-block')).on("swiperight", function(ev){
             if (ev.center.x - ev.distance < 250) {
                 $('#sidebar').removeClass('active');
             }
         },options);
 
-        Hammer(document.body).on("swipeleft", function(ev){ 
+        Hammer(document.body).on("swipeleft", function(ev){
             if (ev.center.x - ev.distance < 350) {
                 $('#sidebar').addClass('active');
             }
         },options);
 
-        Hammer(document.getElementById('content')).on("tap swipe", function(ev){ 
+        Hammer(document.getElementById('content')).on("tap swipe", function(ev){
             $('#sidebar').addClass('active');
         },options);
 

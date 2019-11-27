@@ -1,3 +1,4 @@
+import psycopg2
 from flask import Flask, jsonify, abort, make_response, request, url_for
 app = Flask(__name__)
 
@@ -15,6 +16,18 @@ tasks = [
         'done': False
     }
 ]
+
+
+
+@app.route('/signalements', methods=['GET'])
+def get_tasks():
+    database = psycopg2.connect("dbname=test user=postgres")
+    res = []
+    request = database.connect().execute("SELECT * FROM public.signalements;")
+    reponse = jsonify({'signalements': request})
+    request.close()
+    database.close()
+    return reponse
 
 def make_public_task(task):
     new_task = {}

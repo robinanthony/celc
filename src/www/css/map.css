@@ -13,6 +13,8 @@
 
 #actionbar {
     z-index: 9990;
+    position: fixed;
+    width: 100%;
 }
 #actionbar .container-fluid {
     padding: 0;
@@ -36,6 +38,7 @@
 
 .ol-zoom.ol-unselectable.ol-control {
     z-index: 9995;
+    top: 4rem;
 }
 
 #sidebar {
@@ -141,6 +144,11 @@ a, a:hover, a:focus {
 #sidebar ul.components {
     padding: 20px 0;
     border-bottom: 1px solid #47748b;
+}
+
+#sidebar ul.buttons li {
+    display: flex;
+    justify-content: center;
 }
 
 #sidebar ul p {

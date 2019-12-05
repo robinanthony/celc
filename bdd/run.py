@@ -27,7 +27,7 @@ with open('target/signalements.sql', 'w') as sql_data:
 
 CREATE TABLE public.signalements
 (
-    id numeric NOT NULL,
+    id SERIAL NOT NULL,
     type_signalement character varying(64) NOT NULL,
     retard numeric,
     commentaire character varying(512),

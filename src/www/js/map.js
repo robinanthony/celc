@@ -294,7 +294,7 @@ map.getView().on('change:resolution', function(evt) {
 
 var init_map = function() {
     // Geolocalisation
-    
+
     var geolocation = new ol.Geolocation({
         // enableHighAccuracy must be set to true to have the heading value.
         trackingOptions: {
@@ -302,17 +302,17 @@ var init_map = function() {
         },
         projection: view.getProjection()
       });
-    
+
     // handle geolocation error.
     geolocation.on('error', function(error) {
         alert(error.message);
       });
-    
+
     var accuracyFeature = new ol.Feature();
     geolocation.on('change:accuracyGeometry', function() {
       accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
     });
-    
+
     var positionFeature = new ol.Feature();
     positionFeature.setStyle(new ol.style.Style({
       image: new ol.style.Circle({
@@ -326,20 +326,20 @@ var init_map = function() {
         })
       })
     }));
-    
+
     geolocation.on('change:position', function() {
       var coordinates = geolocation.getPosition();
       positionFeature.setGeometry(coordinates ?
         new ol.geom.Point(coordinates) : null);
     });
-    
+
     new ol.layer.Vector({
       map: map,
       source: new ol.source.Vector({
         features: [accuracyFeature, positionFeature]
       })
     });
-    
+
     geolocation.setTracking(true);
 
     geolocation.once('change:position', function() {
@@ -437,8 +437,10 @@ var init_map = function() {
                 var type = selected.getId().split('.')[0];
                 var info = getInfos(selected);
 
-                $("#modalInfoTitle").text(info)
-                $('#modalInfo').modal('show')
+                $("#modalInfoTitle").text(info);
+                getSignalementInfo(type,id);
+
+                $('#modalInfo').modal('show');
 
                 setTimeout(() => {
                   sessionStorage.setItem("infoLoc",info);
@@ -476,6 +478,19 @@ var init_map = function() {
         }
     };
 
+    $(document).ready(function () {
+
+    // function getSignalementInfo(type,id){
+      $.ajax({
+  			type : 'GET',
+  			url  : 'test.json',
+  			success : function(response){
+  				response = JSON.parse(response);
+          $("#modal-body").text(response)
+        }
+      });
+    // }
+});
     $("#newSignalement").on("click",function(){
       document.location.href = "new_signalement.html";
     })

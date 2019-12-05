@@ -9,6 +9,17 @@ networks:
     driver: bridge
 
 services:
+   web:
+      build:
+         context: .
+         dockerfile: ./web.Dockerfile
+      networks:
+         - geo-net
+      ports:
+        - "5000:5000"
+      depends_on:
+        - db
+
    geo-init:
       build:
          context: .
@@ -16,7 +27,7 @@ services:
       networks:
          - geo-net
       depends_on:
-        - geoserver
+         - geoserver
 
    db:
       build:

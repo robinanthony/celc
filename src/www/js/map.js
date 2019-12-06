@@ -478,6 +478,29 @@ var init_map = function() {
         }
     };
 
+    var getSignalementInfo = function (type, id) {
+        var v = "http://web:5000/signalement.id_object/" + id;
+
+        // Create a request variable and assign a new XMLHttpRequest object to it.
+        var request = new XMLHttpRequest()
+
+        // Open a new connection, using the GET request on the URL endpoint
+        request.open('GET', 'http://web:5000/signalement.id_object/' + id, true)
+
+        request.onload = function() {
+            // Begin accessing JSON data here
+            var data = JSON.parse(this.response)
+
+            // if (request.status >= 200 && request.status < 400){
+            //     console.log("coucou")
+            // }
+            console.log(request.status)
+        };
+
+// Send request
+        request.send()
+    };
+
     $(document).ready(function () {
 
     // function getSignalementInfo(type,id){

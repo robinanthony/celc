@@ -10,14 +10,14 @@ networks:
 
 services:
    web:
-      container_name: api_rest
+      # container_name: apirest
       build:
          context: .
          dockerfile: ./web.Dockerfile
       networks:
          - geo-net
       ports:
-        - "5000:5000"
+        - "5050:9152"
       depends_on:
         - postgresql
 
@@ -31,7 +31,7 @@ services:
          - geoserver
 
    postgresql:
-      container_name: postgresql
+      # container_name: postgresql
       build:
          context: .
          dockerfile: ./postgis.Dockerfile
@@ -43,7 +43,7 @@ services:
         - "25434:5432"
 
    geoserver:
-      container_name: geoserver
+      # container_name: geoserver
       build:
          context: .
          dockerfile: ./geoserver.Dockerfile

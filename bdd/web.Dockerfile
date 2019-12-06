@@ -1,6 +1,6 @@
 FROM python:3.7
 
-RUN apt-get install libpq-dev
+RUN apt-get install -y libpq-dev
 RUN pip install flask
 RUN pip install psycopg2
 

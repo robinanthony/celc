@@ -2,11 +2,16 @@ import psycopg2
 from flask import Flask, jsonify, abort, make_response, request, url_for
 app = Flask(__name__)
 
+# DBNAME = "gis"
+# USER = "docker"
+# PASSWORD = "docker"
+# HOST = "localhost"
+# PORT = "25434"
 DBNAME = "gis"
 USER = "docker"
 PASSWORD = "docker"
-HOST = "localhost"
-PORT = "25434"
+HOST = "postgresql"
+PORT = "5432"
 
 @app.errorhandler(404)
 def not_found(error):
@@ -116,4 +121,4 @@ def delete_signalement(signalement_id):
 
 if __name__ == '__main__':
 #     #Debug mode should never be used in a production environment!
-    app.run(debug=True, host="localhost", port=9152)
+    app.run(debug=True, host="0.0.0.0", port=9152)

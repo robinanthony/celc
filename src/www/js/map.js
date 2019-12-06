@@ -485,11 +485,12 @@ var init_map = function() {
         var request = new XMLHttpRequest()
 
         // Open a new connection, using the GET request on the URL endpoint
-        request.open('GET', 'http://web:5000/signalement.id_object/' + id, true)
+        request.open('GET', 'http://localhost:9152/signalement/id_object/' + id, true)
 
         request.onload = function() {
             // Begin accessing JSON data here
             var data = JSON.parse(this.response)
+            console.log(data)
 
             // if (request.status >= 200 && request.status < 400){
             //     console.log("coucou")

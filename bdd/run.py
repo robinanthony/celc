@@ -23,16 +23,16 @@ lignes_velo.traitement()
 with open('target/signalements.sql', 'w') as sql_data:
     sql_data.write(
     """-- Table: public.signalements
--- DROP TABLE public.signalements;
+DROP TABLE IF EXISTS public.signalements;
 
 CREATE TABLE public.signalements
 (
     id SERIAL NOT NULL,
     type_signalement character varying(64) NOT NULL,
-    retard numeric,
+    retard integer,
     commentaire character varying(512),
     type_object character varying(64) NOT NULL,
-    id_object numeric NOT NULL,
+    id_object integer NOT NULL,
     CONSTRAINT signalements_pkey PRIMARY KEY (id)
 );
 

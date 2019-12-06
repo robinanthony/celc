@@ -10,7 +10,7 @@ networks:
 
 services:
    web:
-     container_name: api_rest
+      container_name: api_rest
       build:
          context: .
          dockerfile: ./web.Dockerfile
@@ -52,6 +52,6 @@ services:
       volumes:
         - geoserver-data:/opt/geoserver/data_dir
       ports:
-        - "8081:8081"
+        - "8081:8080"
       depends_on:
         - postgresql

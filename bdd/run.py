@@ -29,10 +29,10 @@ CREATE TABLE public.signalements
 (
     id SERIAL NOT NULL,
     type_signalement character varying(64) NOT NULL,
-    retard numeric,
+    retard integer,
     commentaire character varying(512),
     type_object character varying(64) NOT NULL,
-    id_object numeric NOT NULL,
+    id_object integer NOT NULL,
     CONSTRAINT signalements_pkey PRIMARY KEY (id)
 );
 

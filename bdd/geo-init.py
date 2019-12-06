@@ -47,7 +47,7 @@ def createDatastore(workspace_name, datastore_name):
             "name": datastore_name,
             "connectionParameters": {
                 "entry": [
-                    {"@key":"host","$":"db"},
+                    {"@key":"host","$":"postgresql"},
                     {"@key":"port","$":"5432"},
                     {"@key":"database","$":"gis"},
                     {"@key":"user","$":"docker"},

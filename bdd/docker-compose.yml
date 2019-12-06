@@ -10,6 +10,7 @@ networks:
 
 services:
    web:
+     container_name: api_rest
       build:
          context: .
          dockerfile: ./web.Dockerfile
@@ -18,7 +19,7 @@ services:
       ports:
         - "5000:5000"
       depends_on:
-        - db
+        - postgresql
 
    geo-init:
       build:

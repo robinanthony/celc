@@ -3,13 +3,14 @@ version: '2.1'
 volumes:
    geoserver-data:
    geo-db-data:
-        
+
 networks:
   geo-net:
     driver: bridge
 
 services:
    web:
+     container_name: api_rest
       build:
          context: .
          dockerfile: ./web.Dockerfile
@@ -18,7 +19,7 @@ services:
       ports:
         - "5000:5000"
       depends_on:
-        - db
+        - postgresql
 
    geo-init:
       build:
@@ -29,7 +30,8 @@ services:
       depends_on:
          - geoserver
 
-   db:
+   postgresql:
+      container_name: postgresql
       build:
          context: .
          dockerfile: ./postgis.Dockerfile
@@ -41,6 +43,7 @@ services:
         - "25434:5432"
 
    geoserver:
+      container_name: geoserver
       build:
          context: .
          dockerfile: ./geoserver.Dockerfile
@@ -49,8 +52,6 @@ services:
       volumes:
         - geoserver-data:/opt/geoserver/data_dir
       ports:
-        - "8080:8080"
+        - "8081:8081"
       depends_on:
-        - db
-
-
+        - postgresql

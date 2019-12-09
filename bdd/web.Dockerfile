@@ -2,6 +2,7 @@ FROM python:3.7
 
 RUN apt-get install -y libpq-dev
 RUN pip install flask
+RUN pip install flask-cors
 RUN pip install psycopg2
 
 WORKDIR /home/celc

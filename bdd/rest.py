@@ -1,6 +1,9 @@
 import psycopg2
 from flask import Flask, jsonify, abort, make_response, request, url_for
+from flask_cors import CORS
+
 app = Flask(__name__)
+CORS(app)
 
 # DBNAME = "gis"
 # USER = "docker"
@@ -13,6 +16,14 @@ PASSWORD = "docker"
 HOST = "postgresql"
 PORT = "5432"
 
+def getJSON(rows, curDesc):
+    columns = [desc[0] for desc in curDesc]
+    result = []
+    for row in rows:
+        row = dict(zip(columns, row))
+        result.append(row)
+    return result
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
@@ -23,7 +34,7 @@ def get_signalements():
     cursor = database.cursor()
 
     cursor.execute("SELECT * FROM signalements;")
-    reponse = jsonify({'signalement': cursor.fetchall()})
+    reponse = jsonify({'signalements': getJSON(cursor.fetchall(), cursor.description)})
 
     cursor.close()
     database.close()
@@ -35,19 +46,19 @@ def get_signalement_byId(signalement_id):
     cursor = database.cursor()
 
     cursor.execute("SELECT * FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
-    reponse = jsonify({'signalement': cursor.fetchone()})
+    reponse = jsonify({'signalement': getJSON(cursor.fetchone(), cursor.description)})
 
     cursor.close()
     database.close()
     return reponse
 
 @app.route('/signalement/type_object/<string:type_object>', methods=['GET'])
-def get_signalement_byType_object(type_object):
+def get_signalements_byType_object(type_object):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
     cursor.execute("SELECT * FROM public.signalements WHERE type_object = %(type_object)s;", { "type_object" : type_object})
-    reponse = jsonify({'signalement': cursor.fetchone()})
+    reponse = jsonify({'signalements': getJSON(cursor.fetchall(), cursor.description)})
 
     cursor.close()
     database.close()
@@ -59,7 +70,7 @@ def get_signalement_byId_object(id_object):
     cursor = database.cursor()
 
     cursor.execute("SELECT * FROM public.signalements WHERE id_object = %(id_object)s;", { "id_object" : id_object})
-    reponse = jsonify({'signalement': cursor.fetchone()})
+    reponse = jsonify({'signalement': getJSON(cursor.fetchone(), cursor.description)})
 
     cursor.close()
     database.close()

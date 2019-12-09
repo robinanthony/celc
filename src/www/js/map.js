@@ -486,13 +486,11 @@ var init_map = function() {
     }
 
     var getSignalementInfo = function (type, id) {
-        var v = "http://web:5000/signalement.id_object/" + id;
-
         // Create a request variable and assign a new XMLHttpRequest object to it.
         var request = new XMLHttpRequest()
 
         // Open a new connection, using the GET request on the URL endpoint
-        request.open('GET', 'http://localhost:9152/signalement/id_object/' + id, true)
+        request.open('GET', `http://localhost:5050/signalement/type_object/${type}/id_object/${id}`, true)
 
         request.onload = function() {
             // Begin accessing JSON data here
@@ -505,23 +503,23 @@ var init_map = function() {
             console.log(request.status)
         };
 
-// Send request
+        // Send request
         request.send()
     };
 
-    $(document).ready(function () {
+    // $(document).ready(function () {
 
     // function getSignalementInfo(type,id){
-      $.ajax({
-  			type : 'GET',
-  			url  : 'test.json',
-  			success : function(response){
-  				response = JSON.parse(response);
-          $("#modal-body").text(response)
-        }
-      });
+    //   $.ajax({
+  	// 		type : 'GET',
+  	// 		url  : 'test.json',
+  	// 		success : function(response){
+  	// 			response = JSON.parse(response);
+    //       $("#modal-body").text(response)
+    //     }
+    //   });
     // }
-});
+    // });
     $("#newSignalement").on("click",function(){
       document.location.href = "new_signalement.html";
     })

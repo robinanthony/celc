@@ -428,7 +428,7 @@ var init_map = function() {
         if (select !== null) {
             map.addInteraction(select);
             select.on('select', function(e) {
-                console.log(e.target.getFeatures().getArray());
+                console.log(e, e.target.getFeatures().getArray());
 
                 let selected = e.target.getFeatures().getArray()[0];
                 // alert(getInfos(selected));
@@ -436,6 +436,8 @@ var init_map = function() {
                 var id = selected.getId().split('.')[1];
                 var type = selected.getId().split('.')[0];
                 var info = getInfos(selected);
+
+                var coord = ol.proj.toLonLat(e.mapBrowserEvent.coordinate, map.getView().getProjection())
 
                 $("#modalInfoTitle").text(info);
                 getSignalementInfo(type,id);
@@ -446,6 +448,7 @@ var init_map = function() {
                   sessionStorage.setItem("infoLoc",info);
                   sessionStorage.setItem("idLoc",id);
                   sessionStorage.setItem("typeLoc",type);
+                  sessionStorage.setItem("coordLoc",getGeoPoint(coord));
                 }, 0)
             });
         }
@@ -477,6 +480,10 @@ var init_map = function() {
                 return "";
         }
     };
+
+    var getGeoPoint = function(coord) {
+        return `Point(${coord[0]}, ${coord[1]})`
+    }
 
     var getSignalementInfo = function (type, id) {
         var v = "http://web:5000/signalement.id_object/" + id;

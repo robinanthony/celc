@@ -21,14 +21,40 @@
 
 #actionbar {
   z-index: 9990;
+  display: block;
 }
 
 #actionbar h3{
   color: white;
 }
+
 #actionbar .container-fluid {
   padding: 0;
 }
+
+#actionbar a {
+  color: white;
+}
+
+#actionbar .nav {
+  justify-content: center;
+}
+
+#actionbar .nav-tabs .nav-link.active, #actionbar .nav-tabs .nav-item.show .nav-link {
+  color: #495057;
+}
+
+#actionbar .nav-pills .nav-link.active, #actionbar .nav-pills .show > .nav-link {
+  color: #495057;
+  background-color: #ffffff;
+}
+
+#actionbar a:hover {
+  color: #0056b3;
+  text-decoration: none;
+  background-color: #ffffff80;
+}
+
 .btn-actionbar {
   color: #fff;
   background-color: #5f6eb1;

@@ -53,12 +53,12 @@ def get_signalement_byType_object(type_object):
     database.close()
     return reponse
 
-@app.route('/signalement/id_object/<int:id_object>', methods=['GET'])
-def get_signalement_byId_object(id_object):
+@app.route('/signalement/type_object/<string:type_object>/id_object/<int:id_object>', methods=['GET'])
+def get_signalement_byId_object(type_object, id_object):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
-    cursor.execute("SELECT * FROM public.signalements WHERE id_object = %(id_object)s;", { "id_object" : id_object})
+    cursor.execute("SELECT * FROM public.signalements WHERE id_object = %(id_object)s and type_object = %(type_object)s;", {"id_object" : id_object, "type_object" : type_object})
     reponse = jsonify({'signalement': cursor.fetchone()})
 
     cursor.close()

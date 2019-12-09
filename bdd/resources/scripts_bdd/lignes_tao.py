@@ -15,9 +15,12 @@ def traitement():
             raw_data = json.load(json_data)
 
     clean_data = []
+    id_generator = 0
 
     for rd in raw_data:
+        id_generator += 1
         new_data = {
+            "id" : id_generator,
             "route_id" : rd["fields"]["route_id"],
             "route_long_name" : rd["fields"]["route_long_name"],
             "route_short_name" : rd["fields"]["route_short_name"],
@@ -41,7 +44,8 @@ def traitement():
 
     CREATE TABLE public.lignes_tao_tram
     (
-        id character varying(75) NOT NULL,
+        id integer NOT NULL,
+        old_id character varying(75) NOT NULL UNIQUE,
         geom geometry(MULTILINESTRING, 4326),
         name character varying(50),
         long_name character varying(100),
@@ -54,7 +58,8 @@ def traitement():
 
     CREATE TABLE public.lignes_tao_bus
     (
-        id character varying(75) NOT NULL,
+        id integer NOT NULL,
+        old_id character varying(75) NOT NULL UNIQUE,
         geom geometry(MULTILINESTRING, 4326),
         name character varying(50),
         long_name character varying(100),
@@ -67,8 +72,8 @@ def traitement():
     with open('target/lignes_bus_tram.sql', "a") as sql_data:
         for elem in clean_data:
             if(elem["route_type"] == "Bus"):
-                sql_data.write("INSERT INTO public.lignes_tao_bus (id, name, long_name, geom) VALUES (\'{}\', \'{}\', \'{}\', ST_GeomFromText(\'MULTILINESTRING({})\', {}));\n"
-                    .format(elem["route_id"], elem["route_short_name"].replace("'", "''"), elem["route_long_name"].replace("'", "''"), elem["geometry"]["coordinates"], 4326))
+                sql_data.write("INSERT INTO public.lignes_tao_bus (id, old_id, name, long_name, geom) VALUES ({}, \'{}\', \'{}\', \'{}\', ST_GeomFromText(\'MULTILINESTRING({})\', {}));\n"
+                    .format(elem["id"], elem["route_id"], elem["route_short_name"].replace("'", "''"), elem["route_long_name"].replace("'", "''"), elem["geometry"]["coordinates"], 4326))
             else:
-                sql_data.write("INSERT INTO public.lignes_tao_tram (id, name, long_name, geom) VALUES (\'{}\', \'{}\', \'{}\', ST_GeomFromText(\'MULTILINESTRING({})\', {}));\n"
-                    .format(elem["route_id"], elem["route_short_name"].replace("'", "''"), elem["route_long_name"].replace("'", "''"), elem["geometry"]["coordinates"], 4326))
+                sql_data.write("INSERT INTO public.lignes_tao_tram (id, old_id, name, long_name, geom) VALUES ({}, \'{}\', \'{}\', \'{}\', ST_GeomFromText(\'MULTILINESTRING({})\', {}));\n"
+                    .format(elem["id"], elem["route_id"], elem["route_short_name"].replace("'", "''"), elem["route_long_name"].replace("'", "''"), elem["geometry"]["coordinates"], 4326))

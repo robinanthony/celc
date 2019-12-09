@@ -35,7 +35,7 @@ def traitement():
 
     CREATE TABLE public.stations_velo
     (
-        id numeric NOT NULL,
+        id integer NOT NULL,
         name character varying(50),
         geom geometry(Point, 4326),
 

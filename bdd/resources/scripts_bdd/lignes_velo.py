@@ -55,7 +55,7 @@ def traitement():
 
     CREATE TABLE public.lignes_velo
     (
-        id numeric NOT NULL,
+        id integer NOT NULL,
         geom geometry(MULTILINESTRING, 4326),
         name character varying(50),
         commune character varying(50),

@@ -45,7 +45,7 @@ def traitement():
 
     CREATE TABLE public.parkings_velo
     (
-        id numeric NOT NULL,
+        id integer NOT NULL,
         name character varying(50),
         geom geometry(Point, 4326),
 

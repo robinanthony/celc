@@ -28,6 +28,10 @@ def getJSON(rows, curDesc):
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
+@app.errorhandler(500)
+def server_error(error):
+    return make_response(jsonify({'error': 'Internal Server Error\n'+error.get_response()}), 500)
+
 @app.route('/signalement', methods=['GET'])
 def get_signalements():
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
@@ -46,7 +50,10 @@ def get_signalement_byId(signalement_id):
     cursor = database.cursor()
 
     cursor.execute("SELECT * FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
-    reponse = jsonify({'signalement': getJSON(cursor.fetchone(), cursor.description)})
+    signal = cursor.fetchone()
+    if signal is None:
+        abort(404)
+    reponse = jsonify({'signalement': getJSON([signal], cursor.description)[0]})
 
     cursor.close()
     database.close()
@@ -65,12 +72,12 @@ def get_signalements_byType_object(type_object):
     return reponse
 
 @app.route('/signalement/type_object/<string:type_object>/id_object/<int:id_object>', methods=['GET'])
-def get_signalement_byId_object(type_object, id_object):
+def get_signalements_byId_object(type_object, id_object):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
     cursor.execute("SELECT * FROM public.signalements WHERE id_object = %(id_object)s and type_object = %(type_object)s;", {"id_object" : id_object, "type_object" : type_object})
-    reponse = jsonify({'signalement': getJSON(cursor.fetchone(), cursor.description)})
+    reponse = jsonify({'signalements': getJSON(cursor.fetchall(), cursor.description)})
 
     cursor.close()
     database.close()

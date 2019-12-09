@@ -433,6 +433,7 @@ var init_map = function() {
                 let selected = e.target.getFeatures().getArray()[0];
                 // alert(getInfos(selected));
 
+                console.log(selected.getId())
                 var id = selected.getId().split('.')[1];
                 var type = selected.getId().split('.')[0];
                 var info = getInfos(selected);
@@ -479,17 +480,16 @@ var init_map = function() {
     };
 
     var getSignalementInfo = function (type, id) {
-        var v = "http://web:5000/signalement.id_object/" + id;
-
         // Create a request variable and assign a new XMLHttpRequest object to it.
         var request = new XMLHttpRequest()
-
+        console.log("id : "+ id)
         // Open a new connection, using the GET request on the URL endpoint
-        request.open('GET', 'http://localhost:9152/signalement/id_object/' + id, true)
+        request.open('GET', 'http://localhost:5050/signalement/id_object/' + id, true)
 
         request.onload = function() {
             // Begin accessing JSON data here
             var data = JSON.parse(this.response)
+            console.log("ca passe")
             console.log(data)
 
             // if (request.status >= 200 && request.status < 400){

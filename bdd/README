@@ -9,3 +9,6 @@ $docker-compose build
 $docker-compose up
 dans le dossier actuel, les serveurs se lanceront sur les ports 5432 (postgis) et 8080 (geoserver)
 Le geoserver sera accessible depuis <Docker_Host>:8080/geoserver
+
+Si BDD trop lente :
+sudo docker-compose run geo-init python3 geo-init.py

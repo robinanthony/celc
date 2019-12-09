@@ -1,9 +1,13 @@
 
 ///// Adresse du geoserver avec son espace de travail
 ///// ip fac : 192.168.46.196:8080
-var host = (typeof geoserver !== 'undefined' && typeof geoserver.host === 'string') ? geoserver.host : "192.168.46.196"
-var port = (typeof geoserver !== 'undefined' && typeof geoserver.port === 'string') ? geoserver.port : "8080"
-var adresse_geoserver = 'http://'+host+':'+port+'/geoserver/CELC';
+var host_geoserver = (typeof geoserver !== 'undefined' && typeof geoserver.host === 'string') ? geoserver.host : "192.168.46.196"
+var port_geoserver = (typeof geoserver !== 'undefined' && typeof geoserver.port === 'string') ? geoserver.port : "8080"
+var adresse_geoserver = 'http://'+host_geoserver+':'+port_geoserver+'/geoserver/CELC';
+
+var host_api = (typeof api !== 'undefined' && typeof api.host === 'string') ? api.host : "localhost"
+var port_api = (typeof api !== 'undefined' && typeof api.port === 'string') ? api.port : "9152"
+var adresse_api = 'http://'+host_api+':'+port_api;
 
 ///// Fonction permettant de récuperer les informations sur le GeoServeur
 var getSource = function(lien, couche){
@@ -490,7 +494,7 @@ var init_map = function() {
         var request = new XMLHttpRequest()
 
         // Open a new connection, using the GET request on the URL endpoint
-        request.open('GET', `http://localhost:5050/signalement/type_object/${type}/id_object/${id}`, true)
+        request.open('GET', `${adresse_api}/signalement/type_object/${type}/id_object/${id}`, true)
 
         request.onload = function() {
             // Begin accessing JSON data here

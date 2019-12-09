@@ -1,3 +1,8 @@
+
+var host_api = (typeof api !== 'undefined' && typeof api.host === 'string') ? api.host : "localhost"
+var port_api = (typeof api !== 'undefined' && typeof api.port === 'string') ? api.port : "9152"
+var adresse_api = 'http://'+host_api+':'+port_api;
+
 $(document).ready(function () {
 
     // const params = new URLSearchParams(document.location.search);
@@ -85,6 +90,28 @@ function submitSignal() {
     }
 
     //envoie du commentaire
+
+    /*
+    $.ajax({
+        type : 'POST',
+        url  : adresse_api+'/signalement',
+        data : JSON.stringify({
+            type_signalement: 'retard',
+            retard: '50',
+            commentaire: 'On attend depuis presque une heure, et toujours rien en vue\nPurée de merde !!',
+            type_object: 'arret tram',
+            id_object: '2'
+        }),
+        contentType: "application/json",
+        success : function(response) {
+            console.log(response);
+        },
+        error : function(xhr, ajaxOptions, thrownError) {
+            console.log(xhr.responseText);
+            console.log(thrownError);
+        },
+    });
+    */
 }
 
 function returnMap() {

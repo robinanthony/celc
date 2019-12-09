@@ -1,8 +1,13 @@
+
+var host_api = (typeof api !== 'undefined' && typeof api.host === 'string') ? api.host : "localhost"
+var port_api = (typeof api !== 'undefined' && typeof api.port === 'string') ? api.port : "9152"
+var adresse_api = 'http://'+host_api+':'+port_api;
+
 // "type_signalement" : request.json.get("type_signalement"),
-//         "retard" : request.json.get("retard", None),
-//         "commentaire" : request.json.get("commentaire", None),
-//         "type_object" : request.json.get("type_object"),
-//         "id_object" : request.json.get("id_object")
+// "retard" : request.json.get("retard", None),
+// "commentaire" : request.json.get("commentaire", None),
+// "type_object" : request.json.get("type_object"),
+// "id_object" : request.json.get("id_object")
 
 var addSignalementToDOM = function(signalement) {
     let type_display = "";
@@ -57,7 +62,7 @@ var addSignalementToDOM = function(signalement) {
 $(document).ready(function () {
     $.ajax({
         type : 'GET',
-        url  : 'http://localhost:5050/signalement',
+        url  : `${adresse_api}/signalement`,
         success : function(response) {
             for (s of response.signalements) {
                 addSignalementToDOM(s);

@@ -3,3 +3,8 @@ var geoserver = {
     host : "localhost",
     port : "8081"
 }
+
+var api = {
+    host : "localhost",
+    port : "5050"
+}

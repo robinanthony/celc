@@ -362,6 +362,226 @@ map.getView().on('change:resolution', function(evt) {
 
 });
 
+
+/** ------ Récupération infos ----- **/
+
+var select = new ol.interaction.Select();
+map.addInteraction(select);
+select.on('select', function(e) {
+    layers_features = [
+        arrets_tao_bus, 
+        arrets_tao_tram, 
+        lignes_tao_bus, 
+        lignes_tao_tram, 
+        lignes_velo, 
+        parcs_relais_velo, 
+        parkings_velo, 
+        stations_velo
+    ];
+    layers_signalements = [
+        signalements_arrets_tao_bus, 
+        signalements_arrets_tao_tram, 
+        signalements_lignes_tao_bus, 
+        signalements_lignes_tao_tram, 
+        signalements_lignes_velo, 
+        signalements_parcs_relais_velo, 
+        signalements_parkings_velo, 
+        signalements_stations_velo
+    ];
+    console.log(e, e.selected);
+
+    let selected = e.selected[0];
+
+    if (layers_features.includes(e.target.getLayer(selected))) {
+        var id = selected.getId().split('.')[1];
+        var type = selected.getId().split('.')[0];
+        var info = getInfosFeature(selected);
+
+        var coord = ol.proj.toLonLat(e.mapBrowserEvent.coordinate, map.getView().getProjection())
+
+        console.log(getGeoPoint(coord), type, id);
+
+        getSignalementInfo(type,id);
+
+        modalInfoSetTitle(info);
+        modalInfoSetContent("Lorem ipsum")
+        modalInfoSetButtons(['newSignal', 'close'])
+
+        modalInfoShow();
+
+        setTimeout(() => {
+            sessionStorage.setItem("infoLoc",info);
+            sessionStorage.setItem("idLoc",id);
+            sessionStorage.setItem("typeLoc",type);
+            sessionStorage.setItem("coordLoc",getGeoPoint(coord));
+        }, 0)
+    }
+
+    else if (layers_signalements.includes(e.target.getLayer(selected))) {
+        console.log(selected);
+
+        objet = getSignalementObjet(selected.getId().split('.')[1])
+
+        info = getInfosSignalement(selected, objet);
+
+        modalInfoSetTitle(info);
+        modalInfoSetContent("Lorem ipsum")
+        modalInfoSetButtons(['close'])
+
+        modalInfoShow();
+    }
+
+});
+
+var modalInfoSetTitle = function(title) {
+    $("#modalInfoTitle").text(title);
+}
+
+var modalInfoSetContent = function(content) {
+    $("#modalInfoBody").html(content);
+}
+
+var modalInfoSetButtons = function(buttons) {
+    $("#modalInfoButtons").empty();
+    for (button of buttons) {
+        switch(button) {
+            case 'close':
+                $("#modalInfoButtons").append('<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>');
+                break;
+            case 'newSignal':
+                $("#modalInfoButtons").append('<button type="button" id="newSignalement" class="btn btn-primary">Nouveau signalement</button>');
+                break;
+        }
+    }
+}
+
+var modalInfoShow = function() {
+    $('#modalInfo').modal('show');
+}
+
+var getInfosFeature = function(elem) {
+    console.log("ELEM  ",elem);
+    let id = elem.getId().split('.')[0];
+    let prop = elem.getProperties();
+
+    switch (id) {
+        case 'arrets_tao_bus':
+            return `Arret de bus : ${prop["name"]}`;
+        case 'arrets_tao_tram':
+            return `Arret de tram : ${prop["name"]}`;
+        case 'lignes_tao_bus':
+            return `Ligne de bus ${prop["name"]} ${prop["long_name"]}`;
+        case 'lignes_tao_tram':
+            return `Ligne de tram ${prop["name"]} ${prop["long_name"]}`;
+        case 'stations_velo':
+            return `Arrêt vélo ${prop["name"]}`;
+        case 'parcs_relais_velo':
+            return `Parc relais vélo ${prop["name"]}`;
+        case 'parkings_velo':
+            return `${prop["name"]}`;
+        case 'lignes_velo':
+            return `${prop["name"]}`;
+        default:
+            return "";
+    }
+};
+
+var getTypeObjetDisplay = function(type_objet, objet) {
+    switch (type_objet) {
+        case 'arrets_tao_bus':
+            return `l'arrêt de bus ${objet["name"]}`;
+        case 'arrets_tao_tram':
+            return `l'arrêt de tram ${objet["name"]}`;
+        case 'lignes_tao_bus':
+            return `la ligne de bus ${objet["name"]} ${objet["long_name"]}`;
+        case 'lignes_tao_tram':
+            return `la ligne de tram ${objet["name"]} ${objet["long_name"]}`;
+        case 'stations_velo':
+            return `l'arrêt vélo ${objet["name"]}`;
+        case 'parcs_relais_velo':
+            return `le parc relais vélo ${objet["name"]}`;
+        case 'parkings_velo':
+            return `le parking vélo ${objet["name"]}`;
+        case 'lignes_velo':
+            return `la piste cyclable ${objet["name"]}`;
+    }
+}
+
+var getInfosSignalement = function(elem, objet) {
+    let id = elem.getId().split('.')[0];
+    let signalement = elem.getProperties();
+
+    let infos = "";
+
+    switch(signalement.type_signalement) {
+        case "retard":
+            infos = `Retard de ${signalement.retard} min`;
+            break;
+        case "accident":
+            infos = "Accident";
+            break;
+        case "travaux":
+            infos = "Travaux";
+            break;
+        case "baree":
+            infos = "Route barée";
+            break;
+        case "degradation":
+            infos = "Dégradation";
+            break;
+    }
+
+    infos += ` sur ${getTypeObjetDisplay(signalement.type_object, objet)}`;
+
+    return infos;
+};
+
+var getGeoPoint = function(coord) {
+    return `Point(${coord[0]} ${coord[1]})`
+}
+
+var getSignalementInfo = function (type, id) {
+    // Create a request variable and assign a new XMLHttpRequest object to it.
+    var request = new XMLHttpRequest()
+
+    // Open a new connection, using the GET request on the URL endpoint
+    request.open('GET', `${adresse_api}/signalement/type_object/${type}/id_object/${id}`, true)
+
+    request.onload = function() {
+        // Begin accessing JSON data here
+        var data = JSON.parse(this.response)
+        console.log(data)
+
+        // if (request.status >= 200 && request.status < 400){
+        //     console.log("coucou")
+        // }
+        console.log(request.status)
+    };
+
+    // Send request
+    request.send()
+};
+
+var getSignalementObjet = function (id) {
+    objet = null;
+
+    $.ajax({
+        type : 'GET',
+        url  : `${adresse_api}/signalement/${id}/object`,
+        async: false,
+        timeout: 2000,
+        success : function(response) {
+            objet = response.objet;
+        },
+        error : function(xhr, ajaxOptions, thrownError) {
+            console.log(xhr.responseText);
+            console.log(thrownError);
+        },
+    });
+
+    return objet;
+};
+
 var init_map = function() {
     // Geolocalisation
 
@@ -494,107 +714,6 @@ var init_map = function() {
     //
     // });
 
-
-    /** ------ Récupération infos ----- **/
-
-    var select = null; // ref to currently selected interaction
-
-    // select interaction working on "singleclick"
-    var selectSingleClick = new ol.interaction.Select({multi: false});
-
-    var selectElement = document.getElementById('info');
-
-    var changeInteraction = function() {
-        var currZoom = map.getView().getZoom();
-        console.log(currZoom)
-        if (select !== null) {
-            map.removeInteraction(select);
-        }
-        select = selectSingleClick;
-        if (select !== null) {
-            map.addInteraction(select);
-            select.on('select', function(e) {
-                console.log(e, e.target.getFeatures().getArray());
-
-                let selected = e.target.getFeatures().getArray()[0];
-                // alert(getInfos(selected));
-
-                var id = selected.getId().split('.')[1];
-                var type = selected.getId().split('.')[0];
-                var info = getInfos(selected);
-
-                var coord = ol.proj.toLonLat(e.mapBrowserEvent.coordinate, map.getView().getProjection())
-
-                console.log(getGeoPoint(coord), type, id);
-
-                $("#modalInfoTitle").text(info);
-                getSignalementInfo(type,id);
-
-                $('#modalInfo').modal('show');
-
-                setTimeout(() => {
-                  sessionStorage.setItem("infoLoc",info);
-                  sessionStorage.setItem("idLoc",id);
-                  sessionStorage.setItem("typeLoc",type);
-                  sessionStorage.setItem("coordLoc",getGeoPoint(coord));
-                }, 0)
-            });
-        }
-    };
-
-    var getInfos = function(elem) {
-        console.log("ELEM  ",elem);
-        let id = elem.getId().split('.')[0];
-        let prop = elem.getProperties();
-
-        switch (id) {
-            case 'arrets_tao_bus':
-                return `Arret de bus : ${prop["name"]}`;
-            case 'arrets_tao_tram':
-                return `Arret de tram : ${prop["name"]}`;
-            case 'lignes_tao_bus':
-                return `Ligne de bus ${prop["short_name"]} ${prop["long_name"]}`;
-            case 'lignes_tao_tram':
-                return `Ligne de tram ${prop["short_name"]} ${prop["long_name"]}`;
-            case 'stations_velo':
-                return `Arrêt vélo ${prop["name"]}`;
-            case 'parcs_relais_velo':
-                return `Parc relais vélo ${prop["name"]}`;
-            case 'parkings_velo':
-                return `${prop["name"]}`;
-            case 'lignes_velo':
-                return `${prop["name"]}`;
-            default:
-                return "";
-        }
-    };
-
-    var getGeoPoint = function(coord) {
-        return `Point(${coord[0]} ${coord[1]})`
-    }
-
-    var getSignalementInfo = function (type, id) {
-        // Create a request variable and assign a new XMLHttpRequest object to it.
-        var request = new XMLHttpRequest()
-
-        // Open a new connection, using the GET request on the URL endpoint
-        request.open('GET', `${adresse_api}/signalement/type_object/${type}/id_object/${id}`, true)
-
-        request.onload = function() {
-            // Begin accessing JSON data here
-            var data = JSON.parse(this.response)
-            console.log(data)
-
-            // if (request.status >= 200 && request.status < 400){
-            //     console.log("coucou")
-            // }
-            console.log(request.status)
-        };
-
-        // Send request
-        request.send()
-    };
-
     // $(document).ready(function () {
 
     // function getSignalementInfo(type,id){
@@ -611,9 +730,4 @@ var init_map = function() {
     $("#newSignalement").on("click",function(){
       document.location.href = "new_signalement.html";
     })
-
-    /**
-     * onchange callback on the select element.
-     */
-    changeInteraction();
 }

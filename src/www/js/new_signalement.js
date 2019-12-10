@@ -94,13 +94,14 @@ function submitSignal() {
     /*
     $.ajax({
         type : 'POST',
-        url  : adresse_api+'/signalement',
+        url  : 'http://localhost:5050/signalement',
         data : JSON.stringify({
             type_signalement: 'retard',
             retard: '50',
             commentaire: 'On attend depuis presque une heure, et toujours rien en vue\nPurée de merde !!',
-            type_object: 'arret tram',
-            id_object: '2'
+            type_object: 'lignes_tao_tram',
+            id_object: '32',
+            geom_text: 'Point(1.9125986110884696 47.91188685481691)'
         }),
         contentType: "application/json",
         success : function(response) {

@@ -32,6 +32,10 @@ def not_found(error):
 def server_error(error):
     return make_response(jsonify({'error': 'Internal Server Error\n'+error.get_response()}), 500)
 
+@app.errorhandler(Exception)
+def server_exception(error):
+    return make_response(jsonify({'error': 'Internal Server Error\n'+str(error)}), 500)
+
 @app.route('/signalement', methods=['GET'])
 def get_signalements():
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
@@ -105,13 +109,14 @@ def add_signalement():
         "type_signalement" : request.json.get("type_signalement"),
         "retard" : request.json.get("retard", None),
         "commentaire" : request.json.get("commentaire", None),
+        "geom_text" : request.json.get("geom_text", None),
         "type_object" : request.json.get("type_object"),
         "id_object" : request.json.get("id_object")
         }
 
     cursor.execute("""
-     INSERT INTO public.signalements (type_signalement, retard, commentaire, type_object, id_object)
-     VALUES (%(type_signalement)s, %(retard)s, %(commentaire)s, %(type_object)s, %(id_object)s) RETURNING *;
+     INSERT INTO public.signalements (type_signalement, retard, commentaire, type_object, id_object, geom)
+     VALUES (%(type_signalement)s, %(retard)s, %(commentaire)s, %(type_object)s, %(id_object)s, ST_GeomFromText(%(geom_text)s, 4326)) RETURNING *;
      """, values)
 
     reponse = jsonify({'signalement': cursor.fetchone()})

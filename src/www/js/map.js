@@ -43,6 +43,16 @@ var getSource = function(lien, couche){
           return source;
         };
 
+var getSignalementStyle = function(type_signalement, color = "ef5646") {
+    return [
+        new ol.style.Style({
+            image: new ol.style.Icon(({
+                anchor: [0.5, 1],
+                src: `http://cdn.mapmarker.io/api/v1/pin?text=${type_signalement.substring(0,1).toUpperCase()}&size=50&hoffset=1&background=${color}`
+            }))
+        })
+    ]
+}
 
 /** ----- Création des différentes couches pour la map ----- **/
 
@@ -63,6 +73,12 @@ var arrets_tao_tram = new ol.layer.Vector({
     })
 });
 
+var signalements_arrets_tao_tram = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_arrets_tao_tram'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+});
+
 var arrets_tao_bus = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:arrets_tao_bus'),
@@ -73,6 +89,12 @@ var arrets_tao_bus = new ol.layer.Vector({
             stroke: new ol.style.Stroke({color : 'rgb(26,52,150)', width: 2})
         })
     })
+});
+
+var signalements_arrets_tao_bus = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_arrets_tao_bus'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
 });
 
 var lignes_tao_bus = new ol.layer.Vector({
@@ -89,6 +111,13 @@ var lignes_tao_bus = new ol.layer.Vector({
     })
 });
 
+var signalements_lignes_tao_bus = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_lignes_tao_bus'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+});
+
+
 var lignes_tao_tram = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:lignes_tao_tram'),
@@ -101,6 +130,12 @@ var lignes_tao_tram = new ol.layer.Vector({
             width: 5
         })
     })
+});
+
+var signalements_lignes_tao_tram = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_lignes_tao_tram'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
 });
 
 var lignes_velo = new ol.layer.Vector({
@@ -117,6 +152,12 @@ var lignes_velo = new ol.layer.Vector({
     })
 });
 
+var signalements_lignes_velo = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_lignes_velo'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+});
+
 var stations_velo = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:stations_velo'),
@@ -127,6 +168,12 @@ var stations_velo = new ol.layer.Vector({
             stroke: new ol.style.Stroke({color : 'rgb(10,164,0)', width: 5})
         })
     })
+});
+
+var signalements_stations_velo = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_stations_velo'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
 });
 
 var parcs_relais_velo = new ol.layer.Vector({
@@ -141,6 +188,12 @@ var parcs_relais_velo = new ol.layer.Vector({
     })
 });
 
+var signalements_parcs_relais_velo = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_parcs_relais_velo'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+});
+
 var parkings_velo = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:parkings_velo'),
@@ -151,6 +204,12 @@ var parkings_velo = new ol.layer.Vector({
             stroke: new ol.style.Stroke({color : 'rgb(164,133,23)', width: 2})
         })
     })
+});
+
+var signalements_parkings_velo = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_parkings_velo'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
 });
 
 ///// Création du view pour la carte
@@ -174,8 +233,15 @@ var map = new ol.Map({
         arrets_tao_tram,
         stations_velo,
         parcs_relais_velo,
-        parkings_velo
-
+        parkings_velo,
+        signalements_lignes_velo,
+        signalements_lignes_tao_bus,
+        signalements_lignes_tao_tram,
+        signalements_arrets_tao_bus,
+        signalements_arrets_tao_tram,
+        signalements_stations_velo,
+        signalements_parcs_relais_velo,
+        signalements_parkings_velo,
     ],
     view: view
 
@@ -356,12 +422,20 @@ var init_map = function() {
 
     map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
     map.getLayers().array_[4].setVisible($("#bus").is(":checked"));
+    signalements_arrets_tao_bus.setVisible($("#bus").is(":checked"));
+    signalements_lignes_tao_bus.setVisible($("#bus").is(":checked"));
     map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
     map.getLayers().array_[5].setVisible($("#tram").is(":checked"));
+    signalements_arrets_tao_tram.setVisible($("#tram").is(":checked"));
+    signalements_lignes_tao_tram.setVisible($("#tram").is(":checked"));
     map.getLayers().array_[6].setVisible($("#station_velo").is(":checked"));
+    signalements_stations_velo.setVisible($("#station_velo").is(":checked"));
     map.getLayers().array_[7].setVisible($("#parc_relais_velo").is(":checked"));
+    signalements_parcs_relais_velo.setVisible($("#parc_relais_velo").is(":checked"));
     map.getLayers().array_[8].setVisible($("#parkings_velo").is(":checked"));
+    signalements_parkings_velo.setVisible($("#parkings_velo").is(":checked"));
     map.getLayers().array_[1].setVisible($("#piste_velo").is(":checked"));
+    signalements_lignes_velo.setVisible($("#piste_velo").is(":checked"));
 
 
 
@@ -369,12 +443,20 @@ var init_map = function() {
         $(this).change(function functionName(){
             map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
             map.getLayers().array_[4].setVisible($("#bus").is(":checked"));
+            signalements_arrets_tao_bus.setVisible($("#bus").is(":checked"));
+            signalements_lignes_tao_bus.setVisible($("#bus").is(":checked"));
             map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
             map.getLayers().array_[5].setVisible($("#tram").is(":checked"));
+            signalements_arrets_tao_tram.setVisible($("#tram").is(":checked"));
+            signalements_lignes_tao_tram.setVisible($("#tram").is(":checked"));
             map.getLayers().array_[6].setVisible($("#station_velo").is(":checked"));
+            signalements_stations_velo.setVisible($("#station_velo").is(":checked"));
             map.getLayers().array_[7].setVisible($("#parc_relais_velo").is(":checked"));
+            signalements_parcs_relais_velo.setVisible($("#parc_relais_velo").is(":checked"));
             map.getLayers().array_[8].setVisible($("#parkings_velo").is(":checked"));
+            signalements_parkings_velo.setVisible($("#parkings_velo").is(":checked"));
             map.getLayers().array_[1].setVisible($("#piste_velo").is(":checked"));
+            signalements_lignes_velo.setVisible($("#piste_velo").is(":checked"));
 
         })
     });
@@ -443,6 +525,8 @@ var init_map = function() {
 
                 var coord = ol.proj.toLonLat(e.mapBrowserEvent.coordinate, map.getView().getProjection())
 
+                console.log(getGeoPoint(coord), type, id);
+
                 $("#modalInfoTitle").text(info);
                 getSignalementInfo(type,id);
 
@@ -486,7 +570,7 @@ var init_map = function() {
     };
 
     var getGeoPoint = function(coord) {
-        return `Point(${coord[0]}, ${coord[1]})`
+        return `Point(${coord[0]} ${coord[1]})`
     }
 
     var getSignalementInfo = function (type, id) {

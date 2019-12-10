@@ -68,16 +68,18 @@ def createDatastore(workspace_name, datastore_name):
         print(response.status_code)
         print(response.text)
 
-def createFeatureType(workspace_name, datastore_name, layer_name):
+def createFeatureType(workspace_name, datastore_name, layer_name, table_name=None, filter_=None):
+    table_name = table_name if table_name is not None else layer_name
     featureType_json = {
         "featureType": {
             "name": layer_name,
-            "nativeName": layer_name,
+            "nativeName": table_name,
             "title": layer_name,
             "srs": "EPSG:4326",
             "enabled": True,
             "nativeBoundingBox": bb,
-            "latLonBoundingBox": bb
+            "latLonBoundingBox": bb,
+            "cqlFilter": '' if filter_ is None else filter_
         }
     }
     featureTypes_url = "{base}workspaces/{wname}/datastores/{dname}/featuretypes/".format(base = rest_url, wname = workspace_name, dname = datastore_name)
@@ -110,6 +112,9 @@ while timeout > 0:
             featureTypes_get = requests.get(featureTypes_url, auth=('admin', 'geoserver'), headers=headers).json()['featureTypes']
             if featureTypes_get == '' or not any(x['name'] == ft_name for x in featureTypes_get['featureType']):
                 createFeatureType(workspaceName, dataStoreName, ft_name)
+                
+            if featureTypes_get == '' or not any(x['name'] == 'signalements_'+ft_name for x in featureTypes_get['featureType']):
+                createFeatureType(workspaceName, dataStoreName, "signalements_{}".format(ft_name), table_name="signalements", filter_="type_object = '{}'".format(ft_name))
 
         timeout = -1
     except requests.ConnectionError:

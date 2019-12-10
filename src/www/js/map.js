@@ -43,15 +43,86 @@ var getSource = function(lien, couche){
           return source;
         };
 
-var getSignalementStyle = function(type_signalement, color = "ef5646") {
+var getMarkerImage = function(colorFill, colorText, text, colorStroke = null) {
+    if (colorStroke === null) {
+        colorStroke = colorFill;
+    }
+
+    var svg = `
+<svg xmlns="http://www.w3.org/2000/svg"
+     version="1.1"
+     viewBox="0 0 9.5249996 13.229167"
+     height="50"
+     width="36">
+    <path d="m 4.7625116,13.015004 
+             c -0.758055,0 
+             -4.54833704,-4.8944398 
+             -4.54833704,-8.2828998 
+             0,-2.44722 
+             2.08465404,-4.51795005 
+             4.54833704,-4.51795005 
+             2.463684,0 
+             4.548337,2.07073005 
+             4.548337,4.51795005 
+             0,3.38846 
+             -3.790281,8.2828998 
+             -4.548337,8.2828998 z"
+          style="fill:${colorFill};
+                 fill-opacity:1;
+                 stroke:${colorStroke};
+                 stroke-width:0.4283258;
+                 stroke-linecap:butt;
+                 stroke-linejoin:miter;
+                 stroke-miterlimit:4;
+                 stroke-dasharray:none;
+                 stroke-opacity:1;
+                 paint-order:normal" />
+    <text y="6.6367936"
+          x="4.746572"
+          style="font-style:normal;
+                 font-weight:normal;
+                 font-size:5.03679419px;
+                 line-height:1.25;
+                 font-family:sans-serif;
+                 letter-spacing:0px;
+                 word-spacing:0px;
+                 text-anchor:middle;
+                 fill:${colorText};
+                 fill-opacity:1;
+                 stroke:none;
+                 stroke-width:0.03777595">
+        ${text}
+    </text>
+</svg>`;
+
+    return "data:image/svg+xml," + escape(svg);
+}
+
+var getSignalementStyle = function(type_signalement, color = "#ef5646") {
     return [
         new ol.style.Style({
             image: new ol.style.Icon(({
                 anchor: [0.5, 1],
-                src: `http://cdn.mapmarker.io/api/v1/pin?text=${type_signalement.substring(0,1).toUpperCase()}&size=50&hoffset=1&background=${color}`
+                src: getMarkerImage(color, "#ffffff", type_signalement.substring(0,1).toUpperCase())
             }))
         })
     ]
+}
+
+var getSelectedStyle = function(feature, resolution) {
+    if (feature.getKeys().includes("type_signalement")) {
+        type_signalement = feature.get('type_signalement');
+        return [
+            new ol.style.Style({
+                image: new ol.style.Icon(({
+                    anchor: [0.5, 1],
+                    src: getMarkerImage("#0099FF", "#ffffff", type_signalement.substring(0,1).toUpperCase(), "#ffffff")
+                }))
+            })
+        ]
+    } else {
+        return (new ol.interaction.Select().getOverlay().getStyleFunction())(feature, resolution);
+    }
 }
 
 /** ----- Création des différentes couches pour la map ----- **/
@@ -76,7 +147,7 @@ var arrets_tao_tram = new ol.layer.Vector({
 var signalements_arrets_tao_tram = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_arrets_tao_tram'),
-    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(255,45,23,0.95)')
 });
 
 var arrets_tao_bus = new ol.layer.Vector({
@@ -94,7 +165,7 @@ var arrets_tao_bus = new ol.layer.Vector({
 var signalements_arrets_tao_bus = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_arrets_tao_bus'),
-    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(103,156,200,0.95)')
 });
 
 var lignes_tao_bus = new ol.layer.Vector({
@@ -114,7 +185,7 @@ var lignes_tao_bus = new ol.layer.Vector({
 var signalements_lignes_tao_bus = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_lignes_tao_bus'),
-    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(103,156,200,0.95)')
 });
 
 
@@ -135,7 +206,7 @@ var lignes_tao_tram = new ol.layer.Vector({
 var signalements_lignes_tao_tram = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_lignes_tao_tram'),
-    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(255,45,23,0.95)')
 });
 
 var lignes_velo = new ol.layer.Vector({
@@ -155,7 +226,7 @@ var lignes_velo = new ol.layer.Vector({
 var signalements_lignes_velo = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_lignes_velo'),
-    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(15,255,233,0.95)')
 });
 
 var stations_velo = new ol.layer.Vector({
@@ -173,7 +244,7 @@ var stations_velo = new ol.layer.Vector({
 var signalements_stations_velo = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_stations_velo'),
-    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(51, 178, 41, 0.95)')
 });
 
 var parcs_relais_velo = new ol.layer.Vector({
@@ -191,7 +262,7 @@ var parcs_relais_velo = new ol.layer.Vector({
 var signalements_parcs_relais_velo = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_parcs_relais_velo'),
-    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(176, 49, 162, 0.95)')
 });
 
 var parkings_velo = new ol.layer.Vector({
@@ -209,7 +280,7 @@ var parkings_velo = new ol.layer.Vector({
 var signalements_parkings_velo = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_parkings_velo'),
-    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(209, 172, 43, 0.95)')
 });
 
 ///// Création du view pour la carte
@@ -365,7 +436,7 @@ map.getView().on('change:resolution', function(evt) {
 
 /** ------ Récupération infos ----- **/
 
-var select = new ol.interaction.Select();
+var select = new ol.interaction.Select({style: getSelectedStyle});
 map.addInteraction(select);
 select.on('select', function(e) {
     layers_features = [
@@ -401,7 +472,7 @@ select.on('select', function(e) {
 
         console.log(getGeoPoint(coord), type, id);
 
-        getSignalementInfo(type,id);
+        getSignalementInfo(type, id, modalInfoGetEmptyContent());
 
         modalInfoSetTitle(info);
         modalInfoSetButtons(['newSignal', 'close'])
@@ -424,7 +495,7 @@ select.on('select', function(e) {
         info = getInfosSignalement(selected, objet);
 
         modalInfoSetTitle(info);
-        modalInfoSetContent("Lorem ipsum")
+        modalInfoSetContent(selected.get('commentaire'))
         modalInfoSetButtons(['close'])
 
         modalInfoShow();
@@ -438,6 +509,11 @@ var modalInfoSetTitle = function(title) {
 
 var modalInfoSetContent = function(content) {
     $("#modalInfoBody").html(content);
+}
+
+var modalInfoGetEmptyContent = function(content) {
+    $("#modalInfoBody").empty();
+    return $("#modalInfoBody");
 }
 
 var modalInfoSetButtons = function(buttons) {
@@ -539,116 +615,91 @@ var getGeoPoint = function(coord) {
     return `Point(${coord[0]} ${coord[1]})`
 }
 
-var getSignalementInfo = function (type, id) {
-    // Create a request variable and assign a new XMLHttpRequest object to it.
-    var request = new XMLHttpRequest();
-    console.log("id : "+ id);
-    // Open a new connection, using the GET request on the URL endpoint
-    request.open('GET', `${adresse_api}/signalement/type_object/${type}/id_object/${id}`, true)
+var getSignalementInfo = function (type, id, divContent) {
 
-    request.onload = function() {
-        // Begin accessing JSON data here
-        console.log("ca passe")
-        var data = JSON.parse(this.response);
-        console.log(data)
-        $( "#signalements_text" ).html("");
-        if(data["signalements"] !== undefined){
+    $.ajax({
+        type : 'GET',
+        url  : `${adresse_api}/signalement/type_object/${type}/id_object/${id}`,
+        success : function(response) {
+            // Begin accessing JSON data here
+            console.log("ca passe")
+            var data = response;
+            console.log(data)
+            if(data["signalements"] !== undefined){
 
-            // for(const sign in data["signalements"]){
-            //     console.log(data[sign])
-            // }
+                // for(const sign in data["signalements"]){
+                //     console.log(data[sign])
+                // }
 
-            let type_display = "";
-            (data["signalements"]).forEach(signalement => {
+                let type_display = "";
+                (data["signalements"]).forEach(signalement => {
 
-                switch(signalement.type_signalement) {
-                    case "retard":
-                        type_display = `Retard`;
-                        break;
-                    case "accident":
-                        type_display = "Accident";
-                        break;
-                    case "travaux":
-                        type_display = "Travaux";
-                        break;
-                    case "baree":
-                        type_display = "Route barée";
-                        break;
-                    case "degradation":
-                        type_display = "Dégradation";
-                        break;
-                }
+                    switch(signalement.type_signalement) {
+                        case "retard":
+                            type_display = `Retard`;
+                            break;
+                        case "accident":
+                            type_display = "Accident";
+                            break;
+                        case "travaux":
+                            type_display = "Travaux";
+                            break;
+                        case "baree":
+                            type_display = "Route barée";
+                            break;
+                        case "degradation":
+                            type_display = "Dégradation";
+                            break;
+                    }
 
-                var delay = ""
-                if(signalement.type_signalement == "retard")
-                    delay = signalement.retard + "mins"
+                    var delay = ""
+                    if(signalement.type_signalement == "retard")
+                        delay = signalement.retard + "mins"
 
-                var contenu = `<div class="row">
-                 <div class="accordion col-12" id="signal_list_${signalement.id}">
-                   <div class="card">
-                     <div class="card-header" id="headingOne_${signalement.id}" data-toggle="collapse"
-                       data-target="#collapseOne_${signalement.id}" aria-expanded="true" aria-controls="collapseOne_${signalement.id}">
-                       <h2 class="mb-0">
-                         <button class="btn col-12 " type="button">
-                           <div class="row">
-                             <div class="col col-sm-9 text-left mb-0">${type_display}</div>
-                             <div class="col col-sm-3 text-right mb-0">
-                               <span>${delay}</span>
-                             </div>
-                           </div>
-                         </button>
-                       </h2>
-                     </div>
-                     <div id="collapseOne_${signalement.id}" class="collapse" aria-labelledby="headingOne_${signalement.id}" data-parent="#signal_list_${signalement.id}">
-                       <div class="card-body">
-                         ${signalement.commentaire}
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-             </div>`
+                    var contenu = `
+<div class="row">
+    <div class="col-12" id="signal_list_${signalement.id}">
+        <div class="card">
+            <div class="card-header" 
+                 id="headingOne_${signalement.id}" 
+                 data-toggle="collapse"
+                 data-target="#collapseOne_${signalement.id}" 
+                 aria-expanded="true" 
+                 aria-controls="collapseOne_${signalement.id}">
+                <h2 class="mb-0">
+                    <button class="btn col-12 " type="button">
+                        <div class="row">
+                            <div class="col col-sm-9 text-left mb-0">
+                                ${type_display}
+                            </div>
+                            <div class="col col-sm-3 text-right mb-0">
+                                <span>${delay}</span>
+                            </div>
+                        </div>
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseOne_${signalement.id}" 
+                 class="collapse" 
+                 aria-labelledby="headingOne_${signalement.id}" 
+                 data-parent="#signal_list_${signalement.id}">
+                <div class="card-body">
+                    ${signalement.commentaire}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>`
 
-
-
-
-
-
-
-
-                // console.log(signalement.type_signalement+ " "+ signalement.commentaire)
-                //
-                // var com = ""
-                //
-                // if(signalement.commentaire != null)
-                //     com = signalement.commentaire;
-                //
-                // contenu +="<li></li><p>" + signalement.type_signalement + " : "
-                // if(signalement.type_signalement == "retard")
-                //     contenu += signalement.retard + " mins</p>"
-                // else
-                //     contenu+="</br>"
-                // contenu+="" + com + "</p></li>"
-                $( "#modalInfoBody" ).append(contenu);
-
-            });
-            // contenu+="</ul>"
-            // console.log(contenu)
-        }
-
-
-
-
-
-
-
-
-        // if (request.status >= 200 && request.status < 400){
-        //     console.log("coucou")
-        // }
-    };
-
-    // Send request
-    request.send()
+                    divContent.append(contenu);
+                });
+            }
+        },
+        error : function(xhr, ajaxOptions, thrownError) {
+            console.log(xhr.responseText);
+            console.log(thrownError);
+        },
+    });
 };
 
 var getSignalementObjet = function (id) {

@@ -29,20 +29,15 @@ var addSignalementToDOM = function(signalement) {
             break;
     }
 
-    let signalDOM = `<div class="row">
- <div class="accordion col-12" id="signal_list_${signalement.id}">
+    let signalDOM = `<div class="row text-center">
+ <div class="col-12" id="signal_list_${signalement.id}">
    <div class="card">
      <div class="card-header" id="headingOne_${signalement.id}" data-toggle="collapse"
        data-target="#collapseOne_${signalement.id}" aria-expanded="true" aria-controls="collapseOne_${signalement.id}">
        <h2 class="mb-0">
          <button class="btn col-12 " type="button">
            <div class="row">
-             <div class="col text-left mb-0">${type_display} sur ${sessionStorage.getItem("infoLoc")}</div>
-             <!--div-- class="col text-right mb-0">
-               <span class="badge badge-primary text-left">
-                 <i class="fas fa-exclamation-triangle"></i>
-               </span>
-             </!--div-->
+             <div class="col mb-0">${type_display} sur ${sessionStorage.getItem("infoLoc")}</div>
            </div>
          </button>
        </h2>

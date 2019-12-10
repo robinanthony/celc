@@ -29,6 +29,7 @@ services:
          - geo-net
       depends_on:
          - geoserver
+         - postgresql
 
    postgresql:
       # container_name: postgresql

@@ -80,10 +80,12 @@ function display() {
 
 function submitSignal() {
     var v = $("#typeSignal").val();
+    var r = null;
+    var comment = $("#comment").val();
     //envoie du type + lieu/arrêt
 
     if(v == "retard"){
-        //envoie de la durée
+        r = $("#delay").val();
     }
     else if(v == "degradation"){
         //envoie de l'image
@@ -91,33 +93,35 @@ function submitSignal() {
 
     //envoie du commentaire
 
-    /*
+
     $.ajax({
         type : 'POST',
         url  : 'http://localhost:5050/signalement',
         data : JSON.stringify({
-            type_signalement: 'retard',
-            retard: '50',
-            commentaire: 'On attend depuis presque une heure, et toujours rien en vue\nPurée de merde !!',
-            type_object: 'lignes_tao_tram',
-            id_object: '32',
-            geom_text: 'Point(1.9125986110884696 47.91188685481691)'
+            type_signalement: v,
+            retard: r,
+            commentaire: comment,
+            type_object: sessionStorage.getItem("typeLoc"),
+            id_object: sessionStorage.getItem("idLoc"),
+            geom_text: sessionStorage.getItem("coordLoc")
         }),
         contentType: "application/json",
         success : function(response) {
             console.log(response);
+            alert("Signalement créé")
         },
         error : function(xhr, ajaxOptions, thrownError) {
             console.log(xhr.responseText);
             console.log(thrownError);
         },
     });
-    */
+
 }
 
 function returnMap() {
     document.location.href = "map.html";
 }
+
 
 
 // $(document).on("click", ".browse", function() {

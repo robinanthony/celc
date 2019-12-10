@@ -13,7 +13,7 @@ var addSignalementToDOM = function(signalement) {
     let type_display = "";
     switch(signalement.type_signalement) {
         case "retard":
-            type_display = `Retard de ${signalement.retard} min`;
+            type_display = `Retard de ${signalement.retard} mins`;
             break;
         case "accident":
             type_display = "Accident";
@@ -37,7 +37,7 @@ var addSignalementToDOM = function(signalement) {
        <h2 class="mb-0">
          <button class="btn col-12 " type="button">
            <div class="row">
-             <div class="col text-left mb-0">${type_display} sur ${signalement.type_object} ${signalement.id_object}</div>
+             <div class="col text-left mb-0">${type_display} sur ${sessionStorage.getItem("infoLoc")}</div>
              <!--div-- class="col text-right mb-0">
                <span class="badge badge-primary text-left">
                  <i class="fas fa-exclamation-triangle"></i>

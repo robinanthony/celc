@@ -251,7 +251,7 @@ var map = new ol.Map({
 
 map.getView().on('change:resolution', function(evt) {
     var zoom = map.getView().getZoom();
-    console.log(zoom);
+    // console.log(zoom);
     var radius;
     var radiusParking = 4;
     var widthb = 3;
@@ -404,7 +404,6 @@ select.on('select', function(e) {
         getSignalementInfo(type,id);
 
         modalInfoSetTitle(info);
-        modalInfoSetContent("Lorem ipsum")
         modalInfoSetButtons(['newSignal', 'close'])
 
         modalInfoShow();
@@ -542,20 +541,110 @@ var getGeoPoint = function(coord) {
 
 var getSignalementInfo = function (type, id) {
     // Create a request variable and assign a new XMLHttpRequest object to it.
-    var request = new XMLHttpRequest()
-
+    var request = new XMLHttpRequest();
+    console.log("id : "+ id);
     // Open a new connection, using the GET request on the URL endpoint
     request.open('GET', `${adresse_api}/signalement/type_object/${type}/id_object/${id}`, true)
 
     request.onload = function() {
         // Begin accessing JSON data here
-        var data = JSON.parse(this.response)
+        console.log("ca passe")
+        var data = JSON.parse(this.response);
         console.log(data)
+        $( "#signalements_text" ).html("");
+        if(data["signalements"] !== undefined){
+
+            // for(const sign in data["signalements"]){
+            //     console.log(data[sign])
+            // }
+
+            let type_display = "";
+            (data["signalements"]).forEach(signalement => {
+
+                switch(signalement.type_signalement) {
+                    case "retard":
+                        type_display = `Retard`;
+                        break;
+                    case "accident":
+                        type_display = "Accident";
+                        break;
+                    case "travaux":
+                        type_display = "Travaux";
+                        break;
+                    case "baree":
+                        type_display = "Route barée";
+                        break;
+                    case "degradation":
+                        type_display = "Dégradation";
+                        break;
+                }
+
+                var delay = ""
+                if(signalement.type_signalement == "retard")
+                    delay = signalement.retard + "mins"
+
+                var contenu = `<div class="row">
+                 <div class="accordion col-12" id="signal_list_${signalement.id}">
+                   <div class="card">
+                     <div class="card-header" id="headingOne_${signalement.id}" data-toggle="collapse"
+                       data-target="#collapseOne_${signalement.id}" aria-expanded="true" aria-controls="collapseOne_${signalement.id}">
+                       <h2 class="mb-0">
+                         <button class="btn col-12 " type="button">
+                           <div class="row">
+                             <div class="col col-sm-9 text-left mb-0">${type_display}</div>
+                             <div class="col col-sm-3 text-right mb-0">
+                               <span>${delay}</span>
+                             </div>
+                           </div>
+                         </button>
+                       </h2>
+                     </div>
+                     <div id="collapseOne_${signalement.id}" class="collapse" aria-labelledby="headingOne_${signalement.id}" data-parent="#signal_list_${signalement.id}">
+                       <div class="card-body">
+                         ${signalement.commentaire}
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+             </div>`
+
+
+
+
+
+
+
+
+                // console.log(signalement.type_signalement+ " "+ signalement.commentaire)
+                //
+                // var com = ""
+                //
+                // if(signalement.commentaire != null)
+                //     com = signalement.commentaire;
+                //
+                // contenu +="<li></li><p>" + signalement.type_signalement + " : "
+                // if(signalement.type_signalement == "retard")
+                //     contenu += signalement.retard + " mins</p>"
+                // else
+                //     contenu+="</br>"
+                // contenu+="" + com + "</p></li>"
+                $( "#modalInfoBody" ).append(contenu);
+
+            });
+            // contenu+="</ul>"
+            // console.log(contenu)
+        }
+
+
+
+
+
+
+
 
         // if (request.status >= 200 && request.status < 400){
         //     console.log("coucou")
         // }
-        console.log(request.status)
     };
 
     // Send request
@@ -642,20 +731,20 @@ var init_map = function() {
 
     map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
     map.getLayers().array_[4].setVisible($("#bus").is(":checked"));
-    signalements_arrets_tao_bus.setVisible($("#bus").is(":checked"));
-    signalements_lignes_tao_bus.setVisible($("#bus").is(":checked"));
+    signalements_arrets_tao_bus.setVisible($("#signal_check").is(":checked") && $("#bus").is(":checked"));
+    signalements_lignes_tao_bus.setVisible($("#signal_check").is(":checked") && $("#bus").is(":checked"));
     map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
     map.getLayers().array_[5].setVisible($("#tram").is(":checked"));
-    signalements_arrets_tao_tram.setVisible($("#tram").is(":checked"));
-    signalements_lignes_tao_tram.setVisible($("#tram").is(":checked"));
+    signalements_arrets_tao_tram.setVisible($("#signal_check").is(":checked") && $("#tram").is(":checked"));
+    signalements_lignes_tao_tram.setVisible($("#signal_check").is(":checked") && $("#tram").is(":checked"));
     map.getLayers().array_[6].setVisible($("#station_velo").is(":checked"));
-    signalements_stations_velo.setVisible($("#station_velo").is(":checked"));
+    signalements_stations_velo.setVisible($("#signal_check").is(":checked") && $("#station_velo").is(":checked"));
     map.getLayers().array_[7].setVisible($("#parc_relais_velo").is(":checked"));
-    signalements_parcs_relais_velo.setVisible($("#parc_relais_velo").is(":checked"));
+    signalements_parcs_relais_velo.setVisible($("#signal_check").is(":checked") && $("#parc_relais_velo").is(":checked"));
     map.getLayers().array_[8].setVisible($("#parkings_velo").is(":checked"));
-    signalements_parkings_velo.setVisible($("#parkings_velo").is(":checked"));
+    signalements_parkings_velo.setVisible($("#signal_check").is(":checked") && $("#parkings_velo").is(":checked"));
     map.getLayers().array_[1].setVisible($("#piste_velo").is(":checked"));
-    signalements_lignes_velo.setVisible($("#piste_velo").is(":checked"));
+    signalements_lignes_velo.setVisible($("#signal_check").is(":checked") && $("#piste_velo").is(":checked"));
 
 
 
@@ -663,56 +752,23 @@ var init_map = function() {
         $(this).change(function functionName(){
             map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
             map.getLayers().array_[4].setVisible($("#bus").is(":checked"));
-            signalements_arrets_tao_bus.setVisible($("#bus").is(":checked"));
-            signalements_lignes_tao_bus.setVisible($("#bus").is(":checked"));
+            signalements_arrets_tao_bus.setVisible($("#signal_check").is(":checked") && $("#bus").is(":checked"));
+            signalements_lignes_tao_bus.setVisible($("#signal_check").is(":checked") && $("#bus").is(":checked"));
             map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
             map.getLayers().array_[5].setVisible($("#tram").is(":checked"));
-            signalements_arrets_tao_tram.setVisible($("#tram").is(":checked"));
-            signalements_lignes_tao_tram.setVisible($("#tram").is(":checked"));
+            signalements_arrets_tao_tram.setVisible($("#signal_check").is(":checked") && $("#tram").is(":checked"));
+            signalements_lignes_tao_tram.setVisible($("#signal_check").is(":checked") && $("#tram").is(":checked"));
             map.getLayers().array_[6].setVisible($("#station_velo").is(":checked"));
-            signalements_stations_velo.setVisible($("#station_velo").is(":checked"));
+            signalements_stations_velo.setVisible($("#signal_check").is(":checked") && $("#station_velo").is(":checked"));
             map.getLayers().array_[7].setVisible($("#parc_relais_velo").is(":checked"));
-            signalements_parcs_relais_velo.setVisible($("#parc_relais_velo").is(":checked"));
+            signalements_parcs_relais_velo.setVisible($("#signal_check").is(":checked") && $("#parc_relais_velo").is(":checked"));
             map.getLayers().array_[8].setVisible($("#parkings_velo").is(":checked"));
-            signalements_parkings_velo.setVisible($("#parkings_velo").is(":checked"));
+            signalements_parkings_velo.setVisible($("#signal_check").is(":checked") && $("#parkings_velo").is(":checked"));
             map.getLayers().array_[1].setVisible($("#piste_velo").is(":checked"));
-            signalements_lignes_velo.setVisible($("#piste_velo").is(":checked"));
+            signalements_lignes_velo.setVisible($("#signal_check").is(":checked") && $("#piste_velo").is(":checked"));
 
         })
     });
-
-    // if (currZoom <= 13) {
-    //     map.getLayers().array_[3].setVisible(false);
-    //     map.getLayers().array_[4].setVisible(false);
-    // }
-    // else{
-    //     map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
-    //     map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
-    // }
-    //
-    // map.on('moveend', function(e) {
-    //     currZoom = map.getView().getZoom();
-    //     console.log(currZoom)
-    //     if (currZoom <= 13) {
-    //         map.getLayers().array_[3].setVisible(false);
-    //         map.getLayers().array_[4].setVisible(false);
-    //     }
-    //     else{
-    //         if ($("#bus").is(":checked")){
-    //             map.getLayers().array_[3].setVisible(true);
-    //         }
-    //         else{
-    //             map.getLayers().array_[3].setVisible(false);
-    //         }
-    //         if($("#tram").is(":checked")){
-    //             map.getLayers().array_[4].setVisible(true);
-    //         }
-    //         else{
-    //             map.getLayers().array_[4].setVisible(false);
-    //         }
-    //     }
-    //
-    // });
 
     // $(document).ready(function () {
 

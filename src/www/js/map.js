@@ -495,7 +495,7 @@ select.on('select', function(e) {
         info = getInfosSignalement(selected, objet);
 
         modalInfoSetTitle(info);
-        modalInfoSetContent((selected.get('commentaire') == "" || selected.get('commentaire') === null) ? 'Pas de commentaire' : selected.get('commentaire'))
+        modalInfoSetContent((selected.get('commentaire') == "" || selected.get('commentaire') === null) ? 'Pas de commentaire' : selected.get('commentaire').replace(/\n/g,"<br>"))
         modalInfoSetButtons(['close'])
 
         modalInfoShow();
@@ -525,6 +525,9 @@ var modalInfoSetButtons = function(buttons) {
                 break;
             case 'newSignal':
                 $("#modalInfoButtons").append('<button type="button" id="newSignalement" class="btn btn-primary">Nouveau signalement</button>');
+                $("#newSignalement").on("click",function(){
+                    document.location.href = "new_signalement.html";
+                })
                 break;
         }
     }
@@ -684,7 +687,7 @@ var getSignalementInfo = function (type, id, divContent) {
                  aria-labelledby="headingOne_${signalement.id}" 
                  data-parent="#signal_list_${signalement.id}">
                 <div class="card-body">
-                    ${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire}
+                    ${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire.replace(/\n/g,"<br>")}
                 </div>
             </div>
         </div>
@@ -821,20 +824,4 @@ var init_map = function() {
         })
     });
 
-    // $(document).ready(function () {
-
-    // function getSignalementInfo(type,id){
-    //   $.ajax({
-  	// 		type : 'GET',
-  	// 		url  : 'test.json',
-  	// 		success : function(response){
-  	// 			response = JSON.parse(response);
-    //       $("#modal-body").text(response)
-    //     }
-    //   });
-    // }
-    // });
-    $("#newSignalement").on("click",function(){
-      document.location.href = "new_signalement.html";
-    })
 }

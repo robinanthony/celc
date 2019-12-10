@@ -44,7 +44,7 @@ var addSignalementToDOM = function(signalement) {
      </div>
      <div id="collapseOne_${signalement.id}" class="collapse ${(signalement.commentaire == "" || signalement.commentaire === null) ? '' : 'show'}" aria-labelledby="headingOne_${signalement.id}" data-parent="#signal_list_${signalement.id}">
        <div class="card-body">
-         ${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire}
+         ${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire.replace(/\n/g,"<br>")}
        </div>
      </div>
    </div>

@@ -181,7 +181,7 @@ var map = new ol.Map({
 
 map.getView().on('change:resolution', function(evt) {
     var zoom = map.getView().getZoom();
-    console.log(zoom);
+    // console.log(zoom);
     var radius;
     var radiusParking = 4;
     var widthb = 3;
@@ -420,7 +420,7 @@ var init_map = function() {
 
     var changeInteraction = function() {
         var currZoom = map.getView().getZoom();
-        console.log(currZoom)
+        // console.log(currZoom)
         if (select !== null) {
             map.removeInteraction(select);
         }
@@ -433,7 +433,6 @@ var init_map = function() {
                 let selected = e.target.getFeatures().getArray()[0];
                 // alert(getInfos(selected));
 
-                console.log(selected.getId())
                 var id = selected.getId().split('.')[1];
                 var type = selected.getId().split('.')[0];
                 var info = getInfos(selected);
@@ -453,7 +452,7 @@ var init_map = function() {
     };
 
     var getInfos = function(elem) {
-        console.log("ELEM  ",elem);
+        // console.log("ELEM  ",elem);
         let id = elem.getId().split('.')[0];
         let prop = elem.getProperties();
 
@@ -481,25 +480,31 @@ var init_map = function() {
 
     var getSignalementInfo = function (type, id) {
         // Create a request variable and assign a new XMLHttpRequest object to it.
-        var request = new XMLHttpRequest()
-        console.log("id : "+ id)
+        var request = new XMLHttpRequest();
+        console.log("id : "+ id);
         // Open a new connection, using the GET request on the URL endpoint
-        request.open('GET', 'http://localhost:5050/signalement/id_object/' + id, true)
+        request.open('GET', 'http://localhost:5050/signalement/id_object/' + id, true);
 
         request.onload = function() {
             // Begin accessing JSON data here
-            var data = JSON.parse(this.response)
             console.log("ca passe")
+            var data = JSON.parse(this.response);
             console.log(data)
 
             // if (request.status >= 200 && request.status < 400){
             //     console.log("coucou")
             // }
-            console.log(request.status)
         };
 
 // Send request
         request.send()
+    };
+
+    var getSignalementInfo1 = async function(type,id){
+        console.log("coucou")
+        const response = await fetch('http://localhost:5050/signalement/id_object/'+id);
+        const myJson = await response.json();
+        console.log(myJson)
     };
 
     $(document).ready(function () {

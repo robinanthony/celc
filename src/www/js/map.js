@@ -495,7 +495,7 @@ select.on('select', function(e) {
         info = getInfosSignalement(selected, objet);
 
         modalInfoSetTitle(info);
-        modalInfoSetContent(selected.get('commentaire'))
+        modalInfoSetContent((selected.get('commentaire') == "" || selected.get('commentaire') === null) ? 'Pas de commentaire' : selected.get('commentaire'))
         modalInfoSetButtons(['close'])
 
         modalInfoShow();
@@ -684,7 +684,7 @@ var getSignalementInfo = function (type, id, divContent) {
                  aria-labelledby="headingOne_${signalement.id}" 
                  data-parent="#signal_list_${signalement.id}">
                 <div class="card-body">
-                    ${signalement.commentaire}
+                    ${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire}
                 </div>
             </div>
         </div>

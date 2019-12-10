@@ -63,6 +63,29 @@ def get_signalement_byId(signalement_id):
     database.close()
     return reponse
 
+@app.route('/signalement/<int:signalement_id>/object', methods=['GET'])
+def get_object_bySignalementId(signalement_id):
+    database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
+    cursor = database.cursor()
+
+    cursor.execute("SELECT * FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
+    signal = cursor.fetchone()
+    if signal is None:
+        abort(404)
+
+    signal = getJSON([signal], cursor.description)[0]
+
+    cursor.execute("SELECT * FROM public.{} WHERE id = %(id)s;".format(signal['type_object']), { "id" : signal['id_object']})
+    objet = cursor.fetchone()
+    if objet is None:
+        abort(404)
+
+    reponse = jsonify({'objet': getJSON([objet], cursor.description)[0]})
+
+    cursor.close()
+    database.close()
+    return reponse
+
 @app.route('/signalement/type_object/<string:type_object>', methods=['GET'])
 def get_signalements_byType_object(type_object):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)

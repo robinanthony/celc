@@ -51,10 +51,14 @@ function display() {
     var v = $("#typeSignal").val();
 
     if(v == "retard"){
-        $( ".other_param" ).html( "<div class=\"input-group-prepend\">\n" +
-            "                <span class=\"input-group-text\" id=\"basic-addon3\"> Durée du retard </span>\n" +
-            "              </div>\n" +
-            "                <input type=\"number\" class=\"form-control\" id=\"delay\" placeholder=\"Retard\">" );
+        $( ".other_param" ).html(`
+<div class="input-group-prepend">
+    <span class="input-group-text" id="basic-addon3"> Durée du retard </span>
+</div>
+<div class="min_unit unit_input">
+    <input type="number" class="form-control" id="delay" placeholder="Retard">
+</div>
+        `);
     }
     else if(v == "degradation"){
         $( ".other_param" ).html("<div  id=\"img-upload\">\n" +

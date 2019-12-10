@@ -33,6 +33,7 @@ CREATE TABLE public.signalements
     commentaire character varying(512),
     type_object character varying(64) NOT NULL,
     id_object integer NOT NULL,
+    geom geometry(Point, 4326),
     CONSTRAINT signalements_pkey PRIMARY KEY (id)
 );
 

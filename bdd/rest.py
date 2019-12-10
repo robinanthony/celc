@@ -1,6 +1,9 @@
 import psycopg2
 from flask import Flask, jsonify, abort, make_response, request, url_for
+from flask_cors import CORS
+
 app = Flask(__name__)
+CORS(app)
 
 # DBNAME = "gis"
 # USER = "docker"
@@ -13,9 +16,25 @@ PASSWORD = "docker"
 HOST = "postgresql"
 PORT = "5432"
 
+def getJSON(rows, curDesc):
+    columns = [desc[0] for desc in curDesc]
+    result = []
+    for row in rows:
+        row = dict(zip(columns, row))
+        result.append(row)
+    return result
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
+
+@app.errorhandler(500)
+def server_error(error):
+    return make_response(jsonify({'error': 'Internal Server Error\n'+error.get_response()}), 500)
+
+@app.errorhandler(Exception)
+def server_exception(error):
+    return make_response(jsonify({'error': 'Internal Server Error\n'+str(error)}), 500)
 
 @app.route('/signalement', methods=['GET'])
 def get_signalements():
@@ -23,7 +42,7 @@ def get_signalements():
     cursor = database.cursor()
 
     cursor.execute("SELECT * FROM signalements;")
-    reponse = jsonify({'signalement': cursor.fetchall()})
+    reponse = jsonify({'signalements': getJSON(cursor.fetchall(), cursor.description)})
 
     cursor.close()
     database.close()
@@ -35,31 +54,34 @@ def get_signalement_byId(signalement_id):
     cursor = database.cursor()
 
     cursor.execute("SELECT * FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
-    reponse = jsonify({'signalement': cursor.fetchone()})
+    signal = cursor.fetchone()
+    if signal is None:
+        abort(404)
+    reponse = jsonify({'signalement': getJSON([signal], cursor.description)[0]})
 
     cursor.close()
     database.close()
     return reponse
 
 @app.route('/signalement/type_object/<string:type_object>', methods=['GET'])
-def get_signalement_byType_object(type_object):
+def get_signalements_byType_object(type_object):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
     cursor.execute("SELECT * FROM public.signalements WHERE type_object = %(type_object)s;", { "type_object" : type_object})
-    reponse = jsonify({'signalement': cursor.fetchone()})
+    reponse = jsonify({'signalements': getJSON(cursor.fetchall(), cursor.description)})
 
     cursor.close()
     database.close()
     return reponse
 
-@app.route('/signalement/id_object/<int:id_object>', methods=['GET'])
-def get_signalement_byId_object(id_object):
+@app.route('/signalement/type_object/<string:type_object>/id_object/<int:id_object>', methods=['GET'])
+def get_signalements_byId_object(type_object, id_object):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
-    cursor.execute("SELECT * FROM public.signalements WHERE id_object = %(id_object)s;", { "id_object" : id_object})
-    reponse = jsonify({'signalement': cursor.fetchone()})
+    cursor.execute("SELECT * FROM public.signalements WHERE id_object = %(id_object)s and type_object = %(type_object)s;", {"id_object" : id_object, "type_object" : type_object})
+    reponse = jsonify({'signalements': getJSON(cursor.fetchall(), cursor.description)})
 
     cursor.close()
     database.close()
@@ -87,13 +109,14 @@ def add_signalement():
         "type_signalement" : request.json.get("type_signalement"),
         "retard" : request.json.get("retard", None),
         "commentaire" : request.json.get("commentaire", None),
+        "geom_text" : request.json.get("geom_text", None),
         "type_object" : request.json.get("type_object"),
         "id_object" : request.json.get("id_object")
         }
 
     cursor.execute("""
-     INSERT INTO public.signalements (type_signalement, retard, commentaire, type_object, id_object)
-     VALUES (%(type_signalement)s, %(retard)s, %(commentaire)s, %(type_object)s, %(id_object)s) RETURNING *;
+     INSERT INTO public.signalements (type_signalement, retard, commentaire, type_object, id_object, geom)
+     VALUES (%(type_signalement)s, %(retard)s, %(commentaire)s, %(type_object)s, %(id_object)s, ST_GeomFromText(%(geom_text)s, 4326)) RETURNING *;
      """, values)
 
     reponse = jsonify({'signalement': cursor.fetchone()})

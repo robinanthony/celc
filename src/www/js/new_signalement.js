@@ -1,3 +1,8 @@
+
+var host_api = (typeof api !== 'undefined' && typeof api.host === 'string') ? api.host : "localhost"
+var port_api = (typeof api !== 'undefined' && typeof api.port === 'string') ? api.port : "9152"
+var adresse_api = 'http://'+host_api+':'+port_api;
+
 $(document).ready(function () {
 
     // const params = new URLSearchParams(document.location.search);
@@ -75,16 +80,42 @@ function display() {
 
 function submitSignal() {
     var v = $("#typeSignal").val();
+    var r = null;
+    var comment = $("#comment").val();
     //envoie du type + lieu/arrêt
 
     if(v == "retard"){
-        //envoie de la durée
+        r = $("#delay").val();
     }
     else if(v == "degradation"){
         //envoie de l'image
     }
 
     //envoie du commentaire
+
+
+    $.ajax({
+        type : 'POST',
+        url  : 'http://localhost:5050/signalement',
+        data : JSON.stringify({
+            type_signalement: v,
+            retard: r,
+            commentaire: comment,
+            type_object: sessionStorage.getItem("typeLoc"),
+            id_object: sessionStorage.getItem("idLoc"),
+            geom_text: sessionStorage.getItem("coordLoc")
+        }),
+        contentType: "application/json",
+        success : function(response) {
+            console.log(response);
+            alert("Signalement créé")
+        },
+        error : function(xhr, ajaxOptions, thrownError) {
+            console.log(xhr.responseText);
+            console.log(thrownError);
+        },
+    });
+
 }
 
 function returnMap() {

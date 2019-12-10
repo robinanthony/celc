@@ -19,48 +19,39 @@
   </head>
   <body>
 
-      <nav id="actionbar" class="navbar navbar-expand-lg navbar-light bg-actionbar">
-          <div class="container-fluid">
+    <nav id="actionbar" class="navbar navbar-expand-lg navbar-light bg-actionbar">
+        <div class="container-fluid pb-1">
 
-              <button type="button" id="sidebarCollapse" class="btn btn-actionbar">
-                  <i class="fas fa-arrow-left"></i>
-              </button>
-              <div class="menu-center">
-                <h3 class="text-center">Signalements</h3>
-              </div>
-
-          </div>
-      </nav>
-
-    <div class="row">
-      <div class="accordion col-12" id="signal_list">
-        <div class="card">
-          <div class="card-header" id="headingOne" data-toggle="collapse"
-            data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-            <h2 class="mb-0">
-              <button class="btn col-12 " type="button">
-                <div class="row">
-                  <div class="col text-left mb-0">Collapsible Group Item #1</div>
-                  <div class="col text-right mb-0">
-                    <span class="badge badge-primary text-left">
-                      <i class="fas fa-exclamation-triangle"></i>
-                    </span>
-                  </div>
-                </div>
-
-              </button>
-
-            </h2>
-          </div>
-
-          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#signal_list">
-            <div class="card-body">
-              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+            <button type="button" id="sidebarCollapse" class="btn btn-actionbar">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="menu-center">
+              <h3 class="text-center">Signalements</h3>
             </div>
-          </div>
+
         </div>
-      </div>
+
+        <div class="nav nav-pills pt-1" id="nav-tab" role="tablist">
+
+          <a class="nav-item nav-link mx-1 active" id="nav-retard-tab" data-toggle="tab" href="#nav-retard" role="tab" aria-controls="nav-retard" aria-selected="true">Retard</a>
+          <a class="nav-item nav-link mx-1" id="nav-accident-tab" data-toggle="tab" href="#nav-accident" role="tab" aria-controls="nav-accident" aria-selected="false">Accident</a>
+          <a class="nav-item nav-link mx-1" id="nav-travaux-tab" data-toggle="tab" href="#nav-travaux" role="tab" aria-controls="nav-travaux" aria-selected="false">Travaux</a>
+          <a class="nav-item nav-link mx-1" id="nav-baree-tab" data-toggle="tab" href="#nav-baree" role="tab" aria-controls="nav-baree" aria-selected="false">Route barée</a>
+          <a class="nav-item nav-link mx-1" id="nav-degradation-tab" data-toggle="tab" href="#nav-degradation" role="tab" aria-controls="nav-degradation" aria-selected="false">Dégradation</a>
+        
+        </div>
+    </nav>
+
+    <div class="tab-content" id="nav-tabContent">
+      <div class="tab-pane fade show active" id="nav-retard" role="tabpanel" aria-labelledby="nav-retard-tab"></div>
+      <div class="tab-pane fade" id="nav-accident" role="tabpanel" aria-labelledby="nav-accident-tab"></div>
+      <div class="tab-pane fade" id="nav-travaux" role="tabpanel" aria-labelledby="nav-travaux-tab"></div>
+      <div class="tab-pane fade" id="nav-baree" role="tabpanel" aria-labelledby="nav-baree-tab"></div>
+      <div class="tab-pane fade" id="nav-degradation" role="tabpanel" aria-labelledby="nav-degradation-tab"></div>
     </div>
+
+    <script src="config.js"></script>
+    <script src="js/signalements.js"></script>
 
     <script type="text/javascript">
       $('#sidebarCollapse').on('click', function () {

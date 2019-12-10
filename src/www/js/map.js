@@ -1,9 +1,13 @@
 
 ///// Adresse du geoserver avec son espace de travail
 ///// ip fac : 192.168.46.196:8080
-var host = (typeof geoserver !== 'undefined' && typeof geoserver.host === 'string') ? geoserver.host : "192.168.46.196"
-var port = (typeof geoserver !== 'undefined' && typeof geoserver.port === 'string') ? geoserver.port : "8080"
-var adresse_geoserver = 'http://'+host+':'+port+'/geoserver/CELC';
+var host_geoserver = (typeof geoserver !== 'undefined' && typeof geoserver.host === 'string') ? geoserver.host : "192.168.46.196"
+var port_geoserver = (typeof geoserver !== 'undefined' && typeof geoserver.port === 'string') ? geoserver.port : "8080"
+var adresse_geoserver = 'http://'+host_geoserver+':'+port_geoserver+'/geoserver/CELC';
+
+var host_api = (typeof api !== 'undefined' && typeof api.host === 'string') ? api.host : "localhost"
+var port_api = (typeof api !== 'undefined' && typeof api.port === 'string') ? api.port : "9152"
+var adresse_api = 'http://'+host_api+':'+port_api;
 
 ///// Fonction permettant de récuperer les informations sur le GeoServeur
 var getSource = function(lien, couche){
@@ -39,6 +43,16 @@ var getSource = function(lien, couche){
           return source;
         };
 
+var getSignalementStyle = function(type_signalement, color = "ef5646") {
+    return [
+        new ol.style.Style({
+            image: new ol.style.Icon(({
+                anchor: [0.5, 1],
+                src: `http://cdn.mapmarker.io/api/v1/pin?text=${type_signalement.substring(0,1).toUpperCase()}&size=50&hoffset=1&background=${color}`
+            }))
+        })
+    ]
+}
 
 /** ----- Création des différentes couches pour la map ----- **/
 
@@ -59,6 +73,12 @@ var arrets_tao_tram = new ol.layer.Vector({
     })
 });
 
+var signalements_arrets_tao_tram = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_arrets_tao_tram'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+});
+
 var arrets_tao_bus = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:arrets_tao_bus'),
@@ -69,6 +89,12 @@ var arrets_tao_bus = new ol.layer.Vector({
             stroke: new ol.style.Stroke({color : 'rgb(26,52,150)', width: 2})
         })
     })
+});
+
+var signalements_arrets_tao_bus = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_arrets_tao_bus'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
 });
 
 var lignes_tao_bus = new ol.layer.Vector({
@@ -85,6 +111,13 @@ var lignes_tao_bus = new ol.layer.Vector({
     })
 });
 
+var signalements_lignes_tao_bus = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_lignes_tao_bus'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+});
+
+
 var lignes_tao_tram = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:lignes_tao_tram'),
@@ -97,6 +130,12 @@ var lignes_tao_tram = new ol.layer.Vector({
             width: 5
         })
     })
+});
+
+var signalements_lignes_tao_tram = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_lignes_tao_tram'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
 });
 
 var lignes_velo = new ol.layer.Vector({
@@ -113,6 +152,12 @@ var lignes_velo = new ol.layer.Vector({
     })
 });
 
+var signalements_lignes_velo = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_lignes_velo'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+});
+
 var stations_velo = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:stations_velo'),
@@ -123,6 +168,12 @@ var stations_velo = new ol.layer.Vector({
             stroke: new ol.style.Stroke({color : 'rgb(10,164,0)', width: 5})
         })
     })
+});
+
+var signalements_stations_velo = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_stations_velo'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
 });
 
 var parcs_relais_velo = new ol.layer.Vector({
@@ -137,6 +188,12 @@ var parcs_relais_velo = new ol.layer.Vector({
     })
 });
 
+var signalements_parcs_relais_velo = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_parcs_relais_velo'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
+});
+
 var parkings_velo = new ol.layer.Vector({
     renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:parkings_velo'),
@@ -147,6 +204,12 @@ var parkings_velo = new ol.layer.Vector({
             stroke: new ol.style.Stroke({color : 'rgb(164,133,23)', width: 2})
         })
     })
+});
+
+var signalements_parkings_velo = new ol.layer.Vector({
+    renderMode: 'image',
+    source: getSource(adresse_geoserver, 'CELC:signalements_parkings_velo'),
+    style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'))
 });
 
 ///// Création du view pour la carte
@@ -170,8 +233,15 @@ var map = new ol.Map({
         arrets_tao_tram,
         stations_velo,
         parcs_relais_velo,
-        parkings_velo
-
+        parkings_velo,
+        signalements_lignes_velo,
+        signalements_lignes_tao_bus,
+        signalements_lignes_tao_tram,
+        signalements_arrets_tao_bus,
+        signalements_arrets_tao_tram,
+        signalements_stations_velo,
+        signalements_parcs_relais_velo,
+        signalements_parkings_velo,
     ],
     view: view
 
@@ -352,12 +422,20 @@ var init_map = function() {
 
     map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
     map.getLayers().array_[4].setVisible($("#bus").is(":checked"));
+    signalements_arrets_tao_bus.setVisible($("#signal_check").is(":checked") && $("#bus").is(":checked"));
+    signalements_lignes_tao_bus.setVisible($("#signal_check").is(":checked") && $("#bus").is(":checked"));
     map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
     map.getLayers().array_[5].setVisible($("#tram").is(":checked"));
+    signalements_arrets_tao_tram.setVisible($("#signal_check").is(":checked") && $("#tram").is(":checked"));
+    signalements_lignes_tao_tram.setVisible($("#signal_check").is(":checked") && $("#tram").is(":checked"));
     map.getLayers().array_[6].setVisible($("#station_velo").is(":checked"));
+    signalements_stations_velo.setVisible($("#signal_check").is(":checked") && $("#station_velo").is(":checked"));
     map.getLayers().array_[7].setVisible($("#parc_relais_velo").is(":checked"));
+    signalements_parcs_relais_velo.setVisible($("#signal_check").is(":checked") && $("#parc_relais_velo").is(":checked"));
     map.getLayers().array_[8].setVisible($("#parkings_velo").is(":checked"));
+    signalements_parkings_velo.setVisible($("#signal_check").is(":checked") && $("#parkings_velo").is(":checked"));
     map.getLayers().array_[1].setVisible($("#piste_velo").is(":checked"));
+    signalements_lignes_velo.setVisible($("#signal_check").is(":checked") && $("#piste_velo").is(":checked"));
 
 
 
@@ -365,48 +443,23 @@ var init_map = function() {
         $(this).change(function functionName(){
             map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
             map.getLayers().array_[4].setVisible($("#bus").is(":checked"));
+            signalements_arrets_tao_bus.setVisible($("#signal_check").is(":checked") && $("#bus").is(":checked"));
+            signalements_lignes_tao_bus.setVisible($("#signal_check").is(":checked") && $("#bus").is(":checked"));
             map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
             map.getLayers().array_[5].setVisible($("#tram").is(":checked"));
+            signalements_arrets_tao_tram.setVisible($("#signal_check").is(":checked") && $("#tram").is(":checked"));
+            signalements_lignes_tao_tram.setVisible($("#signal_check").is(":checked") && $("#tram").is(":checked"));
             map.getLayers().array_[6].setVisible($("#station_velo").is(":checked"));
+            signalements_stations_velo.setVisible($("#signal_check").is(":checked") && $("#station_velo").is(":checked"));
             map.getLayers().array_[7].setVisible($("#parc_relais_velo").is(":checked"));
+            signalements_parcs_relais_velo.setVisible($("#signal_check").is(":checked") && $("#parc_relais_velo").is(":checked"));
             map.getLayers().array_[8].setVisible($("#parkings_velo").is(":checked"));
+            signalements_parkings_velo.setVisible($("#signal_check").is(":checked") && $("#parkings_velo").is(":checked"));
             map.getLayers().array_[1].setVisible($("#piste_velo").is(":checked"));
+            signalements_lignes_velo.setVisible($("#signal_check").is(":checked") && $("#piste_velo").is(":checked"));
 
         })
     });
-
-    // if (currZoom <= 13) {
-    //     map.getLayers().array_[3].setVisible(false);
-    //     map.getLayers().array_[4].setVisible(false);
-    // }
-    // else{
-    //     map.getLayers().array_[3].setVisible($("#bus").is(":checked"));
-    //     map.getLayers().array_[4].setVisible($("#tram").is(":checked"));
-    // }
-    //
-    // map.on('moveend', function(e) {
-    //     currZoom = map.getView().getZoom();
-    //     console.log(currZoom)
-    //     if (currZoom <= 13) {
-    //         map.getLayers().array_[3].setVisible(false);
-    //         map.getLayers().array_[4].setVisible(false);
-    //     }
-    //     else{
-    //         if ($("#bus").is(":checked")){
-    //             map.getLayers().array_[3].setVisible(true);
-    //         }
-    //         else{
-    //             map.getLayers().array_[3].setVisible(false);
-    //         }
-    //         if($("#tram").is(":checked")){
-    //             map.getLayers().array_[4].setVisible(true);
-    //         }
-    //         else{
-    //             map.getLayers().array_[4].setVisible(false);
-    //         }
-    //     }
-    //
-    // });
 
 
     /** ------ Récupération infos ----- **/
@@ -419,6 +472,7 @@ var init_map = function() {
     var selectElement = document.getElementById('info');
 
     var changeInteraction = function() {
+        //TODO Gérer les pin des signalements
         var currZoom = map.getView().getZoom();
         // console.log(currZoom)
         if (select !== null) {
@@ -428,7 +482,7 @@ var init_map = function() {
         if (select !== null) {
             map.addInteraction(select);
             select.on('select', function(e) {
-                console.log(e.target.getFeatures().getArray());
+                console.log(e, e.target.getFeatures().getArray());
 
                 let selected = e.target.getFeatures().getArray()[0];
                 // alert(getInfos(selected));
@@ -436,6 +490,10 @@ var init_map = function() {
                 var id = selected.getId().split('.')[1];
                 var type = selected.getId().split('.')[0];
                 var info = getInfos(selected);
+
+                var coord = ol.proj.toLonLat(e.mapBrowserEvent.coordinate, map.getView().getProjection())
+
+                console.log(getGeoPoint(coord), type, id);
 
                 $("#modalInfoTitle").text(info);
                 getSignalementInfo(type,id);
@@ -446,6 +504,7 @@ var init_map = function() {
                   sessionStorage.setItem("infoLoc",info);
                   sessionStorage.setItem("idLoc",id);
                   sessionStorage.setItem("typeLoc",type);
+                  sessionStorage.setItem("coordLoc",getGeoPoint(coord));
                 }, 0)
             });
         }
@@ -462,9 +521,9 @@ var init_map = function() {
             case 'arrets_tao_tram':
                 return `Arret de tram : ${prop["name"]}`;
             case 'lignes_tao_bus':
-                return `Ligne de bus ${prop["short_name"]} ${prop["long_name"]}`;
+                return `Ligne de bus ${prop["name"]} ${prop["long_name"]}`;
             case 'lignes_tao_tram':
-                return `Ligne de tram ${prop["short_name"]} ${prop["long_name"]}`;
+                return `Ligne de tram ${prop["name"]} ${prop["long_name"]}`;
             case 'stations_velo':
                 return `Arrêt vélo ${prop["name"]}`;
             case 'parcs_relais_velo':
@@ -478,48 +537,135 @@ var init_map = function() {
         }
     };
 
+    var getGeoPoint = function(coord) {
+        return `Point(${coord[0]} ${coord[1]})`
+    }
+
     var getSignalementInfo = function (type, id) {
         // Create a request variable and assign a new XMLHttpRequest object to it.
         var request = new XMLHttpRequest();
         console.log("id : "+ id);
         // Open a new connection, using the GET request on the URL endpoint
-        request.open('GET', 'http://localhost:5050/signalement/id_object/' + id, true);
+        request.open('GET', `${adresse_api}/signalement/type_object/${type}/id_object/${id}`, true)
 
         request.onload = function() {
             // Begin accessing JSON data here
             console.log("ca passe")
             var data = JSON.parse(this.response);
             console.log(data)
+            $( "#signalements_text" ).html("");
+            if(data["signalements"] !== undefined){
+
+                // for(const sign in data["signalements"]){
+                //     console.log(data[sign])
+                // }
+
+                let type_display = "";
+                (data["signalements"]).forEach(signalement => {
+
+                    switch(signalement.type_signalement) {
+                        case "retard":
+                            type_display = `Retard`;
+                            break;
+                        case "accident":
+                            type_display = "Accident";
+                            break;
+                        case "travaux":
+                            type_display = "Travaux";
+                            break;
+                        case "baree":
+                            type_display = "Route barée";
+                            break;
+                        case "degradation":
+                            type_display = "Dégradation";
+                            break;
+                    }
+
+                    var delay = ""
+                    if(signalement.type_signalement == "retard")
+                        delay = signalement.retard + "mins"
+
+                    var contenu = `<div class="row">
+                     <div class="accordion col-12" id="signal_list_${signalement.id}">
+                       <div class="card">
+                         <div class="card-header" id="headingOne_${signalement.id}" data-toggle="collapse"
+                           data-target="#collapseOne_${signalement.id}" aria-expanded="true" aria-controls="collapseOne_${signalement.id}">
+                           <h2 class="mb-0">
+                             <button class="btn col-12 " type="button">
+                               <div class="row">
+                                 <div class="col col-sm-9 text-left mb-0">${type_display}</div>
+                                 <div class="col col-sm-3 text-right mb-0">
+                                   <span>${delay}</span>
+                                 </div>
+                               </div>
+                             </button>
+                           </h2>
+                         </div>
+                         <div id="collapseOne_${signalement.id}" class="collapse" aria-labelledby="headingOne_${signalement.id}" data-parent="#signal_list_${signalement.id}">
+                           <div class="card-body">
+                             ${signalement.commentaire}
+                           </div>
+                         </div>
+                       </div>
+                     </div>
+                 </div>`
+
+
+
+
+
+
+
+
+                    // console.log(signalement.type_signalement+ " "+ signalement.commentaire)
+                    //
+                    // var com = ""
+                    //
+                    // if(signalement.commentaire != null)
+                    //     com = signalement.commentaire;
+                    //
+                    // contenu +="<li></li><p>" + signalement.type_signalement + " : "
+                    // if(signalement.type_signalement == "retard")
+                    //     contenu += signalement.retard + " mins</p>"
+                    // else
+                    //     contenu+="</br>"
+                    // contenu+="" + com + "</p></li>"
+                    $( "#signalements_text" ).append(contenu);
+
+                });
+                // contenu+="</ul>"
+                // console.log(contenu)
+            }
+
+
+
+
+
+
+
 
             // if (request.status >= 200 && request.status < 400){
             //     console.log("coucou")
             // }
         };
 
-// Send request
+        // Send request
         request.send()
     };
 
-    var getSignalementInfo1 = async function(type,id){
-        console.log("coucou")
-        const response = await fetch('http://localhost:5050/signalement/id_object/'+id);
-        const myJson = await response.json();
-        console.log(myJson)
-    };
-
-    $(document).ready(function () {
+    // $(document).ready(function () {
 
     // function getSignalementInfo(type,id){
-      $.ajax({
-  			type : 'GET',
-  			url  : 'test.json',
-  			success : function(response){
-  				response = JSON.parse(response);
-          $("#modal-body").text(response)
-        }
-      });
+    //   $.ajax({
+  	// 		type : 'GET',
+  	// 		url  : 'test.json',
+  	// 		success : function(response){
+  	// 			response = JSON.parse(response);
+    //       $("#modal-body").text(response)
+    //     }
+    //   });
     // }
-});
+    // });
     $("#newSignalement").on("click",function(){
       document.location.href = "new_signalement.html";
     })

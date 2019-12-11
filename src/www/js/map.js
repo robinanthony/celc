@@ -431,6 +431,7 @@ map.getView().on('change:resolution', function(evt) {
     parkings_velo.setStyle(newStyle_velo_parkings);
     lignes_velo.setStyle(newStyle_ligne_velo)
 
+    sessionStorage.setItem("zoom", zoom);
 });
 
 
@@ -782,6 +783,11 @@ var init_map = function() {
         var newPosition=ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326');
         map.getView().setCenter(ol.proj.fromLonLat([newPosition[0], newPosition[1]]));
     });
+
+    if (sessionStorage.getItem("zoom") !== null) {
+        let zoom = sessionStorage.getItem("zoom");
+        map.getView().setZoom(parseInt(zoom));
+    }
 
     if (sessionStorage.getItem("position") !== null) {
         let pos = sessionStorage.getItem("position").split(',');

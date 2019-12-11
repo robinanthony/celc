@@ -783,6 +783,20 @@ var init_map = function() {
         map.getView().setCenter(ol.proj.fromLonLat([newPosition[0], newPosition[1]]));
     });
 
+    if (sessionStorage.getItem("position") !== null) {
+        let pos = sessionStorage.getItem("position").split(',');
+        pos.forEach((s, i, a) => a[i] = parseFloat(s));
+        map.getView().setCenter(pos);
+    }
+
+    $("#bus").prop("checked", sessionStorage.getItem("bus_checked") === "true");
+    $("#tram").prop("checked", sessionStorage.getItem("tram_checked") === "true");
+    $("#station_velo").prop("checked", sessionStorage.getItem("station_velo_checked") === "true");
+    $("#parc_relais_velo").prop("checked", sessionStorage.getItem("parc_relais_velo_checked") === "true");
+    $("#parkings_velo").prop("checked", sessionStorage.getItem("parkings_velo_checked") === "true");
+    $("#piste_velo").prop("checked", sessionStorage.getItem("piste_velo_checked") === "true");
+    $("#signal_check").prop("checked", sessionStorage.getItem("signal_check_checked") === "true" || sessionStorage.getItem("signal_check_checked") === null);
+
     map.getLayers().array_[2].setVisible($("#bus").is(":checked"));
     map.getLayers().array_[4].setVisible($("#bus").is(":checked"));
     signalements_arrets_tao_bus.setVisible($("#signal_check").is(":checked") && $("#bus").is(":checked"));
@@ -800,7 +814,10 @@ var init_map = function() {
     map.getLayers().array_[1].setVisible($("#piste_velo").is(":checked"));
     signalements_lignes_velo.setVisible($("#signal_check").is(":checked") && $("#piste_velo").is(":checked"));
 
-
+    map.getView().on('change:center', function() {
+        let pos = map.getView().getCenter();
+        sessionStorage.setItem("position", pos);
+    })
 
     $("input:checkbox").each(function(){
         $(this).change(function functionName(){
@@ -808,19 +825,42 @@ var init_map = function() {
             map.getLayers().array_[4].setVisible($("#bus").is(":checked"));
             signalements_arrets_tao_bus.setVisible($("#signal_check").is(":checked") && $("#bus").is(":checked"));
             signalements_lignes_tao_bus.setVisible($("#signal_check").is(":checked") && $("#bus").is(":checked"));
+
+            sessionStorage.setItem("bus_checked", $("#bus").is(":checked"));
+            
+
             map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
             map.getLayers().array_[5].setVisible($("#tram").is(":checked"));
             signalements_arrets_tao_tram.setVisible($("#signal_check").is(":checked") && $("#tram").is(":checked"));
             signalements_lignes_tao_tram.setVisible($("#signal_check").is(":checked") && $("#tram").is(":checked"));
+
+            sessionStorage.setItem("tram_checked", $("#tram").is(":checked"));
+            
+
             map.getLayers().array_[6].setVisible($("#station_velo").is(":checked"));
             signalements_stations_velo.setVisible($("#signal_check").is(":checked") && $("#station_velo").is(":checked"));
+
+            sessionStorage.setItem("station_velo_checked", $("#station_velo").is(":checked"));
+            
+
             map.getLayers().array_[7].setVisible($("#parc_relais_velo").is(":checked"));
             signalements_parcs_relais_velo.setVisible($("#signal_check").is(":checked") && $("#parc_relais_velo").is(":checked"));
+
+            sessionStorage.setItem("parc_relais_velo_checked", $("#parc_relais_velo").is(":checked"));
+            
+
             map.getLayers().array_[8].setVisible($("#parkings_velo").is(":checked"));
             signalements_parkings_velo.setVisible($("#signal_check").is(":checked") && $("#parkings_velo").is(":checked"));
+
+            sessionStorage.setItem("parkings_velo_checked", $("#parkings_velo").is(":checked"));
+            
+
             map.getLayers().array_[1].setVisible($("#piste_velo").is(":checked"));
             signalements_lignes_velo.setVisible($("#signal_check").is(":checked") && $("#piste_velo").is(":checked"));
 
+            sessionStorage.setItem("piste_velo_checked", $("#piste_velo").is(":checked"));
+
+            sessionStorage.setItem("signal_check_checked", $("#signal_check").is(":checked"));
         })
     });
 

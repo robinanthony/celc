@@ -130,7 +130,7 @@ var getSelectedStyle = function(feature, resolution) {
 /** ----- Création des différentes couches pour la map ----- **/
 
 var osm = new ol.layer.Tile({
-    extent: ol.proj.transformExtent([1.7, 47.7, 2.1, 48.1],'EPSG:4326','EPSG:3857'),
+    //extent: ol.proj.transformExtent([1.7, 47.7, 2.1, 48.1],'EPSG:4326','EPSG:3857'),
     source: new ol.source.OSM({opaque:false})
 });
 

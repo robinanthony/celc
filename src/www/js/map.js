@@ -286,8 +286,60 @@ var view = new ol.View({
 });
 
 
+// Geolocalisation
+
+var geolocation = new ol.Geolocation({
+    // enableHighAccuracy must be set to true to have the heading value.
+    trackingOptions: {
+        enableHighAccuracy: true
+    },
+    projection: view.getProjection()
+});
+
+// handle geolocation error.
+geolocation.on('error', function(error) {
+    alert(error.message);
+});
+
+var CenterOnGeolocControl = /*@__PURE__*/(function (Control) {
+    function CenterOnGeolocControl(opt_options) {
+      var options = opt_options || {};
+  
+      var button = document.createElement('button');
+      button.innerHTML = 'O';
+  
+      var element = document.createElement('div');
+      element.className = 'center_on_pos ol-unselectable ol-control';
+      element.appendChild(button);
+  
+      Control.call(this, {
+        element: element,
+        target: options.target
+      });
+  
+      button.addEventListener('click', this.handleCenterOnGeoloc.bind(this), false);
+    }
+  
+    if ( Control ) CenterOnGeolocControl.__proto__ = Control;
+    CenterOnGeolocControl.prototype = Object.create( Control && Control.prototype );
+    CenterOnGeolocControl.prototype.constructor = CenterOnGeolocControl;
+  
+    CenterOnGeolocControl.prototype.handleCenterOnGeoloc = function handleCenterOnGeoloc () {
+        var coordinates = geolocation.getPosition();
+        positionFeature.setGeometry(coordinates ?
+            new ol.geom.Point(coordinates) : null);
+        var newPosition=ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326');
+        map.getView().setCenter(ol.proj.fromLonLat([newPosition[0], newPosition[1]]));
+    };
+  
+    return CenterOnGeolocControl;
+  }(ol.control.Control));
+
 /** ----- Création de la carte sur la target "map" ----- **/
 var map = new ol.Map({
+    controls: ol.control.defaults().extend([
+        new CenterOnGeolocControl()
+    ]),
     target: 'map',
     layers: [
         osm,
@@ -310,6 +362,39 @@ var map = new ol.Map({
     ],
     view: view
 
+});
+
+
+var accuracyFeature = new ol.Feature();
+geolocation.on('change:accuracyGeometry', function() {
+    accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+});
+
+var positionFeature = new ol.Feature();
+positionFeature.setStyle(new ol.style.Style({
+    image: new ol.style.Circle({
+        radius: 6,
+        fill: new ol.style.Fill({
+            color: '#3399CC'
+        }),
+        stroke: new ol.style.Stroke({
+            color: '#fff',
+            width: 2
+        })
+    })
+}));
+
+geolocation.on('change:position', function() {
+    var coordinates = geolocation.getPosition();
+    positionFeature.setGeometry(coordinates ?
+        new ol.geom.Point(coordinates) : null);
+});
+
+new ol.layer.Vector({
+    map: map,
+    source: new ol.source.Vector({
+        features: [accuracyFeature, positionFeature]
+    })
 });
 
 /** ----- Affichage couches ----- **/
@@ -725,62 +810,7 @@ var getSignalementObjet = function (id) {
 };
 
 var init_map = function() {
-    // Geolocalisation
-
-    var geolocation = new ol.Geolocation({
-        // enableHighAccuracy must be set to true to have the heading value.
-        trackingOptions: {
-          enableHighAccuracy: true
-        },
-        projection: view.getProjection()
-      });
-
-    // handle geolocation error.
-    geolocation.on('error', function(error) {
-        alert(error.message);
-      });
-
-    var accuracyFeature = new ol.Feature();
-    geolocation.on('change:accuracyGeometry', function() {
-      accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
-    });
-
-    var positionFeature = new ol.Feature();
-    positionFeature.setStyle(new ol.style.Style({
-      image: new ol.style.Circle({
-        radius: 6,
-        fill: new ol.style.Fill({
-          color: '#3399CC'
-        }),
-        stroke: new ol.style.Stroke({
-          color: '#fff',
-          width: 2
-        })
-      })
-    }));
-
-    geolocation.on('change:position', function() {
-      var coordinates = geolocation.getPosition();
-      positionFeature.setGeometry(coordinates ?
-        new ol.geom.Point(coordinates) : null);
-    });
-
-    new ol.layer.Vector({
-      map: map,
-      source: new ol.source.Vector({
-        features: [accuracyFeature, positionFeature]
-      })
-    });
-
     geolocation.setTracking(true);
-
-    geolocation.once('change:position', function() {
-        var coordinates = geolocation.getPosition();
-        positionFeature.setGeometry(coordinates ?
-            new ol.geom.Point(coordinates) : null);
-        var newPosition=ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326');
-        map.getView().setCenter(ol.proj.fromLonLat([newPosition[0], newPosition[1]]));
-    });
 
     if (sessionStorage.getItem("rotation") !== null) {
         let rotation = sessionStorage.getItem("rotation");
@@ -796,6 +826,14 @@ var init_map = function() {
         let pos = sessionStorage.getItem("position").split(',');
         pos.forEach((s, i, a) => a[i] = parseFloat(s));
         map.getView().setCenter(pos);
+    } else {
+        geolocation.once('change:position', function() {
+            var coordinates = geolocation.getPosition();
+            positionFeature.setGeometry(coordinates ?
+                new ol.geom.Point(coordinates) : null);
+            var newPosition=ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326');
+            map.getView().setCenter(ol.proj.fromLonLat([newPosition[0], newPosition[1]]));
+        });
     }
 
     $("#bus").prop("checked", sessionStorage.getItem("bus_checked") === "true");

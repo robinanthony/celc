@@ -56,6 +56,16 @@
     top: 4rem;
 }
 
+.center_on_pos {
+    bottom: 1.5rem;
+    right: 0.5rem;
+    border-radius: 1rem;
+}
+
+.center_on_pos button {
+    border-radius: 1rem;
+}
+
 #sidebar {
     min-width: 250px;
     max-width: 250px;

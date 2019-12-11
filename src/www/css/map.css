@@ -51,6 +51,11 @@
     top: 4rem;
 }
 
+.ol-rotate.ol-unselectable.ol-control {
+    z-index: 9995;
+    top: 4rem;
+}
+
 #sidebar {
     min-width: 250px;
     max-width: 250px;

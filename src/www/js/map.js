@@ -103,7 +103,8 @@ var getSignalementStyle = function(type_signalement, color = "#ef5646") {
         new ol.style.Style({
             image: new ol.style.Icon(({
                 anchor: [0.5, 1],
-                src: getMarkerImage(color, "#ffffff", type_signalement.substring(0,1).toUpperCase())
+                src: getMarkerImage(color, "#ffffff", type_signalement.substring(0,1).toUpperCase()),
+                rotateWithView: false
             }))
         })
     ]
@@ -116,7 +117,8 @@ var getSelectedStyle = function(feature, resolution) {
             new ol.style.Style({
                 image: new ol.style.Icon(({
                     anchor: [0.5, 1],
-                    src: getMarkerImage("#0099FF", "#ffffff", type_signalement.substring(0,1).toUpperCase(), "#ffffff")
+                    src: getMarkerImage("#0099FF", "#ffffff", type_signalement.substring(0,1).toUpperCase(), "#ffffff"),
+                    rotateWithView: false
                 }))
             })
         ]
@@ -145,7 +147,6 @@ var arrets_tao_tram = new ol.layer.Vector({
 });
 
 var signalements_arrets_tao_tram = new ol.layer.Vector({
-    renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_arrets_tao_tram'),
     style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(255,45,23,0.95)')
 });
@@ -163,7 +164,6 @@ var arrets_tao_bus = new ol.layer.Vector({
 });
 
 var signalements_arrets_tao_bus = new ol.layer.Vector({
-    renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_arrets_tao_bus'),
     style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(103,156,200,0.95)')
 });
@@ -183,7 +183,6 @@ var lignes_tao_bus = new ol.layer.Vector({
 });
 
 var signalements_lignes_tao_bus = new ol.layer.Vector({
-    renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_lignes_tao_bus'),
     style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(103,156,200,0.95)')
 });
@@ -204,7 +203,6 @@ var lignes_tao_tram = new ol.layer.Vector({
 });
 
 var signalements_lignes_tao_tram = new ol.layer.Vector({
-    renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_lignes_tao_tram'),
     style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(255,45,23,0.95)')
 });
@@ -224,7 +222,6 @@ var lignes_velo = new ol.layer.Vector({
 });
 
 var signalements_lignes_velo = new ol.layer.Vector({
-    renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_lignes_velo'),
     style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(15,255,233,0.95)')
 });
@@ -242,7 +239,6 @@ var stations_velo = new ol.layer.Vector({
 });
 
 var signalements_stations_velo = new ol.layer.Vector({
-    renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_stations_velo'),
     style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(51, 178, 41, 0.95)')
 });
@@ -260,7 +256,6 @@ var parcs_relais_velo = new ol.layer.Vector({
 });
 
 var signalements_parcs_relais_velo = new ol.layer.Vector({
-    renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_parcs_relais_velo'),
     style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(176, 49, 162, 0.95)')
 });
@@ -278,7 +273,6 @@ var parkings_velo = new ol.layer.Vector({
 });
 
 var signalements_parkings_velo = new ol.layer.Vector({
-    renderMode: 'image',
     source: getSource(adresse_geoserver, 'CELC:signalements_parkings_velo'),
     style: (feature, resolution) => getSignalementStyle(feature.get('type_signalement'), 'rgba(209, 172, 43, 0.95)')
 });
@@ -319,6 +313,10 @@ var map = new ol.Map({
 });
 
 /** ----- Affichage couches ----- **/
+
+map.getView().on('change:rotation', function(evt) {
+    sessionStorage.setItem("rotation", map.getView().getRotation());
+});
 
 map.getView().on('change:resolution', function(evt) {
     var zoom = map.getView().getZoom();
@@ -437,7 +435,7 @@ map.getView().on('change:resolution', function(evt) {
 
 /** ------ Récupération infos ----- **/
 
-var select = new ol.interaction.Select({style: getSelectedStyle});
+var select = new ol.interaction.Select({style: getSelectedStyle, hitTolerance: 5});
 map.addInteraction(select);
 select.on('select', function(e) {
     layers_features = [
@@ -783,6 +781,11 @@ var init_map = function() {
         var newPosition=ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326');
         map.getView().setCenter(ol.proj.fromLonLat([newPosition[0], newPosition[1]]));
     });
+
+    if (sessionStorage.getItem("rotation") !== null) {
+        let rotation = sessionStorage.getItem("rotation");
+        map.getView().setRotation(parseFloat(rotation));
+    }
 
     if (sessionStorage.getItem("zoom") !== null) {
         let zoom = sessionStorage.getItem("zoom");

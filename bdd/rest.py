@@ -16,6 +16,12 @@ PASSWORD = "docker"
 HOST = "postgresql"
 PORT = "5432"
 
+DEC2FLOAT = psycopg2.extensions.new_type(
+    psycopg2.extensions.DECIMAL.values,
+    'DEC2FLOAT',
+    lambda value, curs: float(value) if value is not None else None)
+psycopg2.extensions.register_type(DEC2FLOAT)
+
 def getJSON(rows, curDesc):
     columns = [desc[0] for desc in curDesc]
     result = []

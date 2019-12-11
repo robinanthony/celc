@@ -113,6 +113,7 @@ function submitSignal() {
         success : function(response) {
             console.log(response);
             alert("Signalement créé")
+            returnMap();
         },
         error : function(xhr, ajaxOptions, thrownError) {
             console.log(xhr.responseText);

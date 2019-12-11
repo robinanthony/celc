@@ -100,7 +100,7 @@ function submitSignal() {
 
     $.ajax({
         type : 'POST',
-        url  : 'http://localhost:5050/signalement',
+        url  : adresse_api+'/signalement',
         data : JSON.stringify({
             type_signalement: v,
             retard: r,

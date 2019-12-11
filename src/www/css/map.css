@@ -11,6 +11,16 @@
     z-index: 5;    
 }
 
+#check li {
+    font-size: 1.3rem;
+    padding-left: 0.35rem;
+}
+
+#check li label span {
+    font-size: 1.1rem;
+    vertical-align: baseline;
+}
+
 #actionbar {
     z-index: 9990;
     position: fixed;
@@ -171,7 +181,7 @@ a, a:hover, a:focus {
     background: #6d7fcc;
 }
 ul ul a {
-    font-size: 0.9em !important;
+    font-size: 0.9em;
     padding-left: 30px !important;
     background: #6d7fcc;
 }

@@ -713,7 +713,7 @@ var getSignalementInfo = function (type, id, divContent) {
             var data = response;
             console.log(data)
             if(data["signalements"] !== undefined){
-                
+
                 let type_display = "";
                 (data["signalements"]).forEach(signalement => {
 

@@ -103,7 +103,8 @@ function submitSignal() {
             }),
             contentType: "application/json",
             success : function (response) {
-               ajaxInsert(typeSignal,r,byteImg,comment)
+                console.log(response)
+               ajaxInsert(typeSignal,r,null,comment)
             },
             error : function(xhr, ajaxOptions, thrownError) {
                 console.log(xhr.responseText);

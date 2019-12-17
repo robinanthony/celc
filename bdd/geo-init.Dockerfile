@@ -1,6 +1,6 @@
 FROM python:3.7
 
-RUN pip install requests
+RUN pip3 install requests
 
 WORKDIR /home/celc
 

@@ -22,9 +22,17 @@ lignes_velo.traitement()
 
 with open('target/signalements.sql', 'w') as sql_data:
     sql_data.write(
-    """-- Table: public.signalements
-DROP TABLE IF EXISTS public.signalements;
+    """DROP TABLE IF EXISTS public.signalements;
+DROP TABLE IF EXISTS public.images;
 
+-- Table: public.images
+CREATE TABLE public.images
+(
+    id BIGSERIAL NOT NULL,
+    CONSTRAINT images_pkey PRIMARY KEY (id)
+);
+
+-- Table: public.signalements
 CREATE TABLE public.signalements
 (
     id SERIAL NOT NULL,
@@ -34,7 +42,9 @@ CREATE TABLE public.signalements
     type_object character varying(64) NOT NULL,
     id_object integer NOT NULL,
     geom geometry(Point, 4326),
-    CONSTRAINT signalements_pkey PRIMARY KEY (id)
+    id_image integer,
+    CONSTRAINT signalements_pkey PRIMARY KEY (id),
+    CONSTRAINT signalements_fkey FOREIGN KEY (id_image) REFERENCES public.images (id)
 );
 
 """)

@@ -89,7 +89,7 @@ function submitSignal() {
     var comment = $("#comment").val();
     //envoie du type + lieu/arrêt
 
-    if(v == "retard"){
+    if(typeSignal == "retard"){
         r = $("#delay").val();
     }
 
@@ -103,8 +103,8 @@ function submitSignal() {
             }),
             contentType: "application/json",
             success : function (response) {
-                console.log(response)
-               ajaxInsert(typeSignal,r,null,comment)
+                // console.log(response.object.image);
+               // ajaxInsert(typeSignal,r,/*id de limage*/ null,comment)
             },
             error : function(xhr, ajaxOptions, thrownError) {
                 console.log(xhr.responseText);
@@ -113,7 +113,7 @@ function submitSignal() {
         });
     }
     else{
-        ajaxInsert(v,r,null,comment)
+        ajaxInsert(typeSignal,r,null,comment)
     }
 
 

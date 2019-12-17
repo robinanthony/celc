@@ -51,6 +51,8 @@ var addSignalementToDOM = function(signalement, objet) {
             type_display = "Dégradation";
             break;
     }
+    
+    let degradation_image = `<img class="signalement_image" src="${adresse_api}/static/img/${signalement.image_filename}" alt="Image montrant la dégradation">`
 
     let signalDOM = `<div class="row text-center">
  <div class="col-12" id="signal_list_${signalement.id}">
@@ -65,7 +67,8 @@ var addSignalementToDOM = function(signalement, objet) {
          </button>
        </h2>
      </div>
-     <div id="collapseOne_${signalement.id}" class="collapse ${(signalement.commentaire == "" || signalement.commentaire === null) ? '' : 'show'}" aria-labelledby="headingOne_${signalement.id}" data-parent="#signal_list_${signalement.id}">
+     <div id="collapseOne_${signalement.id}" class="collapse ${(signalement.commentaire == "" || signalement.commentaire === null) && signalement.image_filename === null ? '' : 'show'}" aria-labelledby="headingOne_${signalement.id}" data-parent="#signal_list_${signalement.id}">
+       ${signalement.image_filename !== null ? degradation_image : ''}
        <div class="card-body">
          ${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire.replace(/\n/g,"<br>")}
        </div>

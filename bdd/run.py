@@ -29,6 +29,7 @@ DROP TABLE IF EXISTS public.images;
 CREATE TABLE public.images
 (
     id BIGSERIAL NOT NULL,
+    orig_filename character varying(128) NOT NULL,
     CONSTRAINT images_pkey PRIMARY KEY (id)
 );
 

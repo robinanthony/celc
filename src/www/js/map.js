@@ -579,8 +579,30 @@ select.on('select', function(e) {
         info = getInfosSignalement(selected, objet);
 
         modalInfoSetTitle(info);
-        modalInfoSetContent((selected.get('commentaire') == "" || selected.get('commentaire') === null) ? 'Pas de commentaire' : selected.get('commentaire').replace(/\n/g,"<br>"))
-        modalInfoSetButtons(['close'])
+        
+        modalInfoSetButtons(['close']);
+        modalInfoSetContent(`<div class="row">
+                                <span class="vert-center-text col-sm">
+                                    ${(selected.get('commentaire') == "" || selected.get('commentaire') === null) ? 'Pas de commentaire' : selected.get('commentaire').replace(/\n/g,"<br>")}
+                                </span>
+                                <div id="divImg_${selected.get('id')}" class="signalement_image">
+                                </div>
+                            </div>`);
+        $.ajax({
+            type : 'GET',
+            url  : `${adresse_api}/image/${selected.get('id_image')}`,
+            async: false,
+            timeout: 2000,
+            success : function(response) {
+                let degradation_image = `<img id="imgSign_${selected.get('id')}" class="img-thumbnail" src="${adresse_api}/static/img/${response.image.filename}" alt="Image montrant la dégradation">`
+                
+                $(`#divImg_${selected.get('id')}`).html(degradation_image);
+            },
+            error : function(xhr, ajaxOptions, thrownError) {
+                console.log(xhr.responseText);
+                console.log(thrownError);
+            },
+        });
 
         modalInfoShow();
     }
@@ -740,12 +762,12 @@ var getSignalementInfo = function (type, id, divContent) {
                         delay = signalement.retard + "mins"
 
 
-                    if(signalement.type_signalement === "degradation" && signalement.id_image !== null){
-                        recupImage(signalement, type_display, delay, divContent)
-                    }
-                    else {
+                    // if(signalement.type_signalement === "degradation" && signalement.id_image !== null){
+                        // recupImage(signalement, type_display, delay, divContent)
+                    // }
+                    // else {
                         content(signalement, type_display, delay, null, divContent);
-                    }
+                    // }
 
                 });
             }
@@ -778,6 +800,11 @@ var recupImage = function(signalement, type_display, delay, divContent) {
 };
 
 var content = function (signalement, type_display, delay, image, divContent) {
+    
+    
+    let degradation_image = `<div id="divImg_${signalement.id}" class="signalement_image">
+    <img id="imgSign_${signalement.id}" class="img-thumbnail" src="${adresse_api}/static/img/${signalement.image_filename}" alt="Image montrant la dégradation">                             
+</div>`
 
     var contenu =  `
                     <div class="row">
@@ -806,11 +833,9 @@ var content = function (signalement, type_display, delay, image, divContent) {
                                      class="collapse" 
                                      aria-labelledby="headingOne_${signalement.id}" 
                                      data-parent="#signal_list_${signalement.id}">
-                                    <div class="card-body">
-                                        ${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire.replace(/\n/g,"<br>")}
-                                         <div id="divImg_${signalement.id}" class="ml-2 col-sm-6">
-                                 
-                                        </div>
+                                    <div class="row card-body">
+                                        <span class="vert-center-text col-sm">${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire.replace(/\n/g,"<br>")}</span>
+                                        ${signalement.image_filename !== null ? degradation_image : ''}
                                     </div>
                                 </div>
                                
@@ -819,17 +844,6 @@ var content = function (signalement, type_display, delay, image, divContent) {
                     </div>`
     divContent.append(contenu);
 
-
-    if(image !== null){
-        $(`#divImg_${signalement.id}`).append(` <img id="imgSign_${signalement.id}" class="img-thumbnail">`)
-
-        var bytes = new Uint8Array(image)
-        console.log(image)
-        var blob = new Blob([bytes], {type: "application/png"});
-
-        $(`#imgSign_${signalement.id}`).attr("src",window.URL.createObjectURL(blob));
-
-    }
 };
 
 

@@ -63,20 +63,28 @@ function display() {
 }
 
 var byteImg;
+var fileName;
+
+var toHexString = function(byteArray) {
+  return Array.prototype.map.call(byteArray, function(byte) {
+    return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+  }).join('');
+}
 
 var loadFile = function(event) {
     var output = document.getElementById('preview');
     output.src = URL.createObjectURL(event.target.files[0]);
-    var fileName = event.target.files[0].name;
+    fileName = event.target.files[0].name;
     $("#file").val(fileName);
 
     var reader = new FileReader();
     reader.onload = function(){
-        var arrayBuffer = this.result,
-        array = new Uint8Array(arrayBuffer),
-            img = String.fromCharCode.apply(null,array);
+        var arrayBuffer = this.result;
+        console.log(arrayBuffer);
+        array = new Uint8Array(arrayBuffer);
+        //img = String.fromCharCode.apply(null,array);
 
-        byteImg = img
+        byteImg = toHexString(array);
 
     }
     reader.readAsArrayBuffer(event.target.files[0])
@@ -99,12 +107,14 @@ function submitSignal() {
             type: 'POST',
             url: adresse_api+'/image',
             data: JSON.stringify({
-                bytecode: byteImg
+                bytecode: byteImg,
+                filename: fileName
             }),
             contentType: "application/json",
             success : function (response) {
-                console.log(response.image[0]);
-               ajaxInsert(typeSignal,r,response.image[0],comment)
+                console.log(response);
+                console.log(response.image);
+                ajaxInsert(typeSignal,r,response.image,comment)
             },
             error : function(xhr, ajaxOptions, thrownError) {
                 console.log(xhr.responseText);

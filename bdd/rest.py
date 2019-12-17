@@ -44,12 +44,12 @@ def not_found(error):
 
 @app.errorhandler(500)
 def server_error(error):
-    return make_response(jsonify({'error': 'Internal Server Error\n'+error.get_response()}), 500)
+    return make_response(jsonify({'error': 'Internal Server Error \n'+error.get_response()}), 500)
 
 
 @app.errorhandler(Exception)
 def server_exception(error):
-    return make_response(jsonify({'error': 'Internal Server Error\n'+str(error)}), 500)
+    return make_response(jsonify({'error': 'Internal Server Error E \n'+str(error)}), 500)
 
 ##############################################################################
 ##############################################################################
@@ -60,7 +60,8 @@ def get_signalements():
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
-    cursor.execute("SELECT * FROM public.signalements;")
+    cursor.execute("""SELECT s.id as id, s.type_signalement as type_signalement, s.retard as retard, s.commentaire as commentaire, s.type_object as type_object, s.id_object as id_object, s.geom as geom, s.id_image || '_' || i.orig_filename as image_filename 
+                      FROM public.signalements as s LEFT JOIN public.images as i ON s.id_image = i.id;""")
     reponse = jsonify({'signalements': getJSON(cursor.fetchall(), cursor.description)})
 
     cursor.close()
@@ -73,7 +74,9 @@ def get_signalement_byId(signalement_id):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
-    cursor.execute("SELECT * FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
+    cursor.execute("""SELECT s.id as id, s.type_signalement as type_signalement, s.retard as retard, s.commentaire as commentaire, s.type_object as type_object, s.id_object as id_object, s.geom as geom, s.id_image || '_' || i.orig_filename as image_filename 
+                      FROM public.signalements as s LEFT JOIN public.images as i ON s.id_image = i.id 
+                      WHERE id = %(id)s;""", { "id" : signalement_id})
     signal = cursor.fetchone()
     if signal is None:
         abort(404)
@@ -113,7 +116,9 @@ def get_signalements_byType_object(type_object):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
-    cursor.execute("SELECT * FROM public.signalements WHERE type_object = %(type_object)s;", { "type_object" : type_object})
+    cursor.execute("""SELECT s.id as id, s.type_signalement as type_signalement, s.retard as retard, s.commentaire as commentaire, s.type_object as type_object, s.id_object as id_object, s.geom as geom, s.id_image || '_' || i.orig_filename as image_filename 
+                      FROM public.signalements as s LEFT JOIN public.images as i ON s.id_image = i.id 
+                      WHERE type_object = %(type_object)s;""", { "type_object" : type_object})
     reponse = jsonify({'signalements': getJSON(cursor.fetchall(), cursor.description)})
 
     cursor.close()
@@ -126,7 +131,9 @@ def get_signalements_byId_object(type_object, id_object):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
-    cursor.execute("SELECT * FROM public.signalements WHERE id_object = %(id_object)s and type_object = %(type_object)s;", {"id_object" : id_object, "type_object" : type_object})
+    cursor.execute("""SELECT s.id as id, s.type_signalement as type_signalement, s.retard as retard, s.commentaire as commentaire, s.type_object as type_object, s.id_object as id_object, s.geom as geom, s.id_image || '_' || i.orig_filename as image_filename 
+                      FROM public.signalements as s LEFT JOIN public.images as i ON s.id_image = i.id 
+                      WHERE id_object = %(id_object)s and type_object = %(type_object)s;""", {"id_object" : id_object, "type_object" : type_object})
     reponse = jsonify({'signalements': getJSON(cursor.fetchall(), cursor.description)})
 
     cursor.close()
@@ -224,10 +231,10 @@ def get_image_byId(image_id):
     if signal is None:
         print("Oups, 404 sur id : {}".format(image_id))
         abort(404)
+        
+    signal = getJSON([signal], cursor.description)[0]
 
-    with open("img/{}".format(signal[0]), mode="r+") as f:
-        bytecode = f.read()
-        reponse = jsonify({'images': {"id_image" : signal[0], "bytecode" : bytecode}})
+    reponse = jsonify({'image': {"id_image" : signal["id"], "orig_filename" : signal["orig_filename"], "filename" : "{}_{}".format(signal["id"], signal["orig_filename"])}})
 
     cursor.close()
     database.close()
@@ -251,16 +258,17 @@ def add_image():
     print("connection done")
 
     cursor.execute("""
-        INSERT INTO public.images VALUES (DEFAULT) RETURNING *;
-        """)
+        INSERT INTO public.images (orig_filename) VALUES (%(filename)s) RETURNING *;
+        """, {"filename" : request.json.get("filename")})
 
-    id_image = cursor.fetchone()
-    with open("img/{}".format(id_image), mode='w+') as f:
+    id_image = cursor.fetchone()[0]
+    print("id image", id_image)
+    with open("static/img/{}_{}".format(id_image, request.json.get("filename")), mode='w+b') as f:
         print("Lol !")
-        f.write(request.json.get("bytecode"))
+        f.write(bytearray.fromhex(request.json.get("bytecode")))
 
-    with open("img/{}".format(id_image), mode='r+') as f:
-        print(f.read())
+    with open("static/img/{}_{}".format(id_image, request.json.get("filename")), mode='r+b') as f:
+        print(f.read().hex())
 
     reponse = jsonify({'image': id_image})
     database.commit()

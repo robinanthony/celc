@@ -87,6 +87,10 @@
   background-color: #6d7fcc !important;
 }
 
+.signalement_image {
+  max-height: 15rem;
+}
+
 .wrapper {
   display: block;
 }

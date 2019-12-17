@@ -713,11 +713,7 @@ var getSignalementInfo = function (type, id, divContent) {
             var data = response;
             console.log(data)
             if(data["signalements"] !== undefined){
-
-                // for(const sign in data["signalements"]){
-                //     console.log(data[sign])
-                // }
-
+                
                 let type_display = "";
                 (data["signalements"]).forEach(signalement => {
 
@@ -744,39 +740,39 @@ var getSignalementInfo = function (type, id, divContent) {
                         delay = signalement.retard + "mins"
 
                     var contenu = `
-<div class="row">
-    <div class="col-12" id="signal_list_${signalement.id}">
-        <div class="card">
-            <div class="card-header" 
-                 id="headingOne_${signalement.id}" 
-                 data-toggle="collapse"
-                 data-target="#collapseOne_${signalement.id}" 
-                 aria-expanded="true" 
-                 aria-controls="collapseOne_${signalement.id}">
-                <h2 class="mb-0">
-                    <button class="btn col-12 " type="button">
-                        <div class="row">
-                            <div class="col col-sm-9 text-left mb-0">
-                                ${type_display}
-                            </div>
-                            <div class="col col-sm-3 text-right mb-0">
-                                <span>${delay}</span>
+                    <div class="row">
+                        <div class="col-12" id="signal_list_${signalement.id}">
+                            <div class="card">
+                                <div class="card-header" 
+                                     id="headingOne_${signalement.id}" 
+                                     data-toggle="collapse"
+                                     data-target="#collapseOne_${signalement.id}" 
+                                     aria-expanded="true" 
+                                     aria-controls="collapseOne_${signalement.id}">
+                                    <h2 class="mb-0">
+                                        <button class="btn col-12 " type="button">
+                                            <div class="row">
+                                                <div class="col col-sm-9 text-left mb-0">
+                                                    ${type_display}
+                                                </div>
+                                                <div class="col col-sm-3 text-right mb-0">
+                                                    <span>${delay}</span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                </div>
+                                <div id="collapseOne_${signalement.id}" 
+                                     class="collapse" 
+                                     aria-labelledby="headingOne_${signalement.id}" 
+                                     data-parent="#signal_list_${signalement.id}">
+                                    <div class="card-body">
+                                        ${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire.replace(/\n/g,"<br>")}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </button>
-                </h2>
-            </div>
-            <div id="collapseOne_${signalement.id}" 
-                 class="collapse" 
-                 aria-labelledby="headingOne_${signalement.id}" 
-                 data-parent="#signal_list_${signalement.id}">
-                <div class="card-body">
-                    ${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire.replace(/\n/g,"<br>")}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>`
+                    </div>`
 
                     divContent.append(contenu);
                 });

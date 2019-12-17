@@ -28,25 +28,6 @@ $(document).ready(function () {
 });
 
 
-// function extractUrlParams () {
-//     var t = location.search.substring(1);
-//     // console.log(t)
-//
-//     t = t.replace(/%20/g," ");
-//     t = t.replace(/%27/g,"'");
-//     t = t.replace(/%C3%82/g,"Â");
-//     t = t.replace(/%C3%A9/g,"é");
-//     t = t.replace(/%C3%89/g,"E");
-//     t = t.replace(/%C3%A8/g,"è");
-//     t = t.replace(/%C3%AA/g,"ê");
-//     t = t.replace(/%C2%B0/g,"°");
-//
-//     t = t.split('=')[1];
-//     // console.log(t)
-//
-//     return t;
-// }
-
 function display() {
     var v = $("#typeSignal").val();
 
@@ -62,7 +43,7 @@ function display() {
     }
     else if(v == "degradation"){
         $( ".other_param" ).html("<div  id=\"img-upload\">\n" +
-            "              <input type=\"file\" name=\"img[]\" class=\"file\" accept=\"image/*\" onchange=\"loadFile(event)\"> \n" +
+            "              <input type=\"file\" name=\"img[]\" class=\"file\" accept=\"image/*\" onchange=\"loadFile(event)\" id='img'> \n" +
             "              <div class=\"input-group mb-3\">\n" +
             "\n" +
             "              <input type=\"text\" class=\"form-control\" disabled placeholder=\"Upload File\" id=\"file\">\n" +
@@ -79,18 +60,31 @@ function display() {
     else{
         $( ".other_param" ).html("")
     }
-
 }
+
+var byteImg;
 
 var loadFile = function(event) {
     var output = document.getElementById('preview');
     output.src = URL.createObjectURL(event.target.files[0]);
     var fileName = event.target.files[0].name;
     $("#file").val(fileName);
+
+    var reader = new FileReader();
+    reader.onload = function(){
+        var arrayBuffer = this.result,
+        array = new Uint8Array(arrayBuffer),
+            img = String.fromCharCode.apply(null,array);
+
+        byteImg = img
+
+    }
+    reader.readAsArrayBuffer(event.target.files[0])
+
 };
 
 function submitSignal() {
-    var v = $("#typeSignal").val();
+    var typeSignal = $("#typeSignal").val();
     var r = null;
     var comment = $("#comment").val();
     //envoie du type + lieu/arrêt
@@ -98,18 +92,38 @@ function submitSignal() {
     if(v == "retard"){
         r = $("#delay").val();
     }
-    else if(v == "degradation"){
-        //envoie de l'image
+
+
+    if(byteImg !== undefined){
+        $.ajax({
+            type: 'POST',
+            url: adresse_api+'/image',
+            data: JSON.stringify({
+                bytecode: byteImg
+            }),
+            contentType: "application/json",
+            success : function (response) {
+               ajaxInsert(typeSignal,r,byteImg,comment)
+            },
+            error : function(xhr, ajaxOptions, thrownError) {
+                console.log(xhr.responseText);
+                console.log(thrownError);
+            },
+        });
+    }
+    else{
+        ajaxInsert(v,r,null,comment)
     }
 
-    //envoie du commentaire
 
+}
 
+function ajaxInsert(typeSignal,r,image,comment) {
     $.ajax({
         type : 'POST',
         url  : adresse_api+'/signalement',
         data : JSON.stringify({
-            type_signalement: v,
+            type_signalement: typeSignal,
             retard: r,
             commentaire: comment,
             type_object: sessionStorage.getItem("typeLoc"),
@@ -119,7 +133,7 @@ function submitSignal() {
         contentType: "application/json",
         success : function(response) {
             console.log(response);
-            alert("Signalement créé")
+            alert("Signalement créé");
             returnMap();
         },
         error : function(xhr, ajaxOptions, thrownError) {
@@ -127,9 +141,15 @@ function submitSignal() {
             console.log(thrownError);
         },
     });
-
 }
 
 function returnMap() {
     document.location.href = "map.html";
 }
+
+
+
+$(document).on("click", ".browse", function() {
+  var file = $(this).parents().find(".file");
+  file.trigger("click");
+  });

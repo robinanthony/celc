@@ -5,16 +5,16 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# DBNAME = "gis"
-# USER = "docker"
-# PASSWORD = "docker"
-# HOST = "localhost"
-# PORT = "25434"
 DBNAME = "gis"
 USER = "docker"
 PASSWORD = "docker"
-HOST = "postgresql"
-PORT = "5432"
+HOST = "localhost"
+PORT = "25434"
+# DBNAME = "gis"
+# USER = "docker"
+# PASSWORD = "docker"
+# HOST = "postgresql"
+# PORT = "5432"
 
 ##############################################################################
 ############################# FONCTIONS SUPPORT ##############################
@@ -187,7 +187,9 @@ def delete_signalement(signalement_id):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
-    # TODO : SI UNE IMAGE EXISTE DANS LE SIGNALEMENT, SUPPRIMER L'IMAGE LI2E SERAIT COOL ...
+    # TODO : SI UNE IMAGE EXISTE DANS LE SIGNALEMENT A SUPPRIMER, SUPPRIMER L'IMAGE LIéE SERAIT COOL ...
+    cursor.execute("SELECT * FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
+    reponse = cursor.fetchone()[7]
 
     cursor.execute("DELETE FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
     if cursor.rowcount != 1:
@@ -213,7 +215,7 @@ def get_image_byId(image_id):
     if signal is None:
         abort(404)
 
-    with open("img/{}".format(signal[0])) as f:
+    with open("img/{}".format(signal[0]), mode="r+") as f:
         bytecode = f.read()
         reponse = jsonify({'images': {"id_image" : signal[0], "bytecode" : bytecode}})
 
@@ -222,26 +224,33 @@ def get_image_byId(image_id):
     return reponse
 
 
+# curl --header "Content-Type: application/json" --request POST --data '{"bytecode":"ICICESTMONBYTECODE"}' http://localhost:9152/image
 @app.route('/image', methods=['POST'])
 def add_image():
+    print("Test json")
     if not request.json :
         abort(400, "Require Content-Type: application/json.")
 
+    print("test value bytecode")
     if 'bytecode' not in request.json:
         abort(400, "Require data 'bytecode' not NULL.")
 
+    print("test connection")
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
+    print("connection done")
 
     cursor.execute("""
-     INSERT INTO public.images VALUES (DEFAULT) RETURNING *;
-     """, values)
+        INSERT INTO public.images VALUES (DEFAULT) RETURNING *;
+        """)
 
+    print("mkdir")
     os.makedirs("img", exist_ok=True)
+    print("mkdir done")
 
     id_image = cursor.fetchone()
-    with open("/img/{}".format(id_image)) as f:
-        f.write(bytecode)
+    with open("img/{}".format(id_image), mode='w+') as f:
+        f.write(request.json.get("bytecode"))
 
     reponse = jsonify({'image': id_image})
     database.commit()

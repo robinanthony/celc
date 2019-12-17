@@ -62,7 +62,7 @@ function display() {
     }
     else if(v == "degradation"){
         $( ".other_param" ).html("<div  id=\"img-upload\">\n" +
-            "              <input type=\"file\" name=\"img[]\" class=\"file\" accept=\"image/*\">\n" +
+            "              <input type=\"file\" name=\"img[]\" class=\"file\" accept=\"image/*\" onchange=\"loadFile(event)\"> \n" +
             "              <div class=\"input-group mb-3\">\n" +
             "\n" +
             "              <input type=\"text\" class=\"form-control\" disabled placeholder=\"Upload File\" id=\"file\">\n" +
@@ -81,6 +81,13 @@ function display() {
     }
 
 }
+
+var loadFile = function(event) {
+    var output = document.getElementById('preview');
+    output.src = URL.createObjectURL(event.target.files[0]);
+    var fileName = event.target.files[0].name;
+    $("#file").val(fileName);
+};
 
 function submitSignal() {
     var v = $("#typeSignal").val();
@@ -126,23 +133,3 @@ function submitSignal() {
 function returnMap() {
     document.location.href = "map.html";
 }
-
-
-
-// $(document).on("click", ".browse", function() {
-//   var file = $(this).parents().find(".file");
-//   file.trigger("click");
-//   });
-//   $('input[type="file"]').change(function(e) {
-//   var fileName = e.target.files[0].name;
-//   $("#file").val(fileName);
-//
-//   var reader = new FileReader();
-//   reader.onload = function(e) {
-//     // get loaded data and render thumbnail.
-//     document.getElementById("preview").src = e.target.result;
-//   };
-//
-//   // read the image file as a data URL.
-//   reader.readAsDataURL(this.files[0]);
-// });

@@ -5,16 +5,16 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-DBNAME = "gis"
-USER = "docker"
-PASSWORD = "docker"
-HOST = "localhost"
-PORT = "25434"
 # DBNAME = "gis"
 # USER = "docker"
 # PASSWORD = "docker"
-# HOST = "postgresql"
-# PORT = "5432"
+# HOST = "localhost"
+# PORT = "25434"
+DBNAME = "gis"
+USER = "docker"
+PASSWORD = "docker"
+HOST = "postgresql"
+PORT = "5432"
 
 ##############################################################################
 ############################# FONCTIONS SUPPORT ##############################
@@ -189,7 +189,9 @@ def delete_signalement(signalement_id):
 
     # TODO : SI UNE IMAGE EXISTE DANS LE SIGNALEMENT A SUPPRIMER, SUPPRIMER L'IMAGE LIéE SERAIT COOL ...
     cursor.execute("SELECT * FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
-    reponse = cursor.fetchone()[7]
+    id_image = cursor.fetchone()[7]
+
+    cursor.execute("DELETE FROM public.image WHERE id=%(id)s", {"id" : id_image})
 
     cursor.execute("DELETE FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
     if cursor.rowcount != 1:

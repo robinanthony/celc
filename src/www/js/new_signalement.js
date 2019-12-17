@@ -119,7 +119,7 @@ function submitSignal() {
 
 }
 
-function ajaxInsert(typeSignal,r,image,comment) {
+function ajaxInsert(typeSignal,r,idImage,comment) {
     $.ajax({
         type : 'POST',
         url  : adresse_api+'/signalement',

@@ -736,10 +736,50 @@ var getSignalementInfo = function (type, id, divContent) {
                     }
 
                     var delay = ""
-                    if(signalement.type_signalement == "retard")
+                    if(signalement.type_signalement === "retard")
                         delay = signalement.retard + "mins"
 
-                    var contenu = `
+
+                    if(signalement.type_signalement === "degradation" && signalement.id_image !== null){
+                        recupImage(signalement, type_display, delay, divContent)
+                    }
+                    else {
+                        content(signalement, type_display, delay, null, divContent);
+                    }
+
+                });
+            }
+        },
+        error : function(xhr, ajaxOptions, thrownError) {
+            console.log(xhr.responseText);
+            console.log(thrownError);
+        },
+    });
+};
+
+var recupImage = function(signalement, type_display, delay, divContent) {
+    var output = document.getElementById('imgSign');
+
+    $.ajax({
+        type : 'GET',
+        url  : `${adresse_api}/image/${signalement.id_image}`,
+        async: false,
+        timeout: 2000,
+        success : function(response) {
+
+            content(signalement, type_display, delay, response.images.bytecode, divContent);
+
+        },
+        error : function(xhr, ajaxOptions, thrownError) {
+            console.log(xhr.responseText);
+            console.log(thrownError);
+        },
+    });
+};
+
+var content = function (signalement, type_display, delay, image, divContent) {
+
+    var contenu =  `
                     <div class="row">
                         <div class="col-12" id="signal_list_${signalement.id}">
                             <div class="card">
@@ -768,22 +808,37 @@ var getSignalementInfo = function (type, id, divContent) {
                                      data-parent="#signal_list_${signalement.id}">
                                     <div class="card-body">
                                         ${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire.replace(/\n/g,"<br>")}
+                                         <div id="divImg_${signalement.id}" class="ml-2 col-sm-6">
+                                 
+                                        </div>
                                     </div>
                                 </div>
+                               
                             </div>
                         </div>
                     </div>`
+    divContent.append(contenu);
 
-                    divContent.append(contenu);
-                });
-            }
-        },
-        error : function(xhr, ajaxOptions, thrownError) {
-            console.log(xhr.responseText);
-            console.log(thrownError);
-        },
-    });
+
+    if(image !== null){
+        $(`#divImg_${signalement.id}`).append(` <img id="imgSign_${signalement.id}" class="img-thumbnail">`)
+
+        var bytes = new Uint8Array(image)
+        console.log(image)
+        var blob = new Blob([bytes], {type: "application/png"});
+
+        $(`#imgSign_${signalement.id}`).attr("src",window.URL.createObjectURL(blob));
+
+    }
 };
+
+
+
+
+
+
+
+
 
 var getSignalementObjet = function (id) {
     objet = null;

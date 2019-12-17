@@ -9,4 +9,5 @@ WORKDIR /home/celc
 
 COPY rest.py ./
 
+RUN ["mkdir", "img"]
 CMD ["python3", "rest.py"]

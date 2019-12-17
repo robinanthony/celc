@@ -103,8 +103,8 @@ function submitSignal() {
             }),
             contentType: "application/json",
             success : function (response) {
-                // console.log(response.object.image);
-               // ajaxInsert(typeSignal,r,/*id de limage*/ null,comment)
+                console.log(response.image[0]);
+               ajaxInsert(typeSignal,r,response.image[0],comment)
             },
             error : function(xhr, ajaxOptions, thrownError) {
                 console.log(xhr.responseText);
@@ -129,11 +129,12 @@ function ajaxInsert(typeSignal,r,idImage,comment) {
             commentaire: comment,
             type_object: sessionStorage.getItem("typeLoc"),
             id_object: sessionStorage.getItem("idLoc"),
-            geom_text: sessionStorage.getItem("coordLoc")
+            geom_text: sessionStorage.getItem("coordLoc"),
+            id_image: idImage
         }),
         contentType: "application/json",
         success : function(response) {
-            console.log(response);
+            // console.log(response);
             alert("Signalement créé");
             returnMap();
         },

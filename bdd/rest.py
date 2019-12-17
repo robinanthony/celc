@@ -149,9 +149,11 @@ def add_signalement():
     if 'id_object' not in request.json:
         abort(400, "Require data 'id_object' not NULL.")
 
+    print("connect bd")
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
+    print("start values")
     values = {
         "type_signalement" : request.json.get("type_signalement"),
         "retard" : request.json.get("retard", None),
@@ -164,15 +166,19 @@ def add_signalement():
 
     # Si un id_image est donné mais qu'elle n'existe pas
     if values['id_image'] is not None:
-        cursor.execute("SELECT * FROM public.images WHERE id=%(id_image);", {"id_image": id_image})
+        print("cursor si id_image not None :{}".format(values['id_image']))
+        cursor.execute("SELECT * FROM public.images WHERE id=%(id_image)s;", {"id_image": values['id_image']})
         if cursor.rowcount != 1:
+            print("404 spotted")
             abort(404, "Ask 'id_image' does not exist in the database.")
 
+    print("cursor pour inserer signalements")
     cursor.execute("""
      INSERT INTO public.signalements (type_signalement, retard, commentaire, type_object, id_object, geom, id_image)
      VALUES (%(type_signalement)s, %(retard)s, %(commentaire)s, %(type_object)s, %(id_object)s, ST_GeomFromText(%(geom_text)s, 4326), %(id_image)s) RETURNING *;
      """, values)
 
+    print("jsonifycation")
     reponse = jsonify({'signalement': cursor.fetchone()})
     database.commit()
 
@@ -210,9 +216,11 @@ def get_image_byId(image_id):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
+    print("start execute")
     cursor.execute("SELECT * FROM public.images WHERE id = %(id)s;", { "id" : image_id})
     signal = cursor.fetchone()
     if signal is None:
+        print("Oups, 404 sur id : {}".format(image_id))
         abort(404)
 
     with open("img/{}".format(signal[0]), mode="r+") as f:
@@ -244,13 +252,13 @@ def add_image():
         INSERT INTO public.images VALUES (DEFAULT) RETURNING *;
         """)
 
-    print("mkdir")
-    os.makedirs("img", exist_ok=True)
-    print("mkdir done")
-
     id_image = cursor.fetchone()
     with open("img/{}".format(id_image), mode='w+') as f:
+        print("Lol !")
         f.write(request.json.get("bytecode"))
+
+    with open("img/{}".format(id_image), mode='r+') as f:
+        print(f.read())
 
     reponse = jsonify({'image': id_image})
     database.commit()

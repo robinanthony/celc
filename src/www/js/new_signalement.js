@@ -51,10 +51,14 @@ function display() {
     var v = $("#typeSignal").val();
 
     if(v == "retard"){
-        $( ".other_param" ).html( "<div class=\"input-group-prepend\">\n" +
-            "                <span class=\"input-group-text\" id=\"basic-addon3\"> Durée du retard </span>\n" +
-            "              </div>\n" +
-            "                <input type=\"number\" class=\"form-control\" id=\"delay\" placeholder=\"Retard\">" );
+        $( ".other_param" ).html(`
+<div class="input-group-prepend">
+    <span class="input-group-text" id="basic-addon3"> Durée du retard </span>
+</div>
+<div class="min_unit unit_input">
+    <input type="number" class="form-control" id="delay" placeholder="Retard">
+</div>
+        `);
     }
     else if(v == "degradation"){
         $( ".other_param" ).html("<div  id=\"img-upload\">\n" +
@@ -96,7 +100,7 @@ function submitSignal() {
 
     $.ajax({
         type : 'POST',
-        url  : 'http://localhost:5050/signalement',
+        url  : adresse_api+'/signalement',
         data : JSON.stringify({
             type_signalement: v,
             retard: r,
@@ -109,6 +113,7 @@ function submitSignal() {
         success : function(response) {
             console.log(response);
             alert("Signalement créé")
+            returnMap();
         },
         error : function(xhr, ajaxOptions, thrownError) {
             console.log(xhr.responseText);

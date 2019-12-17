@@ -16,6 +16,12 @@ PASSWORD = "docker"
 HOST = "postgresql"
 PORT = "5432"
 
+DEC2FLOAT = psycopg2.extensions.new_type(
+    psycopg2.extensions.DECIMAL.values,
+    'DEC2FLOAT',
+    lambda value, curs: float(value) if value is not None else None)
+psycopg2.extensions.register_type(DEC2FLOAT)
+
 def getJSON(rows, curDesc):
     columns = [desc[0] for desc in curDesc]
     result = []
@@ -58,6 +64,29 @@ def get_signalement_byId(signalement_id):
     if signal is None:
         abort(404)
     reponse = jsonify({'signalement': getJSON([signal], cursor.description)[0]})
+
+    cursor.close()
+    database.close()
+    return reponse
+
+@app.route('/signalement/<int:signalement_id>/object', methods=['GET'])
+def get_object_bySignalementId(signalement_id):
+    database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
+    cursor = database.cursor()
+
+    cursor.execute("SELECT * FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
+    signal = cursor.fetchone()
+    if signal is None:
+        abort(404)
+
+    signal = getJSON([signal], cursor.description)[0]
+
+    cursor.execute("SELECT * FROM public.{} WHERE id = %(id)s;".format(signal['type_object']), { "id" : signal['id_object']})
+    objet = cursor.fetchone()
+    if objet is None:
+        abort(404)
+
+    reponse = jsonify({'objet': getJSON([objet], cursor.description)[0]})
 
     cursor.close()
     database.close()

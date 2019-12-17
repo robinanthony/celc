@@ -4,13 +4,13 @@
     <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css" type="text/css">
 
     <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
-    <script src="../node_modules/jquery/dist/jquery.js"></script>
+    <script src="lib/jquery/jquery.js"></script>
 
-    <script src="js/bootstrap.js"></script>
+    <script src="lib/bootstrap/bootstrap.js"></script>
 
-    <script src="js/hammer.min.js"></script>
+    <script src="lib/hammer/hammer.min.js"></script>
 
-    <link rel="stylesheet"  href="css/bootstrap.css">
+    <link rel="stylesheet"  href="lib/bootstrap/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/map.css">
     <!-- Scrollbar Custom CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
@@ -46,41 +46,55 @@
 
         <ul class="list-unstyled components">
             <li>
-                <a href="#check" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" >AFFICHAGES</a>
-                <ul class="collapse list-unstyled" id="check">
+                <a href="#check" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle" >AFFICHAGES</a>
+                <ul class="collapse list-unstyled show" id="check">
                     <li>
-                        <input type="checkbox" id="bus" name="bus">
-                        <label for="bus">Bus</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="bus" name="bus">
+                            <label class="custom-control-label" for="bus"><span>Bus</span></label>
+                        </div>
                     </li>
 
                     <li>
-                        <input type="checkbox" id="tram" name="tram">
-                        <label for="tram">Tram</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="tram" name="tram">
+                            <label class="custom-control-label" for="tram"><span>Tram</span></label>
+                        </div>
                     </li>
 
                     <li>
-                        <input type="checkbox" id="piste_velo" name="piste_velo">
-                        <label for="piste_velo">Piste cyclable</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="piste_velo" name="piste_velo">
+                            <label class="custom-control-label" for="piste_velo"><span>Piste cyclable</span></label>
+                        </div>
                     </li>
 
                     <li>
-                        <input type="checkbox" id="parc_relais_velo" name="parc_relais_velo">
-                        <label for="parc_relais_velo">P+R vélo</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="parc_relais_velo" name="parc_relais_velo">
+                            <label class="custom-control-label" for="parc_relais_velo"><span>P+R vélo</span></label>
+                        </div>
                     </li>
 
                     <li>
-                        <input type="checkbox" id="station_velo" name="station_velo">
-                        <label for="station_velo">Station Vélo+</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="station_velo" name="station_velo">
+                            <label class="custom-control-label" for="station_velo"><span>Station Vélo+</span></label>
+                        </div>
                     </li>
 
                     <li>
-                        <input type="checkbox" id="parkings_velo" name="parkings_velo">
-                        <label for="parkings_velo">Parking vélo</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="parkings_velo" name="parkings_velo">
+                            <label class="custom-control-label" for="parkings_velo"><span>Parking vélo</span></label>
+                        </div>
                     </li>
 
                     <li>
-                        <input type="checkbox" id="signal_check" name="signal_check" checked>
-                        <label for="signal_check">Signalements</label>
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="signal_check" name="signal_check">
+                            <label class="custom-control-label" for="signal_check"><span>Signalements</span></label>
+                        </div>
                     </li>
 
                 </ul>
@@ -88,8 +102,8 @@
 
 
             <li>
-                <a href="#check1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" >AUTRE PAGES</a>
-                <ul class="collapse list-unstyled" id="check1">
+                <a href="#check1" data-toggle="collapse" aria-expanded="true" class="dropdown-toggle" >AUTRE PAGES</a>
+                <ul class="collapse list-unstyled show" id="check1">
                     <li >
                         <a href="signalements.html">Signalements</a>
                     </li>
@@ -97,13 +111,6 @@
             </li>
             
         </ul>
-
-        
-        <ul class="list-unstyled buttons">
-            <li>
-            </li>
-        </ul>
-
     </nav>
 
     <!-- Page Content -->
@@ -120,6 +127,7 @@
         </nav>
 
         <div id="map" class="map"></div>
+
         <div class="modal fade" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="modalInfoTitle" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -129,10 +137,9 @@
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              <div class="modal-body" id="signalements_text">
-
+              <div class="modal-body" id="modalInfoBody">
               </div>
-              <div class="modal-footer">
+              <div class="modal-footer" id="modalInfoButtons">
                 <button type="button" class="btn btn-secondary"  data-dismiss="modal">Close</button>
                 <button type="button" id="newSignalement" class="btn btn-primary">Nouveau signalement</button>
               </div>

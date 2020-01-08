@@ -335,6 +335,27 @@ var CenterOnGeolocControl = /*@__PURE__*/(function (Control) {
     return CenterOnGeolocControl;
   }(ol.control.Control));
 
+var layers_features = [
+    arrets_tao_bus, 
+    arrets_tao_tram, 
+    lignes_tao_bus, 
+    lignes_tao_tram, 
+    lignes_velo, 
+    parcs_relais_velo, 
+    parkings_velo, 
+    stations_velo
+];
+var layers_signalements = [
+    signalements_arrets_tao_bus, 
+    signalements_arrets_tao_tram, 
+    signalements_lignes_tao_bus, 
+    signalements_lignes_tao_tram, 
+    signalements_lignes_velo, 
+    signalements_parcs_relais_velo, 
+    signalements_parkings_velo, 
+    signalements_stations_velo
+];
+
 /** ----- Création de la carte sur la target "map" ----- **/
 var map = new ol.Map({
     controls: ol.control.defaults().extend([
@@ -523,26 +544,6 @@ map.getView().on('change:resolution', function(evt) {
 var select = new ol.interaction.Select({style: getSelectedStyle, hitTolerance: 5});
 map.addInteraction(select);
 select.on('select', function(e) {
-    layers_features = [
-        arrets_tao_bus, 
-        arrets_tao_tram, 
-        lignes_tao_bus, 
-        lignes_tao_tram, 
-        lignes_velo, 
-        parcs_relais_velo, 
-        parkings_velo, 
-        stations_velo
-    ];
-    layers_signalements = [
-        signalements_arrets_tao_bus, 
-        signalements_arrets_tao_tram, 
-        signalements_lignes_tao_bus, 
-        signalements_lignes_tao_tram, 
-        signalements_lignes_velo, 
-        signalements_parcs_relais_velo, 
-        signalements_parkings_velo, 
-        signalements_stations_velo
-    ];
     console.log(e, e.selected);
 
     let selected = e.selected[0];
@@ -563,12 +564,13 @@ select.on('select', function(e) {
 
         modalInfoShow();
 
-        setTimeout(() => {
-            sessionStorage.setItem("infoLoc",info);
-            sessionStorage.setItem("idLoc",id);
-            sessionStorage.setItem("typeLoc",type);
-            sessionStorage.setItem("coordLoc",getGeoPoint(coord));
-        }, 0)
+        let indexLayers = layers_features.indexOf(e.target.getLayer(selected))
+
+        sessionStorage.setItem("infoLoc",info);
+        sessionStorage.setItem("idLoc",id);
+        sessionStorage.setItem("typeLoc",type);
+        sessionStorage.setItem("coordLoc",getGeoPoint(coord));
+        sessionStorage.setItem("indexLayers", indexLayers);
     }
 
     else if (layers_signalements.includes(e.target.getLayer(selected))) {
@@ -580,7 +582,7 @@ select.on('select', function(e) {
 
         modalInfoSetTitle(info);
         
-        modalInfoSetButtons(['close']);
+        modalInfoSetButtons(['delete', 'close']);
         modalInfoSetContent(`<div class="row">
                                 <span class="vert-center-text col-sm">
                                     ${(selected.get('commentaire') == "" || selected.get('commentaire') === null) ? 'Pas de commentaire' : selected.get('commentaire').replace(/\n/g,"<br>")}
@@ -604,6 +606,11 @@ select.on('select', function(e) {
             },
         });
 
+        let indexLayers = layers_signalements.indexOf(e.target.getLayer(selected))
+
+        sessionStorage.setItem("indexLayers", indexLayers);
+        sessionStorage.setItem("idSignal", selected.getId().split('.')[1]);
+
         modalInfoShow();
     }
 
@@ -622,10 +629,38 @@ var modalInfoGetEmptyContent = function(content) {
     return $("#modalInfoBody");
 }
 
+var deleteSignal = function(id, success=function(a){}, error=function(a, b, c){}) {
+    $.ajax({
+        type : 'DELETE',
+        url  : adresse_api+'/signalement/'+id,
+        success : function(response) {
+            // console.log(response);
+            alert("Signalement supprimé");
+            layers_signalements[sessionStorage.getItem("indexLayers")].getSource().clear();
+            success(response);
+        },
+        error : function(xhr, ajaxOptions, thrownError) {
+            console.log(xhr.responseText);
+            console.log(thrownError);
+            success(xhr, ajaxOptions, thrownError);
+        },
+    });
+}
+
 var modalInfoSetButtons = function(buttons) {
     $("#modalInfoButtons").empty();
     for (button of buttons) {
         switch(button) {
+            case 'delete':
+                $("#modalInfoButtons").append('<button type="button" id="deleteSignalement" class="btn btn-primary">Supprimer signalement</button>');
+                $("#deleteSignalement").on("click",function(){
+                    let id = sessionStorage.getItem("idSignal");
+                    deleteSignal(id, function(response) {
+                        select.getFeatures().clear();
+                        modalInfoHide();
+                    });
+                })
+                break;
             case 'close':
                 $("#modalInfoButtons").append('<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>');
                 break;
@@ -641,6 +676,10 @@ var modalInfoSetButtons = function(buttons) {
 
 var modalInfoShow = function() {
     $('#modalInfo').modal('show');
+}
+
+var modalInfoHide = function() {
+    $('#modalInfo').modal('hide');
 }
 
 var getInfosFeature = function(elem) {
@@ -807,25 +846,29 @@ var content = function (signalement, type_display, delay, image, divContent) {
 </div>`
 
     var contenu =  `
-                    <div class="row">
-                        <div class="col-12" id="signal_list_${signalement.id}">
+                    <div class="row" id="signal_list_${signalement.id}">
+                        <div class="col-12">
                             <div class="card">
                                 <div class="card-header" 
-                                     id="headingOne_${signalement.id}" 
-                                     data-toggle="collapse"
-                                     data-target="#collapseOne_${signalement.id}" 
-                                     aria-expanded="true" 
-                                     aria-controls="collapseOne_${signalement.id}">
-                                    <h2 class="mb-0">
-                                        <button class="btn col-12 " type="button">
+                                     id="headingOne_${signalement.id}" >
+                                    <h2 class="row mb-0">
+                                        <button class="btn col" 
+                                                type="button" 
+                                                data-toggle="collapse"
+                                                data-target="#collapseOne_${signalement.id}" 
+                                                aria-expanded="true"
+                                                aria-controls="collapseOne_${signalement.id}">
                                             <div class="row">
-                                                <div class="col col-sm-9 text-left mb-0">
+                                                <div class="col col-sm-auto text-left mb-0">
                                                     ${type_display}
                                                 </div>
-                                                <div class="col col-sm-3 text-right mb-0">
+                                                <div class="col col-sm text-right mb-0">
                                                     <span>${delay}</span>
                                                 </div>
                                             </div>
+                                        </button>
+                                        <button id="delete_signal_button_${signalement.id}" class="btn" type="button">
+                                            <i class="fas fa-trash"></i>
                                         </button>
                                     </h2>
                                 </div>
@@ -843,6 +886,12 @@ var content = function (signalement, type_display, delay, image, divContent) {
                         </div>
                     </div>`
     divContent.append(contenu);
+
+    $(`#delete_signal_button_${signalement.id}`).click(function() {
+        deleteSignal(signalement.id, function(response) {
+            $(`#signal_list_${signalement.id}`).remove();
+        })
+    });
 
 };
 

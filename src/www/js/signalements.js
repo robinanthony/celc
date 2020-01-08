@@ -54,16 +54,23 @@ var addSignalementToDOM = function(signalement, objet) {
     
     let degradation_image = `<img class="signalement_image" src="${adresse_api}/static/img/${signalement.image_filename}" alt="Image montrant la dégradation">`
 
-    let signalDOM = `<div class="row text-center">
- <div class="col-12" id="signal_list_${signalement.id}">
+    let signalDOM = `<div class="row text-center" id="signal_list_${signalement.id}">
+ <div class="col-12">
    <div class="card">
-     <div class="card-header" id="headingOne_${signalement.id}" data-toggle="collapse"
-       data-target="#collapseOne_${signalement.id}" aria-expanded="true" aria-controls="collapseOne_${signalement.id}">
-       <h2 class="mb-0">
-         <button class="btn col-12 " type="button">
+     <div class="card-header" 
+          id="headingOne_${signalement.id}">
+       <h2 class="row mb-0">
+         <button class="btn col" type="button" 
+                 data-toggle="collapse"
+                 data-target="#collapseOne_${signalement.id}" 
+                 aria-expanded="true" 
+                 aria-controls="collapseOne_${signalement.id}">
            <div class="row">
              <div class="col mb-0">${type_display} sur ${getTypeObjetDisplay(signalement.type_object, objet)}</div>
            </div>
+         </button>
+         <button id="delete_signal_button_${signalement.id}" class="btn" type="button">
+           <i class="fas fa-trash"></i>
          </button>
        </h2>
      </div>
@@ -78,6 +85,29 @@ var addSignalementToDOM = function(signalement, objet) {
 </div>`
 
     $(`#nav-${signalement.type_signalement}`).append(signalDOM);
+
+    $(`#delete_signal_button_${signalement.id}`).click(function() {
+        deleteSignal(signalement.id, function(response) {
+            $(`#signal_list_${signalement.id}`).remove();
+        })
+    });
+}
+
+var deleteSignal = function(id, success=function(a){}, error=function(a, b, c){}) {
+    $.ajax({
+        type : 'DELETE',
+        url  : adresse_api+'/signalement/'+id,
+        success : function(response) {
+            // console.log(response);
+            alert("Signalement supprimé");
+            success(response);
+        },
+        error : function(xhr, ajaxOptions, thrownError) {
+            console.log(xhr.responseText);
+            console.log(thrownError);
+            success(xhr, ajaxOptions, thrownError);
+        },
+    });
 }
 
 $(document).ready(function () {

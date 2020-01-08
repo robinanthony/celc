@@ -204,7 +204,8 @@ def delete_signalement(signalement_id):
     cursor.execute("SELECT * FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
     id_image = cursor.fetchone()[7]
 
-    cursor.execute("DELETE FROM public.image WHERE id=%(id)s", {"id" : id_image})
+    if id_image is not None : 
+        cursor.execute("DELETE FROM public.image WHERE id=%(id)s", {"id" : id_image})
 
     cursor.execute("DELETE FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
     if cursor.rowcount != 1:

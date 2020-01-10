@@ -54,18 +54,18 @@ var getMarkerImage = function(colorFill, colorText, text, colorStroke = null) {
      viewBox="0 0 9.5249996 13.229167"
      height="50"
      width="36">
-    <path d="m 4.7625116,13.015004 
-             c -0.758055,0 
-             -4.54833704,-4.8944398 
-             -4.54833704,-8.2828998 
-             0,-2.44722 
-             2.08465404,-4.51795005 
-             4.54833704,-4.51795005 
-             2.463684,0 
-             4.548337,2.07073005 
-             4.548337,4.51795005 
-             0,3.38846 
-             -3.790281,8.2828998 
+    <path d="m 4.7625116,13.015004
+             c -0.758055,0
+             -4.54833704,-4.8944398
+             -4.54833704,-8.2828998
+             0,-2.44722
+             2.08465404,-4.51795005
+             4.54833704,-4.51795005
+             2.463684,0
+             4.548337,2.07073005
+             4.548337,4.51795005
+             0,3.38846
+             -3.790281,8.2828998
              -4.548337,8.2828998 z"
           style="fill:${colorFill};
                  fill-opacity:1;
@@ -304,26 +304,26 @@ geolocation.on('error', function(error) {
 var CenterOnGeolocControl = /*@__PURE__*/(function (Control) {
     function CenterOnGeolocControl(opt_options) {
       var options = opt_options || {};
-  
+
       var button = document.createElement('button');
       button.innerHTML = 'O';
-  
+
       var element = document.createElement('div');
       element.className = 'center_on_pos ol-unselectable ol-control';
       element.appendChild(button);
-  
+
       Control.call(this, {
         element: element,
         target: options.target
       });
-  
+
       button.addEventListener('click', this.handleCenterOnGeoloc.bind(this), false);
     }
-  
+
     if ( Control ) CenterOnGeolocControl.__proto__ = Control;
     CenterOnGeolocControl.prototype = Object.create( Control && Control.prototype );
     CenterOnGeolocControl.prototype.constructor = CenterOnGeolocControl;
-  
+
     CenterOnGeolocControl.prototype.handleCenterOnGeoloc = function handleCenterOnGeoloc () {
         var coordinates = geolocation.getPosition();
         positionFeature.setGeometry(coordinates ?
@@ -331,28 +331,28 @@ var CenterOnGeolocControl = /*@__PURE__*/(function (Control) {
         var newPosition=ol.proj.transform(geolocation.getPosition(), 'EPSG:3857','EPSG:4326');
         map.getView().setCenter(ol.proj.fromLonLat([newPosition[0], newPosition[1]]));
     };
-  
+
     return CenterOnGeolocControl;
   }(ol.control.Control));
 
 var layers_features = [
-    arrets_tao_bus, 
-    arrets_tao_tram, 
-    lignes_tao_bus, 
-    lignes_tao_tram, 
-    lignes_velo, 
-    parcs_relais_velo, 
-    parkings_velo, 
+    arrets_tao_bus,
+    arrets_tao_tram,
+    lignes_tao_bus,
+    lignes_tao_tram,
+    lignes_velo,
+    parcs_relais_velo,
+    parkings_velo,
     stations_velo
 ];
 var layers_signalements = [
-    signalements_arrets_tao_bus, 
-    signalements_arrets_tao_tram, 
-    signalements_lignes_tao_bus, 
-    signalements_lignes_tao_tram, 
-    signalements_lignes_velo, 
-    signalements_parcs_relais_velo, 
-    signalements_parkings_velo, 
+    signalements_arrets_tao_bus,
+    signalements_arrets_tao_tram,
+    signalements_lignes_tao_bus,
+    signalements_lignes_tao_tram,
+    signalements_lignes_velo,
+    signalements_parcs_relais_velo,
+    signalements_parkings_velo,
     signalements_stations_velo
 ];
 
@@ -581,7 +581,7 @@ select.on('select', function(e) {
         info = getInfosSignalement(selected, objet);
 
         modalInfoSetTitle(info);
-        
+
         modalInfoSetButtons(['delete', 'close']);
         modalInfoSetContent(`<div class="row">
                                 <span class="vert-center-text col-sm">
@@ -597,7 +597,7 @@ select.on('select', function(e) {
             timeout: 2000,
             success : function(response) {
                 let degradation_image = `<img id="imgSign_${selected.get('id')}" class="img-thumbnail" src="${adresse_api}/static/img/${response.image.filename}" alt="Image montrant la dégradation">`
-                
+
                 $(`#divImg_${selected.get('id')}`).html(degradation_image);
             },
             error : function(xhr, ajaxOptions, thrownError) {
@@ -770,9 +770,7 @@ var getSignalementInfo = function (type, id, divContent) {
         url  : `${adresse_api}/signalement/type_object/${type}/id_object/${id}`,
         success : function(response) {
             // Begin accessing JSON data here
-            console.log("ca passe")
             var data = response;
-            console.log(data)
             if(data["signalements"] !== undefined){
 
                 let type_display = "";
@@ -801,12 +799,8 @@ var getSignalementInfo = function (type, id, divContent) {
                         delay = signalement.retard + "mins"
 
 
-                    // if(signalement.type_signalement === "degradation" && signalement.id_image !== null){
-                        // recupImage(signalement, type_display, delay, divContent)
-                    // }
-                    // else {
-                        content(signalement, type_display, delay, null, divContent);
-                    // }
+
+                    content(signalement, type_display, delay, null, divContent);
 
                 });
             }
@@ -818,44 +812,24 @@ var getSignalementInfo = function (type, id, divContent) {
     });
 };
 
-var recupImage = function(signalement, type_display, delay, divContent) {
-    var output = document.getElementById('imgSign');
-
-    $.ajax({
-        type : 'GET',
-        url  : `${adresse_api}/image/${signalement.id_image}`,
-        async: false,
-        timeout: 2000,
-        success : function(response) {
-
-            content(signalement, type_display, delay, response.images.bytecode, divContent);
-
-        },
-        error : function(xhr, ajaxOptions, thrownError) {
-            console.log(xhr.responseText);
-            console.log(thrownError);
-        },
-    });
-};
-
 var content = function (signalement, type_display, delay, image, divContent) {
-    
-    
+
+
     let degradation_image = `<div id="divImg_${signalement.id}" class="signalement_image">
-    <img id="imgSign_${signalement.id}" class="img-thumbnail" src="${adresse_api}/static/img/${signalement.image_filename}" alt="Image montrant la dégradation">                             
+    <img id="imgSign_${signalement.id}" class="img-thumbnail" src="${adresse_api}/static/img/${signalement.image_filename}" alt="Image montrant la dégradation">
 </div>`
 
     var contenu =  `
                     <div class="row" id="signal_list_${signalement.id}">
                         <div class="col-12">
                             <div class="card">
-                                <div class="card-header" 
+                                <div class="card-header"
                                      id="headingOne_${signalement.id}" >
                                     <h2 class="row mb-0">
-                                        <button class="btn col" 
-                                                type="button" 
+                                        <button class="btn col"
+                                                type="button"
                                                 data-toggle="collapse"
-                                                data-target="#collapseOne_${signalement.id}" 
+                                                data-target="#collapseOne_${signalement.id}"
                                                 aria-expanded="true"
                                                 aria-controls="collapseOne_${signalement.id}">
                                             <div class="row">
@@ -872,16 +846,16 @@ var content = function (signalement, type_display, delay, image, divContent) {
                                         </button>
                                     </h2>
                                 </div>
-                                <div id="collapseOne_${signalement.id}" 
-                                     class="collapse" 
-                                     aria-labelledby="headingOne_${signalement.id}" 
+                                <div id="collapseOne_${signalement.id}"
+                                     class="collapse"
+                                     aria-labelledby="headingOne_${signalement.id}"
                                      data-parent="#signal_list_${signalement.id}">
                                     <div class="row card-body">
                                         <span class="vert-center-text col-sm">${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire.replace(/\n/g,"<br>")}</span>
                                         ${signalement.image_filename !== null ? degradation_image : ''}
                                     </div>
                                 </div>
-                               
+
                             </div>
                         </div>
                     </div>`
@@ -988,7 +962,7 @@ var init_map = function() {
             signalements_lignes_tao_bus.setVisible($("#signal_check").is(":checked") && $("#bus").is(":checked"));
 
             sessionStorage.setItem("bus_checked", $("#bus").is(":checked"));
-            
+
 
             map.getLayers().array_[3].setVisible($("#tram").is(":checked"));
             map.getLayers().array_[5].setVisible($("#tram").is(":checked"));
@@ -996,25 +970,25 @@ var init_map = function() {
             signalements_lignes_tao_tram.setVisible($("#signal_check").is(":checked") && $("#tram").is(":checked"));
 
             sessionStorage.setItem("tram_checked", $("#tram").is(":checked"));
-            
+
 
             map.getLayers().array_[6].setVisible($("#station_velo").is(":checked"));
             signalements_stations_velo.setVisible($("#signal_check").is(":checked") && $("#station_velo").is(":checked"));
 
             sessionStorage.setItem("station_velo_checked", $("#station_velo").is(":checked"));
-            
+
 
             map.getLayers().array_[7].setVisible($("#parc_relais_velo").is(":checked"));
             signalements_parcs_relais_velo.setVisible($("#signal_check").is(":checked") && $("#parc_relais_velo").is(":checked"));
 
             sessionStorage.setItem("parc_relais_velo_checked", $("#parc_relais_velo").is(":checked"));
-            
+
 
             map.getLayers().array_[8].setVisible($("#parkings_velo").is(":checked"));
             signalements_parkings_velo.setVisible($("#signal_check").is(":checked") && $("#parkings_velo").is(":checked"));
 
             sessionStorage.setItem("parkings_velo_checked", $("#parkings_velo").is(":checked"));
-            
+
 
             map.getLayers().array_[1].setVisible($("#piste_velo").is(":checked"));
             signalements_lignes_velo.setVisible($("#signal_check").is(":checked") && $("#piste_velo").is(":checked"));

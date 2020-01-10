@@ -30,6 +30,38 @@ var getTypeObjetDisplay = function(type_objet, objet) {
     }
 }
 
+var getSignalDOM = function (signalement,type_display,degradation_image,objet,type_list="") {
+    return `<div class="row text-center" id="signal_list_${type_list}${signalement.id}">
+                 <div class="col-12">
+                   <div class="card">
+                     <div class="card-header" 
+                          id="headingOne_${type_list}${signalement.id}">
+                       <h2 class="row mb-0">
+                         <button class="btn col" type="button" 
+                                 data-toggle="collapse"
+                                 data-target="#collapseOne_${type_list}${signalement.id}" 
+                                 aria-expanded="true" 
+                                 aria-controls="collapseOne_${type_list}${signalement.id}">
+                           <div class="row">
+                             <div class="col mb-0">${type_display} sur ${getTypeObjetDisplay(signalement.type_object, objet)}</div>
+                           </div>
+                         </button>
+                         <button id="delete_signal_button_${type_list}${signalement.id}" class="btn" type="button">
+                           <i class="fas fa-trash"></i>
+                         </button>
+                       </h2>
+                     </div>
+                     <div id="collapseOne_${type_list}${signalement.id}" class="collapse ${(signalement.commentaire == "" || signalement.commentaire === null) && signalement.image_filename === null ? '' : 'show'}" aria-labelledby="headingOne_${type_list}${signalement.id}" data-parent="#signal_list_${type_list}${signalement.id}">
+                       ${signalement.image_filename !== null ? degradation_image : ''}
+                       <div class="card-body">
+                         ${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire.replace(/\n/g,"<br>")}
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+                </div>`
+}
+
 var addSignalementToDOM = function(signalement, objet) {
     console.log(signalement, objet);
 
@@ -54,41 +86,14 @@ var addSignalementToDOM = function(signalement, objet) {
     
     let degradation_image = `<img class="signalement_image" src="${adresse_api}/static/img/${signalement.image_filename}" alt="Image montrant la dégradation">`
 
-    let signalDOM = `<div class="row text-center" id="signal_list_${signalement.id}">
- <div class="col-12">
-   <div class="card">
-     <div class="card-header" 
-          id="headingOne_${signalement.id}">
-       <h2 class="row mb-0">
-         <button class="btn col" type="button" 
-                 data-toggle="collapse"
-                 data-target="#collapseOne_${signalement.id}" 
-                 aria-expanded="true" 
-                 aria-controls="collapseOne_${signalement.id}">
-           <div class="row">
-             <div class="col mb-0">${type_display} sur ${getTypeObjetDisplay(signalement.type_object, objet)}</div>
-           </div>
-         </button>
-         <button id="delete_signal_button_${signalement.id}" class="btn" type="button">
-           <i class="fas fa-trash"></i>
-         </button>
-       </h2>
-     </div>
-     <div id="collapseOne_${signalement.id}" class="collapse ${(signalement.commentaire == "" || signalement.commentaire === null) && signalement.image_filename === null ? '' : 'show'}" aria-labelledby="headingOne_${signalement.id}" data-parent="#signal_list_${signalement.id}">
-       ${signalement.image_filename !== null ? degradation_image : ''}
-       <div class="card-body">
-         ${(signalement.commentaire == "" || signalement.commentaire === null) ? 'Pas de commentaire' : signalement.commentaire.replace(/\n/g,"<br>")}
-       </div>
-     </div>
-   </div>
- </div>
-</div>`
+    $(`#nav-tous`).append(getSignalDOM(signalement,type_display,degradation_image,objet,"tous"));
+    $(`#nav-${signalement.type_signalement}`).append(getSignalDOM(signalement,type_display,degradation_image,objet));
 
-    $(`#nav-${signalement.type_signalement}`).append(signalDOM);
-
-    $(`#delete_signal_button_${signalement.id}`).click(function() {
+    $(`#delete_signal_button_${signalement.id}, #delete_signal_button_tous${signalement.id}`).click(function() {
         deleteSignal(signalement.id, function(response) {
             $(`#signal_list_${signalement.id}`).remove();
+            $(`#signal_list_tous${signalement.id}`).remove();
+
         })
     });
 }

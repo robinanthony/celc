@@ -60,7 +60,7 @@ def get_signalements():
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
-    cursor.execute("""SELECT s.id as id, s.type_signalement as type_signalement, s.retard as retard, s.commentaire as commentaire, s.type_object as type_object, s.id_object as id_object, s.geom as geom, s.id_image || '_' || i.orig_filename as image_filename 
+    cursor.execute("""SELECT s.id as id, s.type_signalement as type_signalement, s.retard as retard, s.commentaire as commentaire, s.type_object as type_object, s.id_object as id_object, s.geom as geom, s.id_image || '_' || i.orig_filename as image_filename
                       FROM public.signalements as s LEFT JOIN public.images as i ON s.id_image = i.id;""")
     reponse = jsonify({'signalements': getJSON(cursor.fetchall(), cursor.description)})
 
@@ -74,8 +74,8 @@ def get_signalement_byId(signalement_id):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
-    cursor.execute("""SELECT s.id as id, s.type_signalement as type_signalement, s.retard as retard, s.commentaire as commentaire, s.type_object as type_object, s.id_object as id_object, s.geom as geom, s.id_image || '_' || i.orig_filename as image_filename 
-                      FROM public.signalements as s LEFT JOIN public.images as i ON s.id_image = i.id 
+    cursor.execute("""SELECT s.id as id, s.type_signalement as type_signalement, s.retard as retard, s.commentaire as commentaire, s.type_object as type_object, s.id_object as id_object, s.geom as geom, s.id_image || '_' || i.orig_filename as image_filename
+                      FROM public.signalements as s LEFT JOIN public.images as i ON s.id_image = i.id
                       WHERE id = %(id)s;""", { "id" : signalement_id})
     signal = cursor.fetchone()
     if signal is None:
@@ -116,8 +116,8 @@ def get_signalements_byType_object(type_object):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
-    cursor.execute("""SELECT s.id as id, s.type_signalement as type_signalement, s.retard as retard, s.commentaire as commentaire, s.type_object as type_object, s.id_object as id_object, s.geom as geom, s.id_image || '_' || i.orig_filename as image_filename 
-                      FROM public.signalements as s LEFT JOIN public.images as i ON s.id_image = i.id 
+    cursor.execute("""SELECT s.id as id, s.type_signalement as type_signalement, s.retard as retard, s.commentaire as commentaire, s.type_object as type_object, s.id_object as id_object, s.geom as geom, s.id_image || '_' || i.orig_filename as image_filename
+                      FROM public.signalements as s LEFT JOIN public.images as i ON s.id_image = i.id
                       WHERE type_object = %(type_object)s;""", { "type_object" : type_object})
     reponse = jsonify({'signalements': getJSON(cursor.fetchall(), cursor.description)})
 
@@ -131,8 +131,8 @@ def get_signalements_byId_object(type_object, id_object):
     database = psycopg2.connect(dbname=DBNAME, user=USER, password=PASSWORD, host=HOST, port=PORT)
     cursor = database.cursor()
 
-    cursor.execute("""SELECT s.id as id, s.type_signalement as type_signalement, s.retard as retard, s.commentaire as commentaire, s.type_object as type_object, s.id_object as id_object, s.geom as geom, s.id_image || '_' || i.orig_filename as image_filename 
-                      FROM public.signalements as s LEFT JOIN public.images as i ON s.id_image = i.id 
+    cursor.execute("""SELECT s.id as id, s.type_signalement as type_signalement, s.retard as retard, s.commentaire as commentaire, s.type_object as type_object, s.id_object as id_object, s.geom as geom, s.id_image || '_' || i.orig_filename as image_filename
+                      FROM public.signalements as s LEFT JOIN public.images as i ON s.id_image = i.id
                       WHERE id_object = %(id_object)s and type_object = %(type_object)s;""", {"id_object" : id_object, "type_object" : type_object})
     reponse = jsonify({'signalements': getJSON(cursor.fetchall(), cursor.description)})
 
@@ -204,13 +204,12 @@ def delete_signalement(signalement_id):
     cursor.execute("SELECT * FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
     id_image = cursor.fetchone()[7]
 
-    if id_image is not None : 
-        cursor.execute("DELETE FROM public.image WHERE id=%(id)s", {"id" : id_image})
-
     cursor.execute("DELETE FROM public.signalements WHERE id = %(id)s;", { "id" : signalement_id})
     if cursor.rowcount != 1:
         abort(404)
     else:
+        if id_image is not None :
+            cursor.execute("DELETE FROM public.images WHERE id=%(id)s", {"id" : id_image})
         database.commit()
 
     cursor.close()
@@ -232,7 +231,7 @@ def get_image_byId(image_id):
     if signal is None:
         print("Oups, 404 sur id : {}".format(image_id))
         abort(404)
-        
+
     signal = getJSON([signal], cursor.description)[0]
 
     reponse = jsonify({'image': {"id_image" : signal["id"], "orig_filename" : signal["orig_filename"], "filename" : "{}_{}".format(signal["id"], signal["orig_filename"])}})

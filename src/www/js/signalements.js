@@ -3,12 +3,6 @@ var host_api = (typeof api !== 'undefined' && typeof api.host === 'string') ? ap
 var port_api = (typeof api !== 'undefined' && typeof api.port === 'string') ? api.port : "9152"
 var adresse_api = 'http://'+host_api+':'+port_api;
 
-// "type_signalement" : request.json.get("type_signalement"),
-// "retard" : request.json.get("retard", None),
-// "commentaire" : request.json.get("commentaire", None),
-// "type_object" : request.json.get("type_object"),
-// "id_object" : request.json.get("id_object")
-
 var getTypeObjetDisplay = function(type_objet, objet) {
     switch (type_objet) {
         case 'arrets_tao_bus':
@@ -63,7 +57,6 @@ var getSignalDOM = function (signalement,type_display,degradation_image,objet,ty
 }
 
 var addSignalementToDOM = function(signalement, objet) {
-    console.log(signalement, objet);
 
     let type_display = "";
     switch(signalement.type_signalement) {
@@ -103,7 +96,6 @@ var deleteSignal = function(id, success=function(a){}, error=function(a, b, c){}
         type : 'DELETE',
         url  : adresse_api+'/signalement/'+id,
         success : function(response) {
-            // console.log(response);
             alert("Signalement supprimé");
             success(response);
         },

@@ -11,8 +11,6 @@ var adresse_api = 'http://'+host_api+':'+port_api;
 
 ///// Fonction permettant de récuperer les informations sur le GeoServeur
 var getSource = function(lien, couche){
-  // lien = 'adresse_du_geoserver/espace_de_travail'
-  // couche = 'entrepot:couche'
           var source = new ol.source.Vector({
             format: new ol.format.GeoJSON(),
             loader: function(extent, resolution, projection) {
@@ -130,7 +128,6 @@ var getSelectedStyle = function(feature, resolution) {
 /** ----- Création des différentes couches pour la map ----- **/
 
 var osm = new ol.layer.Tile({
-    //extent: ol.proj.transformExtent([1.7, 47.7, 2.1, 48.1],'EPSG:4326','EPSG:3857'),
     source: new ol.source.OSM({opaque:false})
 });
 
@@ -426,7 +423,6 @@ map.getView().on('change:rotation', function(evt) {
 
 map.getView().on('change:resolution', function(evt) {
     var zoom = map.getView().getZoom();
-    // console.log(zoom);
     var radius;
     var radiusParking = 4;
     var widthb = 3;
@@ -544,7 +540,6 @@ map.getView().on('change:resolution', function(evt) {
 var select = new ol.interaction.Select({style: getSelectedStyle, hitTolerance: 5});
 map.addInteraction(select);
 select.on('select', function(e) {
-    console.log(e, e.selected);
 
     let selected = e.selected[0];
 
@@ -554,8 +549,6 @@ select.on('select', function(e) {
         var info = getInfosFeature(selected);
 
         var coord = ol.proj.toLonLat(e.mapBrowserEvent.coordinate, map.getView().getProjection())
-
-        console.log(getGeoPoint(coord), type, id);
 
         getSignalementInfo(type, id, modalInfoGetEmptyContent());
 
@@ -574,7 +567,6 @@ select.on('select', function(e) {
     }
 
     else if (layers_signalements.includes(e.target.getLayer(selected))) {
-        console.log(selected);
 
         objet = getSignalementObjet(selected.getId().split('.')[1])
 
@@ -634,7 +626,6 @@ var deleteSignal = function(id, success=function(a){}, error=function(a, b, c){}
         type : 'DELETE',
         url  : adresse_api+'/signalement/'+id,
         success : function(response) {
-            // console.log(response);
             alert("Signalement supprimé");
             layers_signalements[sessionStorage.getItem("indexLayers")].getSource().clear();
             success(response);
@@ -683,7 +674,6 @@ var modalInfoHide = function() {
 }
 
 var getInfosFeature = function(elem) {
-    console.log("ELEM  ",elem);
     let id = elem.getId().split('.')[0];
     let prop = elem.getProperties();
 
@@ -770,9 +760,7 @@ var getSignalementInfo = function (type, id, divContent) {
         url  : `${adresse_api}/signalement/type_object/${type}/id_object/${id}`,
         success : function(response) {
             // Begin accessing JSON data here
-            console.log("ca passe")
             var data = response;
-            console.log(data)
             if(data["signalements"] !== undefined){
 
                 let type_display = "";
@@ -800,13 +788,7 @@ var getSignalementInfo = function (type, id, divContent) {
                     if(signalement.type_signalement === "retard")
                         delay = signalement.retard + "mins"
 
-
-                    // if(signalement.type_signalement === "degradation" && signalement.id_image !== null){
-                        // recupImage(signalement, type_display, delay, divContent)
-                    // }
-                    // else {
-                        content(signalement, type_display, delay, null, divContent);
-                    // }
+                    content(signalement, type_display, delay, null, divContent);
 
                 });
             }

@@ -5,24 +5,10 @@ var adresse_api = 'http://'+host_api+':'+port_api;
 
 $(document).ready(function () {
 
-    // const params = new URLSearchParams(document.location.search);
-
     const info = sessionStorage.getItem("infoLoc");
 
-    // if(params.get("location")!=null){
-    //     $("#location").text(params.get("location"));
-    //     $("#location_name_field").val(params.get("location"));
-    // }
-    // if(params.get("id")!=null){
-    //     $("#id").val(params.get("id"));
-    //
-    // }
-    //
-    // $("#location").text(extractUrlParams());
-
     $("#location").text(info);
-    // console.log(sessionStorage.getItem("idLoc"));
-    // console.log(sessionStorage.getItem("typeLoc"));
+
     display()
 
 });
@@ -80,9 +66,7 @@ var loadFile = function(event) {
     var reader = new FileReader();
     reader.onload = function(){
         var arrayBuffer = this.result;
-        console.log(arrayBuffer);
         array = new Uint8Array(arrayBuffer);
-        //img = String.fromCharCode.apply(null,array);
 
         byteImg = toHexString(array);
 
@@ -144,8 +128,6 @@ function ajaxInsert(typeSignal,r,idImage,comment) {
         }),
         contentType: "application/json",
         success : function(response) {
-            // console.log(response);
-            alert("Signalement créé");
             returnMap();
         },
         error : function(xhr, ajaxOptions, thrownError) {

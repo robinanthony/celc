@@ -202,12 +202,6 @@
             }
         },options);
 
-        Hammer(document.body).on("swipeleft", function(ev){
-            if (ev.center.x - ev.distance < 350) {
-                $('#sidebar').addClass('active');
-            }
-        },options);
-
         Hammer(document.getElementById('content')).on("tap swipe", function(ev){
             $('#sidebar').addClass('active');
         },options);
